@@ -43,8 +43,13 @@ Page({
   },
 
   async addToMenu() {
+    const recipeId = this.data.recipe.id
+    if (!recipeId) {
+      wx.showToast({ title: '菜谱信息未加载', icon: 'none' })
+      return
+    }
     try {
-      await api.addOrder({ recipe_id: this.data.recipe.id, quantity: 1 })
+      await api.addOrder({ recipe_id: recipeId, quantity: 1 })
       wx.showToast({ title: '已加入今日点菜', icon: 'success' })
     } catch (e) {
       wx.showToast({ title: '添加失败', icon: 'none' })
