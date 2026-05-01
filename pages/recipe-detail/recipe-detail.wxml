@@ -50,4 +50,9 @@
     <button class="btn-outline" bindtap="editRecipe">编辑</button>
     <button class="btn-primary" bindtap="addToMenu">加入点菜</button>
   </view>
+
+  <!-- 备注输入 -->
+  <view class="note-bar">
+    <input placeholder="添加备注（如：少辣、多放葱...）" value="{{orderNote}}" bindinput="onNoteInput" />
+  </view>
 </view>

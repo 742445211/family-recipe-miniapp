@@ -17,9 +17,13 @@
       <text class="item-name">{{item.recipe.name}}</text>
       <text class="item-meta">
         {{item.quantity}}份
-        <text wx:if="{{item.note}}"> | {{item.note}}</text>
       </text>
-      <text class="item-adder" wx:if="{{item.adder}}">👤 {{item.adder.nickname || '匿名'}}</text>
+      <text class="item-note" wx:if="{{item.note}}">📝 {{item.note}}</text>
+      <view class="item-adder" wx:if="{{item.adder}}">
+        <image wx:if="{{item.adder.avatar_url}}" src="{{item.adder.avatar_url}}" class="adder-avatar" mode="aspectFill" />
+        <text wx:else class="adder-placeholder">👤</text>
+        <text class="adder-name">{{item.adder.nickname || '匿名'}}</text>
+      </view>
     </view>
     <text class="del-btn" bindtap="removeOrder" data-id="{{item.id}}">✕</text>
   </view>

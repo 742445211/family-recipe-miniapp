@@ -57,4 +57,19 @@
   box-shadow: 0 -2rpx 12rpx rgba(0,0,0,0.05);
 }
 .bottom-bar button { flex: 1; margin: 0; }
-.container { padding-bottom: 140rpx; }
+
+/* 备注栏 */
+.note-bar {
+  padding: 16rpx 20rpx;
+  margin-top: 16rpx;
+}
+.note-bar input {
+  background: #fff;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+  font-size: 26rpx;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.container { padding-bottom: 180rpx; }

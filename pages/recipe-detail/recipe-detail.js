@@ -6,10 +6,10 @@ function safeParse(str) {
 }
 
 Page({
-  data: { recipe: {}, ingredients: [], seasonings: [], steps: [], isFav: false },
+  data: { recipe: {}, ingredients: [], seasonings: [], steps: [], isFav: false, orderNote: '' },
 
   onLoad(options) {
-    this.setData({ recipeId: options.id })
+    this.setData({ recipeId: options.id, orderNote: '' })
     this.loadRecipe(options.id)
   },
 
@@ -57,6 +57,10 @@ Page({
     wx.navigateTo({ url: '/pages/recipe-edit/recipe-edit?id=' + this.data.recipe.id })
   },
 
+  onNoteInput(e) {
+    this.setData({ orderNote: e.detail.value })
+  },
+
   async addToMenu() {
     const recipeId = this.data.recipe.id
     if (!recipeId) {
@@ -64,8 +68,9 @@ Page({
       return
     }
     try {
-      await api.addOrder({ recipe_id: recipeId, quantity: 1 })
+      await api.addOrder({ recipe_id: recipeId, quantity: 1, note: this.data.orderNote.trim() })
       wx.showToast({ title: '已加入今日点菜', icon: 'success' })
+      this.setData({ orderNote: '' })
     } catch (e) {
       wx.showToast({ title: '添加失败', icon: 'none' })
     }
