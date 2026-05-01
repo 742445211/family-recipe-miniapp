@@ -20,9 +20,14 @@ Page({
 
   async loadOrders() {
     try {
+      console.log('[order] loading orders for', this.data.dateStr)
       const orders = await api.getOrders(this.data.dateStr)
+      console.log('[order] got', orders ? orders.length : 0, 'orders', JSON.stringify(orders))
       this.setData({ orders: orders || [] })
-    } catch (e) {}
+    } catch (e) {
+      console.error('[order] loadOrders error:', JSON.stringify(e))
+      wx.showToast({ title: '加载点菜失败', icon: 'none' })
+    }
   },
 
   prevDay() {
