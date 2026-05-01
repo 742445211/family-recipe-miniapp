@@ -1,4 +1,4 @@
-const BASE_URL = 'https://你的域名.com/api'  // 替换为实际后端地址
+const BASE_URL = 'https://www.zzzjc.xin/api'
 
 const request = (url, method = 'GET', data = {}) => {
   const token = wx.getStorageSync('token')
