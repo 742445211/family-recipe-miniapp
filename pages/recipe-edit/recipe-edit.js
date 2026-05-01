@@ -1,117 +1,80 @@
-const api = require('../../utils/api')
-
-function safeParse(str) {
-  if (!str || typeof str !== 'string') return []
-  try { return JSON.parse(str) } catch (e) { return [] }
-}
-
-Page({
-  data: {
-    isEdit: false, id: 0, name: '', category: '荤菜', categoryIndex: 0,
-    difficulty: 'medium', cookTime: '', coverUrl: '', coverKey: '',
-    ingredients: [{ name: '', amount: '' }], steps: [''],
-    tips: '', submitting: false,
-    categories: ['荤菜', '素菜', '汤', '主食', '凉菜', '其他']
-  },
-
-  onLoad(options) {
-    if (options.id) {
-      this.setData({ isEdit: true, id: options.id })
-      this.loadRecipe(options.id)
-    }
-  },
-
-  async loadRecipe(id) {
-    try {
-      const r = await api.getRecipe(id)
-      this.setData({
-        name: r.name, category: r.category, difficulty: r.difficulty,
-        cookTime: String(r.cook_time), coverUrl: r.cover_url, coverKey: r.image_key,
-        ingredients: safeParse(r.ingredients).length ? safeParse(r.ingredients) : [{ name: '', amount: '' }],
-        steps: safeParse(r.steps).length ? safeParse(r.steps) : [''],
-        tips: r.tips || ''
-      })
-    } catch (e) {}
-  },
-
-  onInput(e) {
-    const field = e.currentTarget.dataset.field
-    this.setData({ [field]: e.detail.value })
-  },
-
-  onCategory(e) {
-    const idx = parseInt(e.detail.value)
-    this.setData({ categoryIndex: idx, category: this.data.categories[idx] })
-  },
-
-  setDifficulty(e) {
-    this.setData({ difficulty: e.currentTarget.dataset.val })
-  },
-
-  onIngredient(e) {
-    const idx = e.currentTarget.dataset.idx
-    const field = e.currentTarget.dataset.field
-    const val = e.detail.value
-    const items = this.data.ingredients.slice()
-    if (field === 'iname') items[idx].name = val
-    else items[idx].amount = val
-    this.setData({ ingredients: items })
-  },
-
-  addIngredient() {
-    this.setData({ ingredients: [...this.data.ingredients, { name: '', amount: '' }] })
-  },
-
-  delIngredient(e) {
-    const items = this.data.ingredients.slice()
-    items.splice(e.currentTarget.dataset.idx, 1)
-    this.setData({ ingredients: items.length ? items : [{ name: '', amount: '' }] })
-  },
-
-  onStep(e) {
-    const steps = this.data.steps.slice()
-    steps[e.currentTarget.dataset.idx] = e.detail.value
-    this.setData({ steps })
-  },
-
-  addStep() { this.setData({ steps: [...this.data.steps, ''] }) },
-  
-  delStep(e) {
-    const steps = this.data.steps.slice()
-    steps.splice(e.currentTarget.dataset.idx, 1)
-    this.setData({ steps: steps.length ? steps : [''] })
-  },
-
-  async chooseImage() {
-    const res = await wx.chooseImage({ count: 1, sizeType: ['compressed'] })
-    try {
-      const data = await api.upload(res.tempFilePaths[0])
-      this.setData({ coverUrl: data.url, coverKey: data.key })
-    } catch (e) {}
-  },
-
-  async submit() {
-    if (!this.data.name.trim()) {
-      wx.showToast({ title: '请输入菜名', icon: 'none' })
-      return
-    }
-    this.setData({ submitting: true })
-    const data = {
-      name: this.data.name,
-      category: this.data.category,
-      difficulty: this.data.difficulty,
-      cook_time: parseInt(this.data.cookTime) || 0,
-      image_key: this.data.coverKey,
-      cover_url: this.data.coverUrl,
-      ingredients: JSON.stringify(this.data.ingredients.filter(i => i.name)),
-      steps: JSON.stringify(this.data.steps.filter(s => s)),
-      tips: this.data.tips
-    }
-    try {
-      if (this.data.isEdit) await api.updateRecipe(this.data.id, data)
-      else await api.createRecipe(data)
-      wx.navigateBack()
-    } catch (e) {}
-    this.setData({ submitting: false })
-  }
-})
+     1|const api = require('../../utils/api')
+     2|
+     3|function safeParse(str) {
+     4|  if (!str || typeof str !== 'string') return []
+     5|  try { return JSON.parse(str) } catch (e) { return [] }
+     6|}
+     7|
+     8|Page({
+     9|  data: { recipe: {}, ingredients: [], seasonings: [], steps: [], isFav: false, orderNote: '' },
+    10|
+    11|  onLoad(options) {
+    12|    this.setData({ recipeId: options.id, orderNote: '' })
+    13|    this.loadRecipe(options.id)
+    14|  },
+    15|
+    16|  onShow() {
+    wx.hideTabBar()
+    17|    // 编辑返回后刷新
+    18|    if (this.data.recipeId) {
+    19|      this.loadRecipe(this.data.recipeId)
+    20|    }
+    21|  },
+    22|
+    23|  async loadRecipe(id) {
+    24|    try {
+    25|      const r = await api.getRecipe(id)
+    26|      this.setData({
+    27|        recipe: r,
+    28|        ingredients: safeParse(r.ingredients),
+    29|        seasonings: safeParse(r.seasonings),
+    30|        steps: safeParse(r.steps)
+    31|      })
+    32|    } catch (e) {
+    33|      wx.showToast({ title: '加载失败', icon: 'none' })
+    34|    }
+    35|  },
+    36|
+    37|  async toggleFavorite() {
+    38|    const id = this.data.recipe.id
+    39|    try {
+    40|      if (this.data.isFav) await api.removeFavorite(id)
+    41|      else await api.addFavorite(id)
+    42|      this.setData({ isFav: !this.data.isFav })
+    43|    } catch (e) {}
+    44|  },
+    45|
+    46|  async markCooked() {
+    47|    try {
+    48|      await api.markCooked(this.data.recipe.id)
+    49|      wx.showToast({ title: '已标记', icon: 'success' })
+    50|      const r = this.data.recipe
+    51|      r.cook_count++
+    52|      this.setData({ recipe: r })
+    53|    } catch (e) {}
+    54|  },
+    55|
+    56|  editRecipe() {
+    57|    wx.navigateTo({ url: '/pages/recipe-edit/recipe-edit?id=' + this.data.recipe.id })
+    58|  },
+    59|
+    60|  onNoteInput(e) {
+    61|    this.setData({ orderNote: e.detail.value })
+    62|  },
+    63|
+    64|  async addToMenu() {
+    65|    const recipeId = this.data.recipe.id
+    66|    if (!recipeId) {
+    67|      wx.showToast({ title: '菜谱信息未加载', icon: 'none' })
+    68|      return
+    69|    }
+    70|    try {
+    71|      await api.addOrder({ recipe_id: recipeId, quantity: 1, note: this.data.orderNote.trim() })
+    72|      wx.showToast({ title: '已加入今日点菜', icon: 'success' })
+    73|      this.setData({ orderNote: '' })
+    74|    } catch (e) {
+    75|      wx.showToast({ title: '添加失败', icon: 'none' })
+    76|    }
+    77|  }
+    78|})
+    79|

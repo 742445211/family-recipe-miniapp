@@ -6,15 +6,18 @@ function safeParse(str) {
 }
 
 Page({
-  data: { recipe: {}, ingredients: [], seasonings: [], steps: [], isFav: false, orderNote: '' },
+  data: {
+    recipe: {}, ingredients: [], seasonings: [], steps: [], isFav: false,
+    showOrderModal: false, orderMeal: 'dinner', orderNote: ''
+  },
 
   onLoad(options) {
-    this.setData({ recipeId: options.id, orderNote: '' })
+    this.setData({ recipeId: options.id })
     this.loadRecipe(options.id)
   },
 
   onShow() {
-    // 编辑返回后刷新
+    wx.hideTabBar()
     if (this.data.recipeId) {
       this.loadRecipe(this.data.recipeId)
     }
@@ -57,22 +60,42 @@ Page({
     wx.navigateTo({ url: '/pages/recipe-edit/recipe-edit?id=' + this.data.recipe.id })
   },
 
-  onNoteInput(e) {
-    this.setData({ orderNote: e.detail.value })
-  },
-
-  async addToMenu() {
+  // 点击加入点菜 → 弹出选择餐次+备注
+  showOrder() {
     const recipeId = this.data.recipe.id
     if (!recipeId) {
       wx.showToast({ title: '菜谱信息未加载', icon: 'none' })
       return
     }
+    this.setData({ showOrderModal: true, orderMeal: 'dinner', orderNote: '' })
+  },
+
+  hideOrderModal() {
+    this.setData({ showOrderModal: false })
+  },
+
+  onOrderMealChange(e) {
+    this.setData({ orderMeal: e.currentTarget.dataset.val })
+  },
+
+  onOrderNoteInput(e) {
+    this.setData({ orderNote: e.detail.value })
+  },
+
+  async confirmOrder() {
+    const recipeId = this.data.recipe.id
     try {
-      await api.addOrder({ recipe_id: recipeId, quantity: 1, note: this.data.orderNote.trim() })
-      wx.showToast({ title: '已加入今日点菜', icon: 'success' })
-      this.setData({ orderNote: '' })
+      await api.addOrder({
+        recipe_id: recipeId,
+        meal_type: this.data.orderMeal,
+        quantity: 1,
+        note: this.data.orderNote.trim()
+      })
+      const mealNames = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐' }
+      wx.showToast({ title: '已加入今日' + (mealNames[this.data.orderMeal] || ''), icon: 'success' })
+      this.setData({ showOrderModal: false })
     } catch (e) {
-      wx.showToast({ title: '添加失败', icon: 'none' })
+      wx.showToast({ title: e.msg || '添加失败', icon: 'none' })
     }
   }
 })

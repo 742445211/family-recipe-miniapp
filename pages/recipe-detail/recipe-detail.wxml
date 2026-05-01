@@ -48,11 +48,33 @@
 
   <view class="bottom-bar">
     <button class="btn-outline" bindtap="editRecipe">编辑</button>
-    <button class="btn-primary" bindtap="addToMenu">加入点菜</button>
+    <button class="btn-primary" bindtap="showOrder">加入点菜</button>
   </view>
 
-  <!-- 备注输入 -->
-  <view class="note-bar">
-    <input placeholder="添加备注（如：少辣、多放葱...）" value="{{orderNote}}" bindinput="onNoteInput" />
+  <!-- 点菜弹窗 -->
+  <view wx:if="{{showOrderModal}}" class="modal-mask" bindtap="hideOrderModal">
+    <view class="modal" catchtap>
+      <view class="modal-title">加入今日点菜</view>
+      <text class="modal-recipe">{{recipe.name}}</text>
+      
+      <view class="form-group">
+        <text class="label">餐次</text>
+        <view class="meal-row">
+          <view class="meal-item {{orderMeal === 'breakfast' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="breakfast">🌅 早餐</view>
+          <view class="meal-item {{orderMeal === 'lunch' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="lunch">☀️ 午餐</view>
+          <view class="meal-item {{orderMeal === 'dinner' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="dinner">🌙 晚餐</view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="label">备注（选填）</text>
+        <input value="{{orderNote}}" bindinput="onOrderNoteInput" placeholder="如：少辣、多放葱..." />
+      </view>
+
+      <view class="modal-btns">
+        <button class="btn-outline" bindtap="hideOrderModal">取消</button>
+        <button class="btn-primary" bindtap="confirmOrder">确定</button>
+      </view>
+    </view>
   </view>
 </view>

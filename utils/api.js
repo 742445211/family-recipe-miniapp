@@ -50,8 +50,13 @@ const api = {
   deleteRecipe: (id) => request('/recipes/' + id, 'DELETE'),
   markCooked: (id) => request('/recipes/' + id + '/cooked', 'POST'),
 
-  // 点菜（按日期，直接点菜到当天）
-  getOrders: (date) => request('/orders' + (date ? '?date=' + date : '')),
+  // 点菜（按日期+餐次）
+  getOrders: (date, mealType) => {
+    const params = []
+    if (date) params.push('date=' + date)
+    if (mealType) params.push('meal_type=' + mealType)
+    return request('/orders' + (params.length ? '?' + params.join('&') : ''))
+  },
   addOrder: (data) => request('/orders', 'POST', data),
   removeOrder: (id) => request('/orders/' + id, 'DELETE'),
 

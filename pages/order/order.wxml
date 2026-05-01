@@ -6,6 +6,13 @@
     <text class="date-nav" bindtap="nextDay">▶</text>
   </view>
 
+  <!-- 餐次切换 -->
+  <view class="meal-tabs">
+    <view wx:for="{{meals}}" wx:key="key" class="meal-tab {{mealType === item.key ? 'active' : ''}}" bindtap="switchMeal" data-val="{{item.key}}">
+      {{item.label}}
+    </view>
+  </view>
+
   <view wx:if="{{!orders.length}}" class="empty">
     <text>今天还没点菜</text>
     <text>去菜谱页面添加吧~</text>
@@ -17,6 +24,7 @@
       <text class="item-name">{{item.recipe.name}}</text>
       <text class="item-meta">
         {{item.quantity}}份
+        <text wx:if="{{item.meal_type}}"> | {{item.meal_type === 'breakfast' ? '早餐' : item.meal_type === 'lunch' ? '午餐' : '晚餐'}}</text>
       </text>
       <text class="item-note" wx:if="{{item.note}}">📝 {{item.note}}</text>
       <view class="item-adder" wx:if="{{item.adder}}">
