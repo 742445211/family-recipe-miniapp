@@ -1,5 +1,10 @@
 const api = require('../../utils/api')
 
+function safeParse(str) {
+  if (!str || typeof str !== 'string') return []
+  try { return JSON.parse(str) } catch (e) { return [] }
+}
+
 Page({
   data: {
     isEdit: false, id: 0, name: '', category: '荤菜', categoryIndex: 0,
@@ -22,8 +27,8 @@ Page({
       this.setData({
         name: r.name, category: r.category, difficulty: r.difficulty,
         cookTime: String(r.cook_time), coverUrl: r.cover_url, coverKey: r.image_key,
-        ingredients: typeof r.ingredients === 'string' ? JSON.parse(r.ingredients) : (r.ingredients || [{ name: '', amount: '' }]),
-        steps: typeof r.steps === 'string' ? JSON.parse(r.steps) : (r.steps || ['']),
+        ingredients: safeParse(r.ingredients).length ? safeParse(r.ingredients) : [{ name: '', amount: '' }],
+        steps: safeParse(r.steps).length ? safeParse(r.steps) : [''],
         tips: r.tips || ''
       })
     } catch (e) {}

@@ -57,3 +57,4 @@
   box-shadow: 0 -2rpx 12rpx rgba(0,0,0,0.05);
 }
 .bottom-bar button { flex: 1; margin: 0; }
+.container { padding-bottom: 140rpx; }

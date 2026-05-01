@@ -56,3 +56,4 @@
   font-size: 24rpx;
 }
 .add-btn { color: #FF6B35; padding: 16rpx; font-size: 26rpx; }
+.container { padding-bottom: 60rpx; }
