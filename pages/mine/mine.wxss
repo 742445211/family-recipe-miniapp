@@ -4,7 +4,8 @@
 .user-text { flex: 1; }
 .nickname { font-size: 34rpx; font-weight: bold; display: block; }
 .edit-hint { font-size: 24rpx; color: #999; margin-top: 6rpx; }
-.menu-item { padding: 20rpx 0; font-size: 30rpx; }
+.menu-item { padding: 20rpx 0; font-size: 30rpx; display: flex; justify-content: space-between; align-items: center; }
+.chef-hint { font-size: 22rpx; color: #999; margin-top: 4rpx; display: block; }
 
 /* 弹窗 */
 .modal-mask {

@@ -65,6 +65,7 @@ const api = {
   createFamily: (data) => request('/families', 'POST', data),
   joinFamily: (code) => request('/families/join', 'POST', { invite_code: code }),
   getMembers: (id) => request('/families/' + id + '/members'),
+  toggleChef: () => request('/families/chef', 'POST'),
 
   // 收藏
   getFavorites: () => request('/favorites'),

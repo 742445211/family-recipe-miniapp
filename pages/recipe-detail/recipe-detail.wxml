@@ -52,7 +52,7 @@
   </view>
 
   <!-- 点菜弹窗 -->
-  <view wx:if="{{showOrderModal}}" class="modal-mask" bindtap="hideOrderModal">
+  <view hidden="{{!showOrderModal}}" class="modal-mask" bindtap="hideOrderModal" catchtouchmove>
     <view class="modal" catchtap>
       <view class="modal-title">加入今日点菜</view>
       <text class="modal-recipe">{{recipe.name}}</text>

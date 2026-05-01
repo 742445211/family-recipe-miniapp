@@ -3,6 +3,7 @@ const api = require('../../utils/api')
 Page({
   data: {
     userInfo: {},
+    isChef: false,
     showEdit: false,
     editNickname: '',
     editAvatar: ''
@@ -20,7 +21,7 @@ Page({
         avatar: profile.avatar_url
       }
       wx.setStorageSync('userInfo', info)
-      this.setData({ userInfo: info })
+      this.setData({ userInfo: info, isChef: profile.is_chef || false })
     } catch (e) {
       // fallback to storage
       const info = wx.getStorageSync('userInfo')
@@ -88,5 +89,13 @@ Page({
     wx.removeStorageSync('token')
     wx.removeStorageSync('userInfo')
     wx.reLaunch({ url: '/pages/login/login' })
+  },
+
+  async toggleChef() {
+    try {
+      const data = await api.toggleChef()
+      this.setData({ isChef: data.is_chef })
+      wx.showToast({ title: data.is_chef ? '已设为厨师' : '已取消厨师', icon: 'success' })
+    } catch (e) {}
   }
 })
