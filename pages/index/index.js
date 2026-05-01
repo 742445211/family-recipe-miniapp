@@ -11,7 +11,6 @@ Page({
   },
 
   onLoad(options) {
-    // 保留兼容 URL 参数方式
     if (options.mode === 'favorites') {
       this.setData({ mode: 'favorites' })
       wx.setNavigationBarTitle({ title: '我的收藏' })
@@ -19,17 +18,24 @@ Page({
   },
 
   onShow() {
-    // globalData 方式（来自 mine 页 switchTab）
     const app = getApp()
     if (app.globalData.indexMode === 'favorites') {
       this.setData({ mode: 'favorites' })
       wx.setNavigationBarTitle({ title: '我的收藏' })
-      app.globalData.indexMode = null  // 用完清除
-    } else if (app.globalData.indexMode === 'recipes') {
-      this.setData({ mode: 'recipes' })
-      wx.setNavigationBarTitle({ title: '家庭菜谱' })
       app.globalData.indexMode = null
+    } else {
+      // 正常进入时恢复菜谱模式（防止上次收藏模式残留）
+      if (this.data.mode !== 'recipes') {
+        this.setData({ mode: 'recipes', keyword: '', category: '', categoryIndex: -1 })
+        wx.setNavigationBarTitle({ title: '家庭菜谱' })
+      }
     }
+    this.loadRecipes()
+  },
+
+  backToRecipes() {
+    this.setData({ mode: 'recipes', keyword: '', category: '', categoryIndex: -1 })
+    wx.setNavigationBarTitle({ title: '家庭菜谱' })
     this.loadRecipes()
   },
 
@@ -37,7 +43,6 @@ Page({
     try {
       if (this.data.mode === 'favorites') {
         const data = await api.getFavorites()
-        // favorites returns list of {recipe: {...}}
         const recipes = (data || []).map(f => f.recipe || f)
         this.setData({ recipes })
       } else {

@@ -33,8 +33,12 @@
         <input value="{{editNickname}}" bindinput="onNicknameInput" placeholder="请输入昵称" />
       </view>
       <view class="form-group">
-        <text class="label">头像URL</text>
-        <input value="{{editAvatar}}" bindinput="onAvatarInput" placeholder="请输入头像链接" />
+        <text class="label">头像</text>
+        <view class="avatar-upload" bindtap="chooseAvatar">
+          <image wx:if="{{editAvatar}}" src="{{editAvatar}}" class="avatar-preview" mode="aspectFill" />
+          <text wx:else class="avatar-tip">📷 点击上传</text>
+        </view>
+        <text class="url-hint" wx:if="{{editAvatar}}">{{editAvatar}}</text>
       </view>
       <view class="modal-btns">
         <button class="btn-outline" bindtap="hideEditDialog">取消</button>

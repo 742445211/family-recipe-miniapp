@@ -48,6 +48,18 @@ Page({
     this.setData({ editAvatar: e.detail.value })
   },
 
+  async chooseAvatar() {
+    try {
+      const res = await wx.chooseImage({ count: 1, sizeType: ['compressed'], sourceType: ['album', 'camera'] })
+      wx.showLoading({ title: '上传中...' })
+      const data = await api.upload(res.tempFilePaths[0])
+      wx.hideLoading()
+      this.setData({ editAvatar: data.url })
+    } catch (e) {
+      wx.hideLoading()
+    }
+  },
+
   async saveProfile() {
     if (!this.data.editNickname.trim()) {
       wx.showToast({ title: '昵称不能为空', icon: 'none' })

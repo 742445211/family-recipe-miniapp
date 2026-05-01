@@ -38,3 +38,15 @@
   margin-bottom: 10rpx;
 }
 .recipe-tags { display: flex; align-items: center; gap: 8rpx; }
+
+/* 收藏标题栏 */
+.fav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+  padding: 10rpx 0;
+}
+.fav-back { font-size: 28rpx; color: #FF6B35; }
+.fav-title { font-size: 32rpx; font-weight: bold; }
+.fav-placeholder { width: 120rpx; }

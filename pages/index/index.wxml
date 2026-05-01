@@ -1,4 +1,11 @@
 <view class="container">
+  <!-- 收藏模式标题栏 -->
+  <view wx:if="{{mode === 'favorites'}}" class="fav-header">
+    <text class="fav-back" bindtap="backToRecipes">← 返回菜谱</text>
+    <text class="fav-title">❤️ 我的收藏</text>
+    <text class="fav-placeholder"></text>
+  </view>
+
   <!-- 搜索栏（菜谱模式） -->
   <view wx:if="{{mode === 'recipes'}}" class="search-bar">
     <input placeholder="搜索菜谱..." bindinput="onSearch" value="{{keyword}}" />
