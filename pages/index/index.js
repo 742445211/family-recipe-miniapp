@@ -6,16 +6,33 @@ Page({
     keyword: '',
     category: '',
     categoryIndex: -1,
-    categories: ['全部', '荤菜', '素菜', '汤', '主食', '凉菜', '其他']
+    categories: ['全部', '荤菜', '素菜', '汤', '主食', '凉菜', '其他'],
+    mode: 'recipes'  // 'recipes' | 'favorites'
+  },
+
+  onLoad(options) {
+    if (options.mode === 'favorites') {
+      this.setData({ mode: 'favorites' })
+      wx.setNavigationBarTitle({ title: '我的收藏' })
+    }
   },
 
   onShow() { this.loadRecipes() },
 
   async loadRecipes() {
     try {
-      const data = await api.getRecipes({ keyword: this.data.keyword, category: this.data.category })
-      this.setData({ recipes: data.list })
-    } catch (e) {}
+      if (this.data.mode === 'favorites') {
+        const data = await api.getFavorites()
+        // favorites returns list of {recipe: {...}}
+        const recipes = (data || []).map(f => f.recipe || f)
+        this.setData({ recipes })
+      } else {
+        const data = await api.getRecipes({ keyword: this.data.keyword, category: this.data.category })
+        this.setData({ recipes: data.list || [] })
+      }
+    } catch (e) {
+      this.setData({ recipes: [] })
+    }
   },
 
   onSearch(e) {

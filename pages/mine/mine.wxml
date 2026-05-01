@@ -1,8 +1,11 @@
 <view class="container">
-  <view class="card user-card">
+  <view class="card user-card" bindtap="showEditDialog">
     <image wx:if="{{userInfo.avatar}}" src="{{userInfo.avatar}}" class="avatar" />
     <text wx:else class="avatar-placeholder">👤</text>
-    <text class="nickname">{{userInfo.nickname || '未设置昵称'}}</text>
+    <view class="user-text">
+      <text class="nickname">{{userInfo.nickname || '未设置昵称'}}</text>
+      <text class="edit-hint">点击编辑</text>
+    </view>
   </view>
 
   <view class="card" bindtap="goAI">
@@ -19,5 +22,24 @@
 
   <view class="card" bindtap="logout">
     <view class="menu-item" style="color: #F44336;">退出登录</view>
+  </view>
+
+  <!-- 编辑弹窗 -->
+  <view wx:if="{{showEdit}}" class="modal-mask" bindtap="hideEditDialog">
+    <view class="modal" catchtap>
+      <view class="modal-title">编辑资料</view>
+      <view class="form-group">
+        <text class="label">昵称</text>
+        <input value="{{editNickname}}" bindinput="onNicknameInput" placeholder="请输入昵称" />
+      </view>
+      <view class="form-group">
+        <text class="label">头像URL</text>
+        <input value="{{editAvatar}}" bindinput="onAvatarInput" placeholder="请输入头像链接" />
+      </view>
+      <view class="modal-btns">
+        <button class="btn-outline" bindtap="hideEditDialog">取消</button>
+        <button class="btn-primary" bindtap="saveProfile">保存</button>
+      </view>
+    </view>
   </view>
 </view>

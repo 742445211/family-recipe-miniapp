@@ -1,14 +1,16 @@
 <view class="container">
-  <!-- 搜索栏 -->
-  <view class="search-bar">
+  <!-- 搜索栏（菜谱模式） -->
+  <view wx:if="{{mode === 'recipes'}}" class="search-bar">
     <input placeholder="搜索菜谱..." bindinput="onSearch" value="{{keyword}}" />
     <picker bindchange="onCategory" value="{{categoryIndex}}" range="{{categories}}">
-      <view class="category-picker">{{category || '分类'}}</view>
+      <view class="category-picker">{{categories[categoryIndex] || '分类'}}</view>
     </picker>
   </view>
 
   <!-- 菜谱列表 -->
-  <view wx:if="{{recipes.length === 0}}" class="empty">暂无菜谱，快去添加吧~</view>
+  <view wx:if="{{!recipes.length}}" class="empty">
+    {{mode === 'favorites' ? '还没有收藏哦~' : '暂无菜谱，快去添加吧~'}}
+  </view>
   <view wx:for="{{recipes}}" wx:key="id" class="card recipe-card" bindtap="toDetail" data-id="{{item.id}}">
     <image wx:if="{{item.cover_url}}" src="{{item.cover_url}}" class="recipe-img" mode="aspectFill" />
     <view class="recipe-info">
@@ -21,6 +23,6 @@
     </view>
   </view>
 
-  <!-- 浮动添加按钮 -->
-  <view class="float-btn" bindtap="addRecipe">+</view>
+  <!-- 浮动添加按钮（菜谱模式） -->
+  <view wx:if="{{mode === 'recipes'}}" class="float-btn" bindtap="addRecipe">+</view>
 </view>
