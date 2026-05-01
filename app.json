@@ -4,9 +4,7 @@
     "pages/index/index",
     "pages/recipe-detail/recipe-detail",
     "pages/recipe-edit/recipe-edit",
-    "pages/menu-list/menu-list",
-    "pages/menu-create/menu-create",
-    "pages/menu-detail/menu-detail",
+    "pages/order/order",
     "pages/mine/mine",
     "pages/family/family",
     "pages/family-join/family-join",
@@ -29,7 +27,7 @@
         "selectedIconPath": "images/tab-recipe-active.png"
       },
       {
-        "pagePath": "pages/menu-list/menu-list",
+        "pagePath": "pages/order/order",
         "text": "点菜",
         "iconPath": "images/tab-menu.png",
         "selectedIconPath": "images/tab-menu-active.png"

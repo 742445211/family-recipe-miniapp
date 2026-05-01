@@ -42,7 +42,12 @@ Page({
     wx.navigateTo({ url: '/pages/recipe-edit/recipe-edit?id=' + this.data.recipe.id })
   },
 
-  addToMenu() {
-    wx.navigateTo({ url: '/pages/menu-create/menu-create?recipeId=' + this.data.recipe.id })
+  async addToMenu() {
+    try {
+      await api.addOrder({ recipe_id: this.data.recipe.id, quantity: 1 })
+      wx.showToast({ title: '已加入今日点菜', icon: 'success' })
+    } catch (e) {
+      wx.showToast({ title: '添加失败', icon: 'none' })
+    }
   }
 })

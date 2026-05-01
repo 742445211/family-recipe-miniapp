@@ -1,0 +1,29 @@
+<view class="container">
+  <!-- 日期选择 -->
+  <view class="date-bar">
+    <text class="date-nav" bindtap="prevDay">◀</text>
+    <text class="date-str">{{dateStr}}</text>
+    <text class="date-nav" bindtap="nextDay">▶</text>
+  </view>
+
+  <view wx:if="{{orders.length === 0}}" class="empty">
+    <text>今天还没点菜</text>
+    <text>去菜谱页面添加吧~</text>
+  </view>
+
+  <view wx:for="{{orders}}" wx:key="id" class="card order-item">
+    <image wx:if="{{item.recipe.cover_url}}" src="{{item.recipe.cover_url}}" class="item-img" mode="aspectFill" />
+    <view class="item-info">
+      <text class="item-name">{{item.recipe.name}}</text>
+      <text class="item-meta">
+        {{item.quantity}}份
+        <text wx:if="{{item.note}}"> | {{item.note}}</text>
+      </text>
+      <text class="item-adder" wx:if="{{item.adder}}">👤 {{item.adder.nickname || '匿名'}}</text>
+    </view>
+    <text class="del-btn" bindtap="removeOrder" data-id="{{item.id}}">✕</text>
+  </view>
+
+  <!-- 浮动按钮：去菜谱选菜 -->
+  <view class="float-btn" bindtap="addRecipe">+</view>
+</view>
