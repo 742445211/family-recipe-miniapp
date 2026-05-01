@@ -6,7 +6,7 @@
     <text class="date-nav" bindtap="nextDay">▶</text>
   </view>
 
-  <view wx:if="{{orders.length === 0}}" class="empty">
+  <view wx:if="{{!orders.length}}" class="empty">
     <text>今天还没点菜</text>
     <text>去菜谱页面添加吧~</text>
   </view>

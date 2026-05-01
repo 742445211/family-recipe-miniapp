@@ -1,5 +1,10 @@
 const api = require('../../utils/api')
 
+function safeParse(str) {
+  if (!str || typeof str !== 'string') return []
+  try { return JSON.parse(str) } catch (e) { return [] }
+}
+
 Page({
   data: { recipe: {}, ingredients: [], seasonings: [], steps: [], isFav: false },
 
@@ -12,11 +17,13 @@ Page({
       const r = await api.getRecipe(id)
       this.setData({
         recipe: r,
-        ingredients: typeof r.ingredients === 'string' ? JSON.parse(r.ingredients) : (r.ingredients || []),
-        seasonings: typeof r.seasonings === 'string' ? JSON.parse(r.seasonings) : (r.seasonings || []),
-        steps: typeof r.steps === 'string' ? JSON.parse(r.steps) : (r.steps || [])
+        ingredients: safeParse(r.ingredients),
+        seasonings: safeParse(r.seasonings),
+        steps: safeParse(r.steps)
       })
-    } catch (e) {}
+    } catch (e) {
+      wx.showToast({ title: '加载失败', icon: 'none' })
+    }
   },
 
   async toggleFavorite() {

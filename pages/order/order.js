@@ -22,10 +22,11 @@ Page({
     try {
       console.log('[order] loading orders for', this.data.dateStr)
       const orders = await api.getOrders(this.data.dateStr)
-      console.log('[order] got', orders ? orders.length : 0, 'orders', JSON.stringify(orders))
-      this.setData({ orders: orders || [] })
+      console.log('[order] got', orders ? orders.length : 0, 'orders')
+      this.setData({ orders: Array.isArray(orders) ? orders : [] })
     } catch (e) {
-      console.error('[order] loadOrders error:', JSON.stringify(e))
+      console.error('[order] loadOrders error:', e)
+      this.setData({ orders: [] })
       wx.showToast({ title: '加载点菜失败', icon: 'none' })
     }
   },
