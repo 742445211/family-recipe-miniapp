@@ -91,11 +91,16 @@ Page({
     wx.reLaunch({ url: '/pages/login/login' })
   },
 
-  async toggleChef() {
+  async toggleChef(e) {
+    const newVal = e.detail.value
     try {
       const data = await api.toggleChef()
       this.setData({ isChef: data.is_chef })
       wx.showToast({ title: data.is_chef ? '已设为厨师' : '已取消厨师', icon: 'success' })
-    } catch (e) {}
+    } catch (e) {
+      // 失败回滚开关
+      this.setData({ isChef: !newVal })
+      wx.showToast({ title: '操作失败', icon: 'none' })
+    }
   }
 })
