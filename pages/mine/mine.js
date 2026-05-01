@@ -3,14 +3,14 @@ const api = require('../../utils/api')
 Page({
   data: {
     userInfo: {},
-    isChef: false,
+    isChef: wx.getStorageSync('isChef') || false,
     showEdit: false,
     editNickname: '',
     editAvatar: ''
   },
 
-  onShow() {
-    this.loadProfile()
+  async onShow() {
+    await this.loadProfile()
   },
 
   async loadProfile() {
@@ -20,12 +20,14 @@ Page({
         nickname: profile.nickname,
         avatar: profile.avatar_url
       }
+      const isChef = profile.is_chef || false
       wx.setStorageSync('userInfo', info)
-      this.setData({ userInfo: info, isChef: profile.is_chef || false })
+      wx.setStorageSync('isChef', isChef)
+      this.setData({ userInfo: info, isChef })
     } catch (e) {
       // fallback to storage
       const info = wx.getStorageSync('userInfo')
-      this.setData({ userInfo: info || {} })
+      this.setData({ userInfo: info || {}, isChef: wx.getStorageSync('isChef') || false })
     }
   },
 
@@ -88,6 +90,7 @@ Page({
   logout() {
     wx.removeStorageSync('token')
     wx.removeStorageSync('userInfo')
+    wx.removeStorageSync('isChef')
     wx.reLaunch({ url: '/pages/login/login' })
   },
 
@@ -95,9 +98,10 @@ Page({
     const newVal = e.detail.value
     try {
       const data = await api.toggleChef()
+      wx.setStorageSync('isChef', data.is_chef)
       this.setData({ isChef: data.is_chef })
       wx.showToast({ title: data.is_chef ? '已设为厨师' : '已取消厨师', icon: 'success' })
-    } catch (e) {
+    } catch (err) {
       // 失败回滚开关
       this.setData({ isChef: !newVal })
       wx.showToast({ title: '操作失败', icon: 'none' })
