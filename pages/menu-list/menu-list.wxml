@@ -1,0 +1,21 @@
+<view class="container">
+  <view wx:if="{{menus.length === 0}}" class="empty">
+    <text>还没有点菜单</text>
+    <text>点击下方按钮创建第一个吧</text>
+  </view>
+
+  <view wx:for="{{menus}}" wx:key="id" class="card menu-card" bindtap="toDetail" data-id="{{item.id}}">
+    <view class="menu-header">
+      <text class="menu-name">{{item.name}}</text>
+      <text class="menu-status status-{{item.status}}">
+        {{item.status === 'draft' ? '草稿' : item.status === 'voting' ? '投票中' : '已确认'}}
+      </text>
+    </view>
+    <view class="menu-meta">
+      <text>📅 {{item.date}}</text>
+      <text wx:if="{{item.creator}}">👤 {{item.creator.nickname || '创建者'}}</text>
+    </view>
+  </view>
+
+  <view class="float-btn" bindtap="createMenu">+</view>
+</view>

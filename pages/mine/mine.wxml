@@ -1,0 +1,23 @@
+<view class="container">
+  <view class="card user-card">
+    <image wx:if="{{userInfo.avatar}}" src="{{userInfo.avatar}}" class="avatar" />
+    <text wx:else class="avatar-placeholder">👤</text>
+    <text class="nickname">{{userInfo.nickname || '未设置昵称'}}</text>
+  </view>
+
+  <view class="card" bindtap="goAI">
+    <view class="menu-item">🤖 AI 推荐菜谱</view>
+  </view>
+
+  <view class="card" bindtap="goFamily">
+    <view class="menu-item">🏠 家庭管理</view>
+  </view>
+
+  <view class="card" bindtap="goFavorites">
+    <view class="menu-item">❤️ 我的收藏</view>
+  </view>
+
+  <view class="card" bindtap="logout">
+    <view class="menu-item" style="color: #F44336;">退出登录</view>
+  </view>
+</view>

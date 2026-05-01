@@ -1,0 +1,7 @@
+<view class="container">
+  <view class="card">
+    <text class="section-title">输入邀请码加入家庭</text>
+    <input value="{{code}}" bindinput="onCode" placeholder="6位邀请码" maxlength="6" />
+    <button class="btn-primary" bindtap="join" style="margin-top: 24rpx;">加入</button>
+  </view>
+</view>

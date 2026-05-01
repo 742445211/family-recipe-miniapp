@@ -1,0 +1,16 @@
+<view class="container">
+  <view class="card ai-header">
+    <text class="ai-icon">🤖</text>
+    <text class="ai-title">AI 智能推荐</text>
+    <text class="ai-desc">基于你的菜谱库和点菜历史，智能推荐今晚吃什么</text>
+  </view>
+
+  <button class="btn-primary" bindtap="getRecommend" loading="{{loading}}">
+    开始推荐
+  </button>
+
+  <view wx:if="{{result}}" class="card result-card">
+    <view class="result-title">推荐结果</view>
+    <text class="result-text">{{result}}</text>
+  </view>
+</view>

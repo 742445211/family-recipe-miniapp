@@ -1,0 +1,19 @@
+<view class="container">
+  <view class="card">
+    <view class="form-group">
+      <text class="label">菜单名称</text>
+      <input value="{{name}}" bindinput="onName" placeholder="如：周五晚餐" />
+    </view>
+    <view class="form-group">
+      <text class="label">日期</text>
+      <picker mode="date" value="{{date}}" bindchange="onDate">
+        <view class="picker-val">{{date || '选择日期'}}</view>
+      </picker>
+    </view>
+    <button class="btn-primary" bindtap="submit">创建菜单</button>
+  </view>
+
+  <view wx:if="{{recipeId}}" class="card" style="margin-top: 20rpx;">
+    <text>将当前菜谱加入新菜单</text>
+  </view>
+</view>

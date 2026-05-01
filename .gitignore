@@ -1,0 +1,14 @@
+# WeChat mini program
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# WeChat dev tools cache
+node_modules/
+miniprogram_npm/
+
+# Private config (if any)
+project.private.config.json

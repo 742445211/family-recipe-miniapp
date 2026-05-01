@@ -1,0 +1,28 @@
+<view class="container">
+  <view class="card" wx:for="{{families}}" wx:key="id">
+    <view class="family-row">
+      <view>
+        <text class="family-name">{{item.name}}</text>
+        <text class="invite-code">邀请码: {{item.invite_code}}</text>
+      </view>
+      <text class="switch-btn">当前</text>
+    </view>
+  </view>
+
+  <view class="section">
+    <button class="btn-primary" bindtap="showCreate">创建家庭</button>
+    <button class="btn-outline" bindtap="goJoin" style="margin-top: 16rpx;">加入家庭</button>
+  </view>
+
+  <!-- 创建弹窗 -->
+  <view class="modal" wx:if="{{showCreateModal}}">
+    <view class="modal-content">
+      <text class="modal-title">创建家庭</text>
+      <input value="{{newName}}" bindinput="onNewName" placeholder="家庭名称" />
+      <view class="modal-btns">
+        <button size="mini" bindtap="hideCreate">取消</button>
+        <button size="mini" type="primary" bindtap="createFamily">创建</button>
+      </view>
+    </view>
+  </view>
+</view>

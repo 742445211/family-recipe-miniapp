@@ -1,0 +1,7 @@
+.ai-header { text-align: center; padding: 40rpx; }
+.ai-icon { font-size: 80rpx; display: block; }
+.ai-title { font-size: 36rpx; font-weight: bold; display: block; margin: 16rpx 0; }
+.ai-desc { color: #999; font-size: 26rpx; }
+.result-card { margin-top: 30rpx; }
+.result-title { font-size: 30rpx; font-weight: bold; color: #FF6B35; margin-bottom: 16rpx; }
+.result-text { white-space: pre-wrap; line-height: 1.8; font-size: 28rpx; }

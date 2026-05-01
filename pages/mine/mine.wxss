@@ -1,0 +1,5 @@
+.user-card { display: flex; align-items: center; gap: 24rpx; padding: 32rpx; }
+.avatar { width: 100rpx; height: 100rpx; border-radius: 50%; }
+.avatar-placeholder { font-size: 60rpx; }
+.nickname { font-size: 34rpx; font-weight: bold; }
+.menu-item { padding: 20rpx 0; font-size: 30rpx; }

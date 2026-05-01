@@ -1,0 +1,45 @@
+{
+  "pages": [
+    "pages/login/login",
+    "pages/index/index",
+    "pages/recipe-detail/recipe-detail",
+    "pages/recipe-edit/recipe-edit",
+    "pages/menu-list/menu-list",
+    "pages/menu-create/menu-create",
+    "pages/menu-detail/menu-detail",
+    "pages/mine/mine",
+    "pages/family/family",
+    "pages/family-join/family-join",
+    "pages/ai-recommend/ai-recommend"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#FF6B35",
+    "navigationBarTitleText": "家庭菜谱",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F5F5"
+  },
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#FF6B35",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "菜谱",
+        "iconPath": "images/tab-recipe.png",
+        "selectedIconPath": "images/tab-recipe-active.png"
+      },
+      {
+        "pagePath": "pages/menu-list/menu-list",
+        "text": "点菜",
+        "iconPath": "images/tab-menu.png",
+        "selectedIconPath": "images/tab-menu-active.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "images/tab-mine.png",
+        "selectedIconPath": "images/tab-mine-active.png"
+      }
+    ]
+  }
+}

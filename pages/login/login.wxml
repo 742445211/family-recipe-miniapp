@@ -1,0 +1,10 @@
+<view class="login-container">
+  <view class="logo-area">
+    <text class="logo">🍳</text>
+    <text class="title">家庭菜谱</text>
+    <text class="subtitle">记录家的味道</text>
+  </view>
+  <button class="btn-login" bindtap="handleLogin" loading="{{loading}}">
+    微信一键登录
+  </button>
+</view>

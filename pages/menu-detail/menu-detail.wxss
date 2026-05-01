@@ -1,0 +1,14 @@
+.header-row { display: flex; justify-content: space-between; align-items: center; }
+.name { font-size: 38rpx; font-weight: bold; }
+.status { font-size: 24rpx; padding: 6rpx 16rpx; border-radius: 8rpx; }
+.status-draft { background: #FFF3E0; color: #FF9800; }
+.status-confirmed { background: #E8F5E9; color: #4CAF50; }
+.date { color: #999; margin-top: 10rpx; display: block; }
+.section-title { font-size: 30rpx; font-weight: bold; color: #FF6B35; margin-bottom: 16rpx; }
+.item-row { display: flex; align-items: center; gap: 16rpx; padding: 16rpx 0; border-bottom: 1rpx solid #f0f0f0; }
+.item-img { width: 80rpx; height: 80rpx; border-radius: 10rpx; background: #eee; }
+.item-info { flex: 1; }
+.item-name { font-size: 30rpx; }
+.item-meta { color: #999; font-size: 24rpx; display: block; }
+.bottom-actions { display: flex; gap: 20rpx; padding: 20rpx 0; }
+.bottom-actions button { flex: 1; margin: 0; }

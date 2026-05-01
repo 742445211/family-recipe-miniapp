@@ -1,0 +1,8 @@
+.menu-card { padding: 24rpx; }
+.menu-header { display: flex; justify-content: space-between; align-items: center; }
+.menu-name { font-size: 34rpx; font-weight: bold; }
+.menu-status { font-size: 24rpx; padding: 6rpx 16rpx; border-radius: 8rpx; }
+.status-draft { background: #FFF3E0; color: #FF9800; }
+.status-voting { background: #E3F2FD; color: #2196F3; }
+.status-confirmed { background: #E8F5E9; color: #4CAF50; }
+.menu-meta { display: flex; gap: 24rpx; margin-top: 12rpx; color: #999; font-size: 24rpx; }

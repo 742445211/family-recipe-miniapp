@@ -1,0 +1,13 @@
+{
+  "description": "家庭点菜 & 菜谱小程序",
+  "appid": "wx6728bb699338278c",
+  "projectname": "family-recipe",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "postcss": true,
+    "minified": true
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.5.5"
+}
