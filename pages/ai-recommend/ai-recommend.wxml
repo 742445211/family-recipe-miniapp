@@ -6,11 +6,22 @@
   </view>
 
   <button class="btn-primary" bindtap="getRecommend" loading="{{loading}}">
-    开始推荐
+    {{loading ? '正在思考...' : '开始推荐'}}
   </button>
 
-  <view wx:if="{{result}}" class="card result-card">
-    <view class="result-title">推荐结果</view>
-    <text class="result-text">{{result}}</text>
+  <view wx:if="{{items.length}}" class="result-list">
+    <view class="result-title">📋 推荐结果</view>
+    <view wx:for="{{items}}" wx:key="index" class="card result-item">
+      <view class="result-rank">{{index + 1}}</view>
+      <view class="result-body">
+        <text class="result-name">{{item.name}}</text>
+        <text class="result-reason" wx:if="{{item.reason}}">{{item.reason}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:elif="{{rawResult}}" class="card result-card">
+    <view class="result-title">📋 推荐结果</view>
+    <text class="result-text">{{rawResult}}</text>
   </view>
 </view>

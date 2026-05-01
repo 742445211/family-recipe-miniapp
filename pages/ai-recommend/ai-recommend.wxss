@@ -1,7 +1,42 @@
 .ai-header { text-align: center; padding: 40rpx; }
-.ai-icon { font-size: 80rpx; display: block; }
-.ai-title { font-size: 36rpx; font-weight: bold; display: block; margin: 16rpx 0; }
-.ai-desc { color: #999; font-size: 26rpx; }
-.result-card { margin-top: 30rpx; }
-.result-title { font-size: 30rpx; font-weight: bold; color: #FF6B35; margin-bottom: 16rpx; }
-.result-text { white-space: pre-wrap; line-height: 1.8; font-size: 28rpx; }
+.ai-icon { font-size: 80rpx; display: block; margin-bottom: 12rpx; }
+.ai-title { font-size: 36rpx; font-weight: bold; }
+.ai-desc { font-size: 26rpx; color: #999; display: block; margin-top: 12rpx; }
+
+.result-list { margin-top: 30rpx; }
+.result-title { font-size: 32rpx; font-weight: bold; margin-bottom: 20rpx; color: #FF6B35; }
+
+.result-item {
+  display: flex;
+  gap: 20rpx;
+  align-items: flex-start;
+}
+.result-rank {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: #FF6B35;
+  color: #fff;
+  text-align: center;
+  line-height: 56rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+.result-body { flex: 1; }
+.result-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 6rpx;
+}
+.result-reason {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.6;
+}
+.result-text {
+  font-size: 28rpx;
+  line-height: 1.8;
+  white-space: pre-wrap;
+}

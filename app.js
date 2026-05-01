@@ -7,6 +7,7 @@ App({
   },
   globalData: {
     userInfo: null,
-    currentFamily: null
+    currentFamily: null,
+    indexMode: null  // 'favorites' | 'recipes' | null
   }
 })

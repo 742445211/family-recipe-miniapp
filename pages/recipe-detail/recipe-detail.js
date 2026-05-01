@@ -9,7 +9,15 @@ Page({
   data: { recipe: {}, ingredients: [], seasonings: [], steps: [], isFav: false },
 
   onLoad(options) {
+    this.setData({ recipeId: options.id })
     this.loadRecipe(options.id)
+  },
+
+  onShow() {
+    // 编辑返回后刷新
+    if (this.data.recipeId) {
+      this.loadRecipe(this.data.recipeId)
+    }
   },
 
   async loadRecipe(id) {

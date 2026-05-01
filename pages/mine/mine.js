@@ -68,7 +68,10 @@ Page({
 
   goAI() { wx.navigateTo({ url: '/pages/ai-recommend/ai-recommend' }) },
   goFamily() { wx.navigateTo({ url: '/pages/family/family' }) },
-  goFavorites() { wx.navigateTo({ url: '/pages/index/index?mode=favorites' }) },
+  goFavorites() {
+    getApp().globalData.indexMode = 'favorites'
+    wx.switchTab({ url: '/pages/index/index' })
+  },
   logout() {
     wx.removeStorageSync('token')
     wx.removeStorageSync('userInfo')
