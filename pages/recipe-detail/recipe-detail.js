@@ -17,7 +17,6 @@ Page({
   },
 
   onShow() {
-    wx.hideTabBar()
     if (this.data.recipeId) {
       this.loadRecipe(this.data.recipeId)
     }

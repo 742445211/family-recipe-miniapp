@@ -18,6 +18,7 @@ Page({
   },
 
   onShow() {
+    wx.showTabBar()
     const app = getApp()
     if (app.globalData.indexMode === 'favorites') {
       this.setData({ mode: 'favorites' })

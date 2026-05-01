@@ -10,6 +10,7 @@ Page({
   },
 
   async onShow() {
+    wx.showTabBar()
     await this.loadProfile()
   },
 

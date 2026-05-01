@@ -4,7 +4,6 @@ Page({
   data: { code: '' },
 
   onShow() {
-    wx.hideTabBar()
   },
 
   onCode(e) {

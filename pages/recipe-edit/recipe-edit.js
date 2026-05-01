@@ -14,7 +14,6 @@ Page({
   },
 
   onShow() {
-    wx.hideTabBar()
     // 编辑返回后刷新
     if (this.data.recipeId) {
       this.loadRecipe(this.data.recipeId)

@@ -23,6 +23,7 @@ Page({
   },
 
   onShow() {
+    wx.showTabBar()
     this.loadOrders()
   },
 
