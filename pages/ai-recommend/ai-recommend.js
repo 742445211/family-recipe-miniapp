@@ -1,4 +1,5 @@
 const api = require('../../utils/api')
+const { requireLogin } = require('../../utils/auth')
 
 function safeParse(str) {
   if (!str || typeof str !== 'string') return []
@@ -9,6 +10,7 @@ Page({
   data: { recipe: {}, ingredients: [], seasonings: [], steps: [], isFav: false, orderNote: '' },
 
   onLoad(options) {
+    if (!requireLogin()) return
     this.setData({ recipeId: options.id, orderNote: '' })
     this.loadRecipe(options.id)
   },

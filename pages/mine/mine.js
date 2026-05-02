@@ -1,4 +1,5 @@
 const api = require('../../utils/api')
+const { requireLogin } = require('../../utils/auth')
 
 Page({
   data: {
@@ -11,6 +12,7 @@ Page({
 
   async onShow() {
     wx.showTabBar()
+    if (!requireLogin()) return
     await this.loadProfile()
   },
 

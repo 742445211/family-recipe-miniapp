@@ -1,4 +1,5 @@
 const api = require('../../utils/api')
+const { requireLogin } = require('../../utils/auth')
 
 Page({
   data: {
@@ -72,6 +73,7 @@ Page({
   },
 
   addRecipe() {
+    if (!requireLogin()) return
     wx.navigateTo({ url: '/pages/recipe-edit/recipe-edit' })
   }
 })

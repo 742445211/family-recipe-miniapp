@@ -1,9 +1,11 @@
 const api = require('../../utils/api')
+const { requireLogin } = require('../../utils/auth')
 
 Page({
   data: { code: '' },
 
   onShow() {
+    if (!requireLogin()) return
   },
 
   onCode(e) {

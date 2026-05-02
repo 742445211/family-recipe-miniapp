@@ -1,4 +1,5 @@
 const api = require('../../utils/api')
+const { requireLogin } = require('../../utils/auth')
 
 function todayStr() {
   const d = new Date()
@@ -24,6 +25,7 @@ Page({
 
   onShow() {
     wx.showTabBar()
+    if (!requireLogin()) return
     this.loadOrders()
   },
 

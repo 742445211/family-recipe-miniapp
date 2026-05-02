@@ -1,9 +1,6 @@
 App({
   onLaunch() {
-    const token = wx.getStorageSync('token')
-    if (!token) {
-      wx.reLaunch({ url: '/pages/login/login' })
-    }
+    // 不自动跳登录，让用户先浏览菜谱
   },
   globalData: {
     userInfo: null,

@@ -1,4 +1,5 @@
 const api = require('../../utils/api')
+const { requireLogin } = require('../../utils/auth')
 
 Page({
   data: {
@@ -19,6 +20,7 @@ Page({
   },
 
   onLoad(options) {
+    if (!requireLogin()) return
     if (options.id) {
       this.setData({ id: options.id, isEdit: true })
       wx.setNavigationBarTitle({ title: '编辑菜谱' })

@@ -1,6 +1,5 @@
 {
   "pages": [
-    "pages/login/login",
     "pages/index/index",
     "pages/recipe-detail/recipe-detail",
     "pages/recipe-edit/recipe-edit",
@@ -8,7 +7,8 @@
     "pages/mine/mine",
     "pages/family/family",
     "pages/family-join/family-join",
-    "pages/ai-recommend/ai-recommend"
+    "pages/ai-recommend/ai-recommend",
+    "pages/login/login"
   ],
   "window": {
     "navigationBarBackgroundColor": "#FF6B35",

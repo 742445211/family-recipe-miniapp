@@ -15,7 +15,6 @@ const request = (url, method = 'GET', data = {}) => {
         if (res.data.code === 401) {
           wx.removeStorageSync('token')
           wx.removeStorageSync('userInfo')
-          wx.reLaunch({ url: '/pages/login/login' })
           reject(res.data)
         } else if (res.data.code === 0) {
           resolve(res.data.data)

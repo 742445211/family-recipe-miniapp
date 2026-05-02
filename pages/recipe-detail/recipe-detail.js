@@ -1,4 +1,5 @@
 const api = require('../../utils/api')
+const { requireLogin } = require('../../utils/auth')
 
 function safeParse(str) {
   if (!str || typeof str !== 'string') return []
@@ -37,6 +38,7 @@ Page({
   },
 
   async toggleFavorite() {
+    if (!requireLogin()) return
     const id = this.data.recipe.id
     try {
       if (this.data.isFav) await api.removeFavorite(id)
@@ -46,6 +48,7 @@ Page({
   },
 
   async markCooked() {
+    if (!requireLogin()) return
     try {
       await api.markCooked(this.data.recipe.id)
       wx.showToast({ title: '已标记', icon: 'success' })
@@ -56,11 +59,13 @@ Page({
   },
 
   editRecipe() {
+    if (!requireLogin()) return
     wx.navigateTo({ url: '/pages/recipe-edit/recipe-edit?id=' + this.data.recipe.id })
   },
 
   // 点击加入点菜 → 弹出选择餐次+备注
   showOrder() {
+    if (!requireLogin()) return
     const recipeId = this.data.recipe.id
     if (!recipeId) {
       wx.showToast({ title: '菜谱信息未加载', icon: 'none' })
