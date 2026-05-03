@@ -32,6 +32,7 @@ Page({
     isFav: false,         // 是否已收藏
     showOrderModal: false,// 点菜模态框是否显示
     orderMeal: 'dinner',  // 点菜选择的餐次（默认晚餐）
+    orderDate: '',        // 点菜选择的日期（默认今天）
     orderNote: ''         // 点菜备注
   },
 
@@ -129,8 +130,10 @@ Page({
       wx.showToast({ title: '菜谱信息未加载', icon: 'none' })
       return
     }
-    // 显示点菜弹窗，重置默认值
-    this.setData({ showOrderModal: true, orderMeal: 'dinner', orderNote: '' })
+    // 默认日期为今天，用户可自行修改
+    const today = new Date()
+    const dateStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0')
+    this.setData({ showOrderModal: true, orderMeal: 'dinner', orderDate: dateStr, orderNote: '' })
   },
 
   /**
@@ -157,6 +160,14 @@ Page({
   },
 
   /**
+   * onOrderDateChange - 点菜日期选择
+   * @param {Object} e - 日期选择器 change 事件，e.detail.value 为 'YYYY-MM-DD'
+   */
+  onOrderDateChange(e) {
+    this.setData({ orderDate: e.detail.value })
+  },
+
+  /**
    * confirmOrder - 确认加入点菜
    * 调用 API 将菜谱加入今日指定餐次的点菜列表
    * @returns {Promise<void>}
@@ -167,14 +178,20 @@ Page({
       await api.addOrder({
         recipe_id: recipeId,
         meal_type: this.data.orderMeal,
+        date: this.data.orderDate,
         quantity: 1,
         note: this.data.orderNote.trim()
       })
-      // 餐次中文映射，用于 Toast 提示
       const mealNames = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐' }
-      wx.showToast({ title: '已加入今日' + (mealNames[this.data.orderMeal] || ''), icon: 'success' })
-      // 关闭弹窗
+      wx.showToast({ title: '已加入' + (mealNames[this.data.orderMeal] || ''), icon: 'success' })
       this.setData({ showOrderModal: false })
+
+      // 请求订阅消息授权（点菜时触发，符合微信要求）
+      wx.requestSubscribeMessage({
+        tmplIds: ['WCehmUVgB8k4zx27u9znF9h66Y1mYzLIjd6bNn0SRgw'],
+        success() {},
+        fail() {}
+      })
     } catch (e) {
       wx.showToast({ title: e.msg || '添加失败', icon: 'none' })
     }

@@ -39,8 +39,8 @@ Page({
           return
         }
         try {
-          // 第二步：将 code + 默认昵称发送到后端换取 token
-          const data = await api.login(res.code, '微信用户', '')
+          // 第二步：将 code 发送后端换取 token（不传昵称，保留数据库中已有值）
+          const data = await api.login(res.code, '', '')
 
           // 第三步：存储登录凭证到本地
           wx.setStorageSync('token', data.token)

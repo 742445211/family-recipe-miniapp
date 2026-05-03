@@ -67,6 +67,13 @@
       </view>
 
       <view class="form-group">
+        <text class="label">日期</text>
+        <picker mode="date" value="{{orderDate}}" bindchange="onOrderDateChange">
+          <view class="picker-text">{{orderDate || '选择日期'}}</view>
+        </picker>
+      </view>
+
+      <view class="form-group">
         <text class="label">备注（选填）</text>
         <input value="{{orderNote}}" bindinput="onOrderNoteInput" placeholder="如：少辣、多放葱..." />
       </view>
