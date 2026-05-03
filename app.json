@@ -1,4 +1,6 @@
 {
+  "_全局注释": "app.json - 小程序全局配置文件，定义页面路由、窗口样式、底部TabBar等",
+
   "pages": [
     "pages/index/index",
     "pages/recipe-detail/recipe-detail",
@@ -10,12 +12,16 @@
     "pages/ai-recommend/ai-recommend",
     "pages/login/login"
   ],
+  "_pages注释": "pages - 页面路由数组，第一项为小程序首页。所有页面路径必须在此注册，否则无法跳转",
+
   "window": {
     "navigationBarBackgroundColor": "#FF6B35",
     "navigationBarTitleText": "家庭菜谱",
     "navigationBarTextStyle": "white",
     "backgroundColor": "#F5F5F5"
   },
+  "_window注释": "window - 全局窗口样式配置。navigationBarBackgroundColor: 导航栏背景色(橙色); navigationBarTitleText: 默认标题; navigationBarTextStyle: 标题文字颜色(white/black); backgroundColor: 页面下拉背景色",
+
   "tabBar": {
     "color": "#999",
     "selectedColor": "#FF6B35",
@@ -39,5 +45,6 @@
         "selectedIconPath": "images/tab-mine-active.png"
       }
     ]
-  }
+  },
+  "_tabBar注释": "tabBar - 底部标签栏配置。color: 未选中文字颜色; selectedColor: 选中文字颜色(橙色); list: 标签列表，最多5个。每个标签需指定 pagePath(页面路径)、text(显示文字)、iconPath(未选中图标)、selectedIconPath(选中图标)"
 }
