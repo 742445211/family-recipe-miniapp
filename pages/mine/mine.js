@@ -178,6 +178,15 @@ Page({
       wx.setStorageSync('isChef', data.is_chef)
       this.setData({ isChef: data.is_chef })
       wx.showToast({ title: data.is_chef ? '已设为厨师' : '已取消厨师', icon: 'success' })
+
+      // 成为厨师时请求订阅消息授权（接收点菜通知）
+      if (data.is_chef) {
+        wx.requestSubscribeMessage({
+          tmplIds: ['WCehmUVgB8k4zx27u9znF9h66Y1mYzLIjd6bNn0SRgw'],
+          success() {},
+          fail() {}
+        })
+      }
     } catch (err) {
       // 失败回滚开关状态：恢复到操作前的值
       this.setData({ isChef: !newVal })
