@@ -6,6 +6,7 @@
  *   3. 支持前后切换日期
  *   4. 删除已点菜品
  *   5. 快捷跳转到菜谱首页添加菜品
+ *   6. 分享菜单卡片到群聊（动态消息）
  */
 
 const api = require('../../utils/api')
@@ -43,12 +44,14 @@ Page({
   },
 
   /**
-   * onShow - 页面显示时加载点菜数据（每次切换 Tab 触发）
+   * onShow - 页面显示时加载点菜数据 + 准备动态消息分享
+   * 每次切换 Tab 触发
    */
   onShow() {
     wx.showTabBar()
     if (!requireLogin()) return
     this.loadOrders()
+    this.prepareShare()
   },
 
   /**
@@ -59,7 +62,6 @@ Page({
   async loadOrders() {
     try {
       const orders = await api.getOrders(this.data.dateStr, this.data.mealType)
-      // 确保 orders 为数组
       this.setData({ orders: Array.isArray(orders) ? orders : [] })
     } catch (e) {
       this.setData({ orders: [] })
@@ -79,7 +81,6 @@ Page({
 
   /**
    * prevDay - 切换到前一天
-   * 解析当前日期字符串 → 减一天 → 格式化 → 重新加载
    */
   prevDay() {
     const [y, m, d] = this.data.dateStr.split('-').map(Number)
@@ -116,5 +117,46 @@ Page({
    */
   addRecipe() {
     wx.switchTab({ url: '/pages/index/index' })
+  },
+
+  // ========== 动态消息分享 ==========
+
+  /**
+   * prepareShare - 准备动态消息分享
+   * 调用后端创建 activity_id，绑定到 wx.updateShareMenu
+   * 之后用户点击分享按钮时，分享的卡片即可被动态更新
+   */
+  async prepareShare() {
+    try {
+      const data = await api.shareOrder()
+      if (data && data.activity_id) {
+        wx.updateShareMenu({
+          withShareTicket: true,
+          activityId: data.activity_id,
+          isUpdatableMessage: true
+        })
+        console.log('[动态消息] activity_id 已绑定:', data.activity_id)
+      }
+    } catch (e) {
+      // 创建失败不影响正常使用，静默跳过
+      console.log('[动态消息] 创建失败:', e)
+    }
+  },
+
+  /**
+   * onShareAppMessage - 分享菜单卡片到聊天
+   * 微信框架自动调用，返回分享配置
+   */
+  onShareAppMessage() {
+    const dishCount = this.data.orders.length
+    const title = dishCount > 0
+      ? '今日点菜 (' + dishCount + '道) - 家庭菜谱'
+      : '家庭点菜 - 来选今天的菜吧'
+
+    return {
+      title: title,
+      path: '/pages/order/order',
+      imageUrl: ''
+    }
   }
 })

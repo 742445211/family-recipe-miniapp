@@ -4,6 +4,7 @@
     <text class="date-nav" bindtap="prevDay">◀</text>
     <text class="date-str">{{dateStr}}</text>
     <text class="date-nav" bindtap="nextDay">▶</text>
+    <button class="share-btn" open-type="share">📤</button>
   </view>
 
   <!-- 餐次切换 -->

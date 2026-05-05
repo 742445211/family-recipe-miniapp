@@ -248,7 +248,16 @@ const api = {
       },
       fail: reject
     })
-  })
+  }),
+
+  // ========== 动态消息（分享菜单卡片） ==========
+
+  /**
+   * shareOrder - 创建动态消息 activity_id
+   * 用于分享菜点到群聊，后续点菜时卡片内容自动刷新
+   * @returns {Promise} - 返回 { activity_id }
+   */
+  shareOrder: () => request('/orders/share', 'POST')
 }
 
 module.exports = api

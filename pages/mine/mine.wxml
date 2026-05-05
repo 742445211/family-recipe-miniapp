@@ -13,7 +13,7 @@
       <text>👨‍🍳 厨师身份</text>
       <switch checked="{{isChef}}" bindchange="toggleChef" color="#FF6B35" />
     </view>
-    <text class="chef-hint">开启后，家人点菜时将收到模板消息通知</text>
+    <text class="chef-hint">开启后，家人点菜时将收到订阅消息通知</text>
   </view>
 
   <view class="card" bindtap="goAI">
