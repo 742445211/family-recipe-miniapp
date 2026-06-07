@@ -68,10 +68,10 @@ Page({
     try {
       const rec = await api.importAIRecipe(this.data.itemId)
       wx.showToast({ title: '已加入菜谱库', icon: 'success' })
-      this.setData({ inLibrary: true, 'draft.existing_recipe_id': rec.id })
-      setTimeout(() => {
-        wx.navigateTo({ url: '/pages/recipe-detail/recipe-detail?id=' + rec.id })
-      }, 800)
+      this.setData({
+        inLibrary: true,
+        draft: Object.assign({}, this.data.draft, { existing_recipe_id: rec.id })
+      })
     } catch (e) {
       if (e && e.code === 400) {
         wx.showToast({ title: '该菜已在菜谱库中', icon: 'none' })
@@ -81,9 +81,10 @@ Page({
   },
 
   showOrder() {
-    if (!requireLogin()) return
     this.setData({ showOrderModal: true, orderMeal: 'dinner', orderDate: todayYMD(), orderNote: '' })
   },
+
+  stopPropagation() {},
 
   hideOrderModal() {
     this.setData({ showOrderModal: false })
@@ -102,6 +103,8 @@ Page({
   },
 
   async confirmOrder() {
+    if (this._ordering) return
+    this._ordering = true
     try {
       await api.addAIRecipeToOrder(this.data.itemId, {
         meal_type: this.data.orderMeal,
@@ -111,9 +114,12 @@ Page({
       })
       const mealNames = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐' }
       wx.showToast({ title: '已加入' + (mealNames[this.data.orderMeal] || ''), icon: 'success' })
-      this.setData({ showOrderModal: false })
+      this.setData({ showOrderModal: false, inLibrary: true })
+      this.loadDraft(this.data.itemId)
     } catch (e) {
       wx.showToast({ title: (e && e.msg) || '添加失败', icon: 'none' })
+    } finally {
+      this._ordering = false
     }
   }
 })

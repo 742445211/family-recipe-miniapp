@@ -42,12 +42,12 @@
   </view>
 
   <view class="bottom-bar">
-    <button class="btn-outline" bindtap="importRecipe" disabled="{{inLibrary}}">加入菜谱</button>
-    <button class="btn-primary" bindtap="showOrder">加入点菜</button>
+    <view class="btn-outline btn-tap {{inLibrary ? 'btn-disabled' : ''}}" catchtap="importRecipe">加入菜谱</view>
+    <view class="btn-primary btn-tap" catchtap="showOrder">加入点菜</view>
   </view>
 
-  <view hidden="{{!showOrderModal}}" class="modal-mask" bindtap="hideOrderModal" catchtouchmove>
-    <view class="modal" catchtap>
+  <view wx:if="{{showOrderModal}}" class="modal-mask" bindtap="hideOrderModal" catchtouchmove="stopPropagation">
+    <view class="modal" catchtap="stopPropagation">
       <view class="modal-title">加入今日点菜</view>
       <text class="modal-recipe">{{draft.name}}</text>
 
@@ -73,8 +73,8 @@
       </view>
 
       <view class="modal-btns">
-        <button class="btn-outline" bindtap="hideOrderModal">取消</button>
-        <button class="btn-primary" bindtap="confirmOrder">确定</button>
+        <view class="btn-outline btn-tap" catchtap="hideOrderModal">取消</view>
+        <view class="btn-primary btn-tap" catchtap="confirmOrder">确定</view>
       </view>
     </view>
   </view>

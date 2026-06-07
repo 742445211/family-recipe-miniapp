@@ -16,3 +16,24 @@
   padding: 6rpx 16rpx;
   border-radius: 8rpx;
 }
+
+.bottom-bar {
+  z-index: 100;
+}
+
+.btn-tap {
+  flex: 1;
+  margin: 0;
+  text-align: center;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+
+.btn-disabled {
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+.modal-btns .btn-tap {
+  padding: 16rpx 0;
+}
