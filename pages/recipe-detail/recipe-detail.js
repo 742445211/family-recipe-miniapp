@@ -10,6 +10,7 @@
 
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
+const { todayYMD } = require('../../utils/date')
 
 /**
  * safeParse - 安全 JSON 解析
@@ -131,9 +132,7 @@ Page({
       return
     }
     // 默认日期为今天，用户可自行修改
-    const today = new Date()
-    const dateStr = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0')
-    this.setData({ showOrderModal: true, orderMeal: 'dinner', orderDate: dateStr, orderNote: '' })
+    this.setData({ showOrderModal: true, orderMeal: 'dinner', orderDate: todayYMD(), orderNote: '' })
   },
 
   /**
@@ -185,13 +184,6 @@ Page({
       const mealNames = { breakfast: '早餐', lunch: '午餐', dinner: '晚餐' }
       wx.showToast({ title: '已加入' + (mealNames[this.data.orderMeal] || ''), icon: 'success' })
       this.setData({ showOrderModal: false })
-
-      // 请求订阅消息授权（点菜时触发，符合微信要求）
-      wx.requestSubscribeMessage({
-        tmplIds: ['WCehmUVgB8k4zx27u9znF9h66Y1mYzLIjd6bNn0SRgw'],
-        success() {},
-        fail() {}
-      })
     } catch (e) {
       wx.showToast({ title: e.msg || '添加失败', icon: 'none' })
     }

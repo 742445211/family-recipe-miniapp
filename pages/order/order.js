@@ -11,30 +11,12 @@
 
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
-const notification = require('../../utils/notification')
-
-/**
- * todayStr - 获取今天的日期字符串 YYYY-MM-DD
- * @returns {string} - 格式如 "2025-01-15"
- */
-function todayStr() {
-  const d = new Date()
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0')
-}
-
-/**
- * formatDate - 将 Date 对象格式化为 YYYY-MM-DD 字符串
- * @param {Date} d - 日期对象
- * @returns {string} - 格式如 "2025-01-15"
- */
-function formatDate(d) {
-  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0')
-}
+const { formatYMD, todayYMD, normalizeYMD } = require('../../utils/date')
 
 Page({
   data: {
     orders: [],
-    dateStr: todayStr(),
+    dateStr: todayYMD(),
     mealType: '',
     unreadNotifications: [],
     unreadCount: 0,
@@ -56,12 +38,7 @@ Page({
     this.loadOrders()
     this.loadUnreadNotifications()
     this.prepareShare()
-    const app = getApp()
-    app.setNotificationCallback((msg) => {
-      this.loadOrders()
-      this.loadUnreadNotifications()
-    })
-    notification.connectSocket(() => {
+    getApp().setNotificationCallback(() => {
       this.loadOrders()
       this.loadUnreadNotifications()
     })
@@ -89,7 +66,7 @@ Page({
       await api.markNotificationRead(id)
     } catch (e) {}
     if (date) {
-      this.setData({ dateStr: date, mealType: meal || '' })
+      this.setData({ dateStr: normalizeYMD(date), mealType: meal || '' })
       this.loadOrders()
     }
     this.loadUnreadNotifications()
@@ -127,7 +104,7 @@ Page({
     const [y, m, d] = this.data.dateStr.split('-').map(Number)
     const prev = new Date(y, m-1, d)
     prev.setDate(prev.getDate() - 1)
-    this.setData({ dateStr: formatDate(prev) })
+    this.setData({ dateStr: formatYMD(prev) })
     this.loadOrders()
   },
 
@@ -138,7 +115,7 @@ Page({
     const [y, m, d] = this.data.dateStr.split('-').map(Number)
     const next = new Date(y, m-1, d)
     next.setDate(next.getDate() + 1)
-    this.setData({ dateStr: formatDate(next) })
+    this.setData({ dateStr: formatYMD(next) })
     this.loadOrders()
   },
 
