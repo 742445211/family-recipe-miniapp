@@ -40,6 +40,9 @@ const request = (url, method = 'GET', data = {}) => {
         } else if (res.data.code === 0) {
           // 业务成功：返回 data 字段
           resolve(res.data.data)
+        } else if (res.statusCode === 429 || res.data.code === 429) {
+          // 限流：由调用方展示友好提示
+          reject(res.data)
         } else {
           // 其他业务错误：弹出提示
           wx.showToast({ title: res.data.msg || '请求失败', icon: 'none' })
@@ -219,10 +222,18 @@ const api = {
   // ========== AI 推荐 ==========
 
   /**
-   * getAIRecommend - 获取 AI 智能推荐菜谱
-   * @returns {Promise} - 返回推荐的菜谱对象
+   * getAIRecommend - 获取 AI 智能推荐（结构化 batch + items）
+   * @returns {Promise} - { batch_id, items, rate_limit }
    */
   getAIRecommend: () => request('/ai/recommend', 'POST'),
+
+  getAIRecipeItem: (itemId) => request('/ai/items/' + itemId),
+
+  importAIRecipe: (itemId) => request('/ai/items/' + itemId + '/import-recipe', 'POST'),
+
+  addAIRecipeToOrder: (itemId, data) => request('/ai/items/' + itemId + '/add-order', 'POST', data),
+
+  getWeather: () => request('/weather'),
 
   // ========== 文件上传 ==========
 

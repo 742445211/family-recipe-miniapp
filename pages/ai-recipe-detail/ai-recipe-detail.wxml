@@ -1,0 +1,81 @@
+<view class="container">
+  <view class="card">
+    <view class="name-row">
+      <text class="name">{{draft.name}}</text>
+    </view>
+    <view class="tags">
+      <text class="tag tag-category">{{draft.category || '其他'}}</text>
+      <text class="tag">{{difficultyText}}</text>
+      <text wx:if="{{draft.cook_time}}">⏱ {{draft.cook_time}}分钟</text>
+    </view>
+    <text class="reason" wx:if="{{draft.reason}}">💡 {{draft.reason}}</text>
+    <text class="badge" wx:if="{{inLibrary}}">已在家庭菜谱库</text>
+  </view>
+
+  <view class="card" wx:if="{{ingredients.length}}">
+    <view class="section-title">🥬 食材</view>
+    <view wx:for="{{ingredients}}" wx:key="index" class="ingredient-item">
+      <text>{{item.name}}</text>
+      <text class="amount" wx:if="{{item.amount}}">{{item.amount}}</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{seasonings.length}}">
+    <view class="section-title">🧂 调料</view>
+    <view wx:for="{{seasonings}}" wx:key="index" class="ingredient-item">
+      <text>{{item.name}}</text>
+      <text class="amount" wx:if="{{item.amount}}">{{item.amount}}</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{steps.length}}">
+    <view class="section-title">📝 步骤</view>
+    <view wx:for="{{steps}}" wx:key="index" class="step-item">
+      <view class="step-num">{{index + 1}}</view>
+      <text>{{item}}</text>
+    </view>
+  </view>
+
+  <view class="card" wx:if="{{draft.tips}}">
+    <view class="section-title">💡 小贴士</view>
+    <text>{{draft.tips}}</text>
+  </view>
+
+  <view class="bottom-bar">
+    <button class="btn-outline" bindtap="importRecipe" disabled="{{inLibrary}}">加入菜谱</button>
+    <button class="btn-primary" bindtap="showOrder">加入点菜</button>
+  </view>
+
+  <view hidden="{{!showOrderModal}}" class="modal-mask" bindtap="hideOrderModal" catchtouchmove>
+    <view class="modal" catchtap>
+      <view class="modal-title">加入今日点菜</view>
+      <text class="modal-recipe">{{draft.name}}</text>
+
+      <view class="form-group">
+        <text class="label">餐次</text>
+        <view class="meal-row">
+          <view class="meal-item {{orderMeal === 'breakfast' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="breakfast">🌅 早餐</view>
+          <view class="meal-item {{orderMeal === 'lunch' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="lunch">☀️ 午餐</view>
+          <view class="meal-item {{orderMeal === 'dinner' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="dinner">🌙 晚餐</view>
+        </view>
+      </view>
+
+      <view class="form-group">
+        <text class="label">日期</text>
+        <picker mode="date" value="{{orderDate}}" bindchange="onOrderDateChange">
+          <view class="picker-text">{{orderDate || '选择日期'}}</view>
+        </picker>
+      </view>
+
+      <view class="form-group">
+        <text class="label">备注（选填）</text>
+        <input value="{{orderNote}}" bindinput="onOrderNoteInput" placeholder="如：少辣、多放葱..." />
+      </view>
+
+      <view class="modal-btns">
+        <button class="btn-outline" bindtap="hideOrderModal">取消</button>
+        <button class="btn-primary" bindtap="confirmOrder">确定</button>
+      </view>
+    </view>
+  </view>
+</view>

@@ -3,7 +3,7 @@
  */
 
 function pad2(n) {
-  return String(n).padStart(2, '0')
+  return n < 10 ? '0' + n : String(n)
 }
 
 /** 将 Date 格式化为 YYYY-MM-DD */
@@ -19,13 +19,17 @@ function todayYMD() {
 /** 规范化日期字符串为 YYYY-MM-DD（兼容 ISO 带时间） */
 function normalizeYMD(s) {
   if (!s) return ''
-  const str = String(s).trim()
+  var str = String(s).trim()
   if (str.length >= 10 && str[4] === '-' && str[7] === '-') {
     return str.slice(0, 10)
   }
-  const d = new Date(str)
+  var d = new Date(str)
   if (!isNaN(d.getTime())) return formatYMD(d)
   return str
 }
 
-module.exports = { formatYMD, todayYMD, normalizeYMD }
+module.exports = {
+  formatYMD: formatYMD,
+  todayYMD: todayYMD,
+  normalizeYMD: normalizeYMD
+}

@@ -6,10 +6,37 @@
 .result-list { margin-top: 30rpx; }
 .result-title { font-size: 32rpx; font-weight: bold; margin-bottom: 20rpx; color: #FF6B35; }
 
+.weather-line {
+  font-size: 26rpx;
+  color: #666;
+  display: block;
+  margin-top: 16rpx;
+}
+.quota-hint {
+  font-size: 24rpx;
+  color: #999;
+  text-align: center;
+  margin-top: 16rpx;
+}
 .result-item {
   display: flex;
   gap: 20rpx;
   align-items: flex-start;
+}
+.tap-item:active { opacity: 0.85; }
+.badge {
+  font-size: 22rpx;
+  color: #FF6B35;
+  background: #fff3ee;
+  padding: 4rpx 12rpx;
+  border-radius: 8rpx;
+  display: inline-block;
+  margin-bottom: 8rpx;
+}
+.arrow {
+  font-size: 40rpx;
+  color: #ccc;
+  align-self: center;
 }
 .result-rank {
   width: 56rpx;

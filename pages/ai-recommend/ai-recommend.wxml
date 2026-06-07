@@ -2,26 +2,34 @@
   <view class="card ai-header">
     <text class="ai-icon">🤖</text>
     <text class="ai-title">AI 智能推荐</text>
-    <text class="ai-desc">基于你的菜谱库和点菜历史，智能推荐今晚吃什么</text>
+    <text class="ai-desc">基于菜谱库、点菜历史与天气，推荐今晚吃什么</text>
+    <text class="weather-line" wx:if="{{weatherText}}">🌤 {{weatherText}}</text>
   </view>
 
   <button class="btn-primary" bindtap="getRecommend" loading="{{loading}}">
     {{loading ? '正在思考...' : '开始推荐'}}
   </button>
 
+  <view class="quota-hint" wx:if="{{rateLimit}}">
+    剩余推荐次数：{{rateLimit.remaining}} / {{rateLimit.limit}}
+  </view>
+
   <view wx:if="{{items.length}}" class="result-list">
-    <view class="result-title">📋 推荐结果</view>
-    <view wx:for="{{items}}" wx:key="index" class="card result-item">
+    <view class="result-title">📋 推荐结果（点击查看详情）</view>
+    <view
+      wx:for="{{items}}"
+      wx:key="item_id"
+      class="card result-item tap-item"
+      bindtap="toAIRecipeDetail"
+      data-id="{{item.item_id}}"
+    >
       <view class="result-rank">{{index + 1}}</view>
       <view class="result-body">
         <text class="result-name">{{item.name}}</text>
+        <text class="badge" wx:if="{{item.existing_recipe_id}}">已在菜谱库</text>
         <text class="result-reason" wx:if="{{item.reason}}">{{item.reason}}</text>
       </view>
+      <text class="arrow">›</text>
     </view>
-  </view>
-
-  <view wx:elif="{{rawResult}}" class="card result-card">
-    <view class="result-title">📋 推荐结果</view>
-    <text class="result-text">{{rawResult}}</text>
   </view>
 </view>

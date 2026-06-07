@@ -10,6 +10,7 @@
     "pages/family/family",
     "pages/family-join/family-join",
     "pages/ai-recommend/ai-recommend",
+    "pages/ai-recipe-detail/ai-recipe-detail",
     "pages/notification-settings/notification-settings",
     "pages/login/login"
   ],
