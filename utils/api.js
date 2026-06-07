@@ -257,7 +257,21 @@ const api = {
    * 用于分享菜点到群聊，后续点菜时卡片内容自动刷新
    * @returns {Promise} - 返回 { activity_id }
    */
-  shareOrder: () => request('/orders/share', 'POST')
+  shareOrder: () => request('/orders/share', 'POST'),
+
+  // ========== 厨师通知 ==========
+
+  getUnreadNotifications: () => request('/notifications/unread'),
+
+  markNotificationRead: (id) => request('/notifications/' + id + '/read', 'POST'),
+
+  getNotificationChannels: () => request('/notification-channels'),
+
+  createNotificationChannel: (data) => request('/notification-channels', 'POST', data),
+
+  updateNotificationChannel: (id, data) => request('/notification-channels/' + id, 'PUT', data),
+
+  deleteNotificationChannel: (id) => request('/notification-channels/' + id, 'DELETE')
 }
 
 module.exports = api

@@ -8,6 +8,7 @@
  */
 
 const api = require('../../utils/api')
+const notification = require('../../utils/notification')
 
 Page({
   data: {
@@ -46,7 +47,7 @@ Page({
           wx.setStorageSync('token', data.token)
           wx.setStorageSync('userInfo', data.user)
 
-          // 第四步：跳转到首页
+          notification.connectSocket()
           wx.switchTab({ url: '/pages/index/index' })
         } catch (e) {
           // API 调用失败：恢复 loading 状态

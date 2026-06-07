@@ -11,6 +11,7 @@
 
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
+const notification = require('../../utils/notification')
 
 /**
  * todayStr - 获取今天的日期字符串 YYYY-MM-DD
@@ -32,9 +33,11 @@ function formatDate(d) {
 
 Page({
   data: {
-    orders: [],           // 点菜列表数据
-    dateStr: todayStr(),  // 当前选中的日期（默认今天）
-    mealType: '',         // 当前餐次筛选：''（全部）| 'breakfast' | 'lunch' | 'dinner'
+    orders: [],
+    dateStr: todayStr(),
+    mealType: '',
+    unreadNotifications: [],
+    unreadCount: 0,
     meals: [
       { key: '', label: '全部' },
       { key: 'breakfast', label: '🌅 早餐' },
@@ -51,7 +54,45 @@ Page({
     wx.showTabBar()
     if (!requireLogin()) return
     this.loadOrders()
+    this.loadUnreadNotifications()
     this.prepareShare()
+    const app = getApp()
+    app.setNotificationCallback((msg) => {
+      this.loadOrders()
+      this.loadUnreadNotifications()
+    })
+    notification.connectSocket(() => {
+      this.loadOrders()
+      this.loadUnreadNotifications()
+    })
+  },
+
+  async loadUnreadNotifications() {
+    try {
+      const list = await api.getUnreadNotifications()
+      const notifications = Array.isArray(list) ? list : []
+      this.setData({
+        unreadNotifications: notifications.slice(0, 3),
+        unreadCount: notifications.length
+      })
+      getApp().globalData.unreadCount = notifications.length
+    } catch (e) {
+      this.setData({ unreadNotifications: [], unreadCount: 0 })
+    }
+  },
+
+  async onNotificationTap(e) {
+    const id = e.currentTarget.dataset.id
+    const date = e.currentTarget.dataset.date
+    const meal = e.currentTarget.dataset.meal
+    try {
+      await api.markNotificationRead(id)
+    } catch (e) {}
+    if (date) {
+      this.setData({ dateStr: date, mealType: meal || '' })
+      this.loadOrders()
+    }
+    this.loadUnreadNotifications()
   },
 
   /**

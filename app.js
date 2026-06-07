@@ -6,13 +6,33 @@
  *   3. 处理应用生命周期（onLaunch 等）
  */
 
+const notification = require('./utils/notification')
+
 App({
   /**
    * onLaunch - 小程序启动时触发
    * 当前策略：不自动跳转登录页，让用户先自由浏览菜谱
    */
   onLaunch() {
-    // 不自动跳登录，让用户先浏览菜谱
+    if (wx.getStorageSync('token')) {
+      notification.connectSocket((msg) => {
+        this.globalData.lastNotification = msg
+        if (typeof this.notificationCallback === 'function') {
+          this.notificationCallback(msg)
+        }
+      })
+    }
+  },
+
+  onShow() {
+    if (wx.getStorageSync('token')) {
+      notification.connectSocket((msg) => {
+        this.globalData.lastNotification = msg
+        if (typeof this.notificationCallback === 'function') {
+          this.notificationCallback(msg)
+        }
+      })
+    }
   },
 
   /**
@@ -27,6 +47,12 @@ App({
   globalData: {
     userInfo: null,
     currentFamily: null,
-    indexMode: null  // 'favorites' | 'recipes' | null
+    indexMode: null,
+    lastNotification: null,
+    unreadCount: 0
+  },
+
+  setNotificationCallback(fn) {
+    this.notificationCallback = fn
   }
 })

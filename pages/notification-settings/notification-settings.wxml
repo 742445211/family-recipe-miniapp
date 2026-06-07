@@ -1,0 +1,40 @@
+<view class="container">
+  <view class="card">
+    <view class="section-title">微信订阅消息</view>
+    <text class="hint">个人小程序仅支持一次性订阅。每授权一次，可用于后续一次点菜提醒。</text>
+    <button class="btn-primary" bindtap="requestSubscribe">开启下一次点菜微信提醒</button>
+  </view>
+
+  <view class="card">
+    <view class="section-title">企业微信（微工作台）</view>
+    <text class="hint">填写企业微信成员 UserID，需在应用可见范围且个人微信已关注微信插件。</text>
+    <input class="input" placeholder="企业微信 UserID" value="{{wecomUserid}}" bindinput="onWecomInput" />
+    <button class="btn-primary" bindtap="saveWecom">保存</button>
+  </view>
+
+  <view class="card">
+    <view class="section-title">Server酱</view>
+    <input class="input" placeholder="SendKey (SCT...)" value="{{serverChanKey}}" bindinput="onServerChanInput" />
+    <button class="btn-primary" bindtap="saveServerChan">保存</button>
+  </view>
+
+  <view class="card">
+    <view class="section-title">Bark (iOS)</view>
+    <input class="input" placeholder="Device Key" value="{{barkKey}}" bindinput="onBarkKeyInput" />
+    <button class="btn-primary" bindtap="saveBark">保存</button>
+  </view>
+
+  <view class="card">
+    <view class="section-title">ntfy</view>
+    <input class="input" placeholder="Topic" value="{{ntfyTopic}}" bindinput="onNtfyTopicInput" />
+    <button class="btn-primary" bindtap="saveNtfy">保存</button>
+  </view>
+
+  <view class="card" wx:if="{{channels.length}}">
+    <view class="section-title">已配置通道</view>
+    <view wx:for="{{channels}}" wx:key="id" class="channel-item">
+      <text>{{item.channel}} - {{item.masked_target || '已配置'}}</text>
+      <text class="del" bindtap="deleteChannel" data-id="{{item.id}}">删除</text>
+    </view>
+  </view>
+</view>

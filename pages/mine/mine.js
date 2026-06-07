@@ -10,6 +10,7 @@
 
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
+const notification = require('../../utils/notification')
 
 Page({
   data: {
@@ -151,11 +152,16 @@ Page({
     wx.switchTab({ url: '/pages/index/index' })
   },
 
+  goNotificationSettings() {
+    wx.navigateTo({ url: '/pages/notification-settings/notification-settings' })
+  },
+
   /**
    * logout - 退出登录
    * 清除本地所有缓存 → 跳转到登录页
    */
   logout() {
+    notification.disconnectSocket()
     wx.removeStorageSync('token')
     wx.removeStorageSync('userInfo')
     wx.removeStorageSync('isChef')

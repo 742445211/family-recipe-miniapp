@@ -28,6 +28,10 @@
     <view class="menu-item">❤️ 我的收藏</view>
   </view>
 
+  <view class="card" bindtap="goNotificationSettings">
+    <view class="menu-item">🔔 通知设置</view>
+  </view>
+
   <view class="card" bindtap="logout">
     <view class="menu-item" style="color: #F44336;">退出登录</view>
   </view>

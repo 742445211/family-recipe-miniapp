@@ -7,6 +7,18 @@
     <button class="share-btn" open-type="share">📤</button>
   </view>
 
+  <!-- 未读通知 -->
+  <view wx:if="{{unreadCount > 0}}" class="notify-bar">
+    <view class="notify-header">
+      <text class="notify-badge">{{unreadCount}}</text>
+      <text class="notify-title">未读点菜通知</text>
+    </view>
+    <view wx:for="{{unreadNotifications}}" wx:key="id" class="notify-item"
+      bindtap="onNotificationTap" data-id="{{item.id}}" data-date="{{item.order_date}}" data-meal="{{item.meal_type}}">
+      <text class="notify-content">{{item.content}}</text>
+    </view>
+  </view>
+
   <!-- 餐次切换 -->
   <view class="meal-tabs">
     <view wx:for="{{meals}}" wx:key="key" class="meal-tab {{mealType === item.key ? 'active' : ''}}" bindtap="switchMeal" data-val="{{item.key}}">

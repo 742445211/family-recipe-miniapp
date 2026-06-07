@@ -10,6 +10,7 @@
     "pages/family/family",
     "pages/family-join/family-join",
     "pages/ai-recommend/ai-recommend",
+    "pages/notification-settings/notification-settings",
     "pages/login/login"
   ],
   "_pages注释": "pages - 页面路由数组，第一项为小程序首页。所有页面路径必须在此注册，否则无法跳转",
