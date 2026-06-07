@@ -47,15 +47,13 @@ docs/
 
 ## API 与后端对齐
 
-
-| 领域  | 小程序方法                       | 后端路径                          |
-| --- | --------------------------- | ----------------------------- |
-| 登录  | `api.login`                 | `POST /auth/login`            |
-| 菜谱  | `getRecipes` / `getRecipe`  | `GET /recipes`                |
-| 点菜  | `getOrders` / `addOrder`    | `GET                          |
-| 通知  | `getUnreadNotifications`    | `GET /notifications/unread`   |
-| 通道  | `createNotificationChannel` | `POST /notification-channels` |
-
+| 领域 | 小程序方法 | 后端路径 |
+|------|-----------|----------|
+| 登录 | `api.login` | `POST /auth/login` |
+| 菜谱 | `getRecipes` / `getRecipe` | `GET /recipes` |
+| 点菜 | `getOrders` / `addOrder` | `GET|POST /orders` |
+| 通知 | `getUnreadNotifications` | `GET /notifications/unread` |
+| 通道 | `createNotificationChannel` | `POST /notification-channels` |
 
 完整路由以 `family-recipe-server/main.go` 为准。
 
@@ -82,4 +80,3 @@ docs/
 
 - 通知架构与验收：`docs/chef-notification-plan.md`
 - 部署命令：`docs/deploy-ubuntu-24.04.md`
-
