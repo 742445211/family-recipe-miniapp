@@ -1,5 +1,5 @@
 /**
- * utils/notification.js - WebSocket 通知连接管理
+ * utils/notification.js - WebSocket 通知连接管理（单例）
  */
 
 const WS_BASE = 'wss://www.zzzjc.xin/api/ws'
@@ -9,6 +9,9 @@ let socketTask = null
 let reconnectTimer = null
 let reconnectAttempt = 0
 let messageHandler = null
+let connecting = false
+let connected = false
+let intentionalClose = false
 
 function parseSocketMessage(raw) {
   if (!raw || typeof raw !== 'string') return null
@@ -26,26 +29,50 @@ function mealLabel(mealType) {
   return map[mealType] || mealType || ''
 }
 
-function connectSocket(onMessage) {
-  const token = wx.getStorageSync('token')
-  if (!token) return
-
-  messageHandler = onMessage || messageHandler
-  if (socketTask) {
-    try { socketTask.close() } catch (e) {}
-    socketTask = null
+function decodeJwtPayload(token) {
+  const part = token.split('.')[1]
+  if (!part) return null
+  try {
+    const base64 = part.replace(/-/g, '+').replace(/_/g, '/')
+    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4)
+    const raw = atob(padded)
+    const json = decodeURIComponent(
+      raw.split('').map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
+    )
+    return JSON.parse(json)
+  } catch (e) {
+    return null
   }
+}
 
-  socketTask = wx.connectSocket({
-    url: WS_BASE + '?token=' + encodeURIComponent(token),
-    fail() { scheduleReconnect() }
-  })
+function isTokenExpired(token) {
+  const payload = decodeJwtPayload(token)
+  if (!payload || !payload.exp) return true
+  return payload.exp * 1000 < Date.now()
+}
 
-  socketTask.onOpen(() => {
+function handleAuthExpired() {
+  intentionalClose = true
+  disconnectSocket()
+  wx.removeStorageSync('token')
+  wx.removeStorageSync('userInfo')
+  wx.showToast({ title: '登录已过期，请重新登录', icon: 'none' })
+}
+
+function updateMessageHandler(onMessage) {
+  if (typeof onMessage === 'function') {
+    messageHandler = onMessage
+  }
+}
+
+function bindSocketEvents(task) {
+  task.onOpen(() => {
+    connecting = false
+    connected = true
     reconnectAttempt = 0
   })
 
-  socketTask.onMessage((res) => {
+  task.onMessage((res) => {
     const msg = parseSocketMessage(res.data)
     if (!msg) return
     if (msg.type === 'ORDER_CREATED') {
@@ -57,18 +84,61 @@ function connectSocket(onMessage) {
     }
   })
 
-  socketTask.onClose(() => {
+  task.onClose(() => {
+    connecting = false
+    connected = false
     socketTask = null
-    scheduleReconnect()
+    if (!intentionalClose && wx.getStorageSync('token')) {
+      scheduleReconnect()
+    }
   })
 
-  socketTask.onError(() => {
-    scheduleReconnect()
+  task.onError(() => {
+    connecting = false
+    connected = false
+    if (!intentionalClose && wx.getStorageSync('token')) {
+      scheduleReconnect()
+    }
   })
 }
 
+function connectSocket(onMessage) {
+  const token = wx.getStorageSync('token')
+  if (!token) return
+
+  if (isTokenExpired(token)) {
+    handleAuthExpired()
+    return
+  }
+
+  updateMessageHandler(onMessage)
+
+  if (connected || connecting) return
+
+  intentionalClose = false
+  connecting = true
+
+  if (socketTask) {
+    try { socketTask.close() } catch (e) {}
+    socketTask = null
+  }
+
+  socketTask = wx.connectSocket({
+    url: WS_BASE + '?token=' + encodeURIComponent(token),
+    fail() {
+      connecting = false
+      scheduleReconnect()
+    }
+  })
+  bindSocketEvents(socketTask)
+}
+
 function scheduleReconnect() {
-  if (!wx.getStorageSync('token')) return
+  const token = wx.getStorageSync('token')
+  if (!token || isTokenExpired(token)) {
+    if (token && isTokenExpired(token)) handleAuthExpired()
+    return
+  }
   if (reconnectTimer) return
   const delay = Math.min(30000, 1000 * Math.pow(2, reconnectAttempt))
   reconnectAttempt++
@@ -79,11 +149,14 @@ function scheduleReconnect() {
 }
 
 function disconnectSocket() {
+  intentionalClose = true
   if (reconnectTimer) {
     clearTimeout(reconnectTimer)
     reconnectTimer = null
   }
   reconnectAttempt = 0
+  connecting = false
+  connected = false
   if (socketTask) {
     try { socketTask.close() } catch (e) {}
     socketTask = null
@@ -101,6 +174,8 @@ function requestSubscribeAuth() {
 module.exports = {
   connectSocket,
   disconnectSocket,
+  updateMessageHandler,
+  handleAuthExpired,
   parseSocketMessage,
   mealLabel,
   requestSubscribeAuth,

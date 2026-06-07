@@ -11,6 +11,7 @@
  */
 
 const BASE_URL = 'https://www.zzzjc.xin/api'
+const notification = require('./notification')
 
 /**
  * request - 通用网络请求函数
@@ -33,11 +34,9 @@ const request = (url, method = 'GET', data = {}) => {
         'Authorization': token ? 'Bearer ' + token : ''
       },
       success(res) {
-        // 处理 401 未授权：清除本地 token 和用户信息
-        if (res.data.code === 401) {
-          wx.removeStorageSync('token')
-          wx.removeStorageSync('userInfo')
-          reject(res.data)
+        if (res.statusCode === 401 || (res.data && res.data.code === 401)) {
+          notification.handleAuthExpired()
+          reject(res.data || { code: 401, msg: '未登录' })
         } else if (res.data.code === 0) {
           // 业务成功：返回 data 字段
           resolve(res.data.data)
