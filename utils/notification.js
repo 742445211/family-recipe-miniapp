@@ -29,17 +29,31 @@ function mealLabel(mealType) {
   return map[mealType] || mealType || ''
 }
 
+function base64UrlDecode(part) {
+  let base64 = part.replace(/-/g, '+').replace(/_/g, '/')
+  const pad = base64.length % 4
+  if (pad) base64 += '='.repeat(4 - pad)
+  if (typeof atob === 'function') {
+    return atob(base64)
+  }
+  if (typeof wx !== 'undefined' && wx.base64ToArrayBuffer) {
+    const buf = wx.base64ToArrayBuffer(base64)
+    const bytes = new Uint8Array(buf)
+    let raw = ''
+    for (let i = 0; i < bytes.length; i++) raw += String.fromCharCode(bytes[i])
+    return raw
+  }
+  return null
+}
+
 function decodeJwtPayload(token) {
+  if (!token || typeof token !== 'string') return null
   const part = token.split('.')[1]
   if (!part) return null
   try {
-    const base64 = part.replace(/-/g, '+').replace(/_/g, '/')
-    const padded = base64 + '='.repeat((4 - (base64.length % 4)) % 4)
-    const raw = atob(padded)
-    const json = decodeURIComponent(
-      raw.split('').map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)).join('')
-    )
-    return JSON.parse(json)
+    const raw = base64UrlDecode(part)
+    if (!raw) return null
+    return JSON.parse(raw)
   } catch (e) {
     return null
   }
@@ -47,8 +61,11 @@ function decodeJwtPayload(token) {
 
 function isTokenExpired(token) {
   const payload = decodeJwtPayload(token)
-  if (!payload || !payload.exp) return true
-  return payload.exp * 1000 < Date.now()
+  // 解析失败时不主动清 token，交由接口 401 处理
+  if (!payload || payload.exp == null) return false
+  const expMs = Number(payload.exp) * 1000
+  if (!expMs) return false
+  return expMs < Date.now()
 }
 
 function handleAuthExpired() {

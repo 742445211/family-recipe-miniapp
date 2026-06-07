@@ -43,12 +43,26 @@ Page({
           // 第二步：将 code 发送后端换取 token（不传昵称，保留数据库中已有值）
           const data = await api.login(res.code, '', '')
 
+          if (!data || !data.token) {
+            this.setData({ loading: false })
+            wx.showToast({ title: '登录失败，未获取到凭证', icon: 'none' })
+            return
+          }
+
           // 第三步：存储登录凭证到本地
           wx.setStorageSync('token', data.token)
-          wx.setStorageSync('userInfo', data.user)
+          wx.setStorageSync('userInfo', {
+            nickname: data.nickname || '',
+            avatar: data.avatar || data.avatar_url || ''
+          })
 
-          notification.connectSocket()
-          wx.switchTab({ url: '/pages/index/index' })
+          this.setData({ loading: false })
+          wx.switchTab({
+            url: '/pages/index/index',
+            success: () => {
+              notification.connectSocket()
+            }
+          })
         } catch (e) {
           // API 调用失败：恢复 loading 状态
           this.setData({ loading: false })

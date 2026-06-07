@@ -16,14 +16,17 @@
  * @returns {boolean} - true 表示已登录（有 token），
  *                      false 表示未登录并已跳转到登录页面
  */
-function requireLogin() {
-  // 从本地存储读取 token，判断是否已登录
+function isLoggedIn() {
   const token = wx.getStorageSync('token')
-  if (token) return true
+  return !!(token && typeof token === 'string' && token.length > 0)
+}
+
+function requireLogin() {
+  if (isLoggedIn()) return true
 
   // 未登录：关闭所有页面，跳转到登录页
   wx.reLaunch({ url: '/pages/login/login' })
   return false
 }
 
-module.exports = { requireLogin }
+module.exports = { requireLogin, isLoggedIn }
