@@ -72,7 +72,12 @@ docs/
 
 ## 测试与发布
 
-- 使用微信开发者工具真机调试 WebSocket 与订阅消息
+**每次改动后必须测试**，未完成验证不得声称完成（详见 `.cursor/rules/mandatory-testing.mdc`）。
+
+- 改完代码：微信开发者工具编译通过、控制台无报错、受影响页面手动点一遍（防白屏）
+- 动到 API：用 `curl` 验证对应路径（例：`curl https://www.zzzjc.xin/api/app/features`）
+- 动到 `app.js`：冷启动确认首页可渲染；优先避免 `app.js` 顶层 `require('./utils/api')` 引起循环依赖
+- 真机调试 WebSocket 与订阅消息
 - 上传前确认 `utils/api.js` 的 `BASE_URL` 指向生产环境
 - 服务器部署见 `docs/deploy-ubuntu-24.04.md`（后端仓库操作）
 

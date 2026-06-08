@@ -2,10 +2,12 @@
  * app.js - 微信小程序应用入口
  */
 
+const { loadAppFeatures } = require('./utils/features')
 const notification = require('./utils/notification')
 
 App({
   onLaunch() {
+    this._featuresPromise = this._loadFeatures()
     this._ensureSocket()
   },
 
@@ -25,12 +27,19 @@ App({
     notification.connectSocket(this._onNotification.bind(this))
   },
 
+  _loadFeatures() {
+    return loadAppFeatures().then((features) => {
+      this.globalData.features = features
+    })
+  },
+
   globalData: {
     userInfo: null,
     currentFamily: null,
     indexMode: null,
     lastNotification: null,
-    unreadCount: 0
+    unreadCount: 0,
+    features: { ai_recommend: false }
   },
 
   setNotificationCallback(fn) {

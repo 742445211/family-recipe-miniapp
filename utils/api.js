@@ -219,6 +219,12 @@ const api = {
    */
   removeFavorite: (recipeId) => request('/favorites/' + recipeId, 'DELETE'),
 
+  /**
+   * getAppFeatures - 获取功能开关（公开，无需登录）
+   * @returns {Promise} - { ai_recommend: boolean }
+   */
+  getAppFeatures: () => request('/app/features'),
+
   // ========== AI 推荐 ==========
 
   /**

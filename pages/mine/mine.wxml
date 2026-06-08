@@ -1,6 +1,6 @@
 <view class="container">
   <view class="card user-card" bindtap="showEditDialog">
-    <image wx:if="{{userInfo.avatar}}" src="{{userInfo.avatar}}" class="avatar" />
+    <image wx:if="{{userInfo.avatar}}" src="{{userInfo.avatar}}" class="avatar" lazy-load="{{true}}" />
     <text wx:else class="avatar-placeholder">👤</text>
     <view class="user-text">
       <text class="nickname">{{userInfo.nickname || '未设置昵称'}}</text>
@@ -16,7 +16,7 @@
     <text class="chef-hint">开启后，家人点菜时将收到订阅消息通知</text>
   </view>
 
-  <view class="card" bindtap="goAI">
+  <view class="card" wx:if="{{showAI}}" bindtap="goAI">
     <view class="menu-item">🤖 AI 推荐菜谱</view>
   </view>
 
@@ -47,7 +47,7 @@
       <view class="form-group">
         <text class="label">头像</text>
         <view class="avatar-upload" bindtap="chooseAvatar">
-          <image wx:if="{{editAvatar}}" src="{{editAvatar}}" class="avatar-preview" mode="aspectFill" />
+          <image wx:if="{{editAvatar}}" src="{{editAvatar}}" class="avatar-preview" mode="aspectFill" lazy-load="{{true}}" />
           <text wx:else class="avatar-tip">📷 点击上传</text>
         </view>
         <text class="url-hint" wx:if="{{editAvatar}}">{{editAvatar}}</text>

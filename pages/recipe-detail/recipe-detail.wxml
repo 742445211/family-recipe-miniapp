@@ -1,5 +1,5 @@
 <view class="container">
-  <image wx:if="{{recipe.cover_url}}" src="{{recipe.cover_url}}" class="cover" mode="aspectFill" />
+  <image wx:if="{{recipe.cover_url}}" src="{{recipe.cover_url}}" class="cover" mode="aspectFill" lazy-load="{{true}}" />
   
   <view class="card">
     <view class="name-row">

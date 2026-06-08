@@ -12,10 +12,19 @@ const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
 const notification = require('../../utils/notification')
 
+function getAppSafe() {
+  try {
+    return getApp()
+  } catch (e) {
+    return null
+  }
+}
+
 Page({
   data: {
     userInfo: {},                         // 用户信息 { nickname, avatar }
     isChef: wx.getStorageSync('isChef') || false,  // 是否为厨师身份
+    showAI: false,                        // AI 推荐入口（由后端功能开关控制）
     showEdit: false,                      // 是否显示编辑资料弹窗
     editNickname: '',                     // 编辑中的昵称
     editAvatar: ''                        // 编辑中的头像 URL
@@ -25,10 +34,20 @@ Page({
    * onShow - 页面显示时加载用户资料
    * @returns {Promise<void>}
    */
-  async onShow() {
+  onShow() {
     wx.showTabBar()
     if (!requireLogin()) return
-    await this.loadProfile()
+    const app = getAppSafe()
+    const apply = () => {
+      const features = (app && app.globalData && app.globalData.features) || {}
+      this.setData({ showAI: !!features.ai_recommend })
+      this.loadProfile()
+    }
+    if (app && app._featuresPromise) {
+      app._featuresPromise.then(apply).catch(apply)
+      return
+    }
+    apply()
   },
 
   /**
@@ -136,7 +155,15 @@ Page({
   /**
    * goAI - 跳转到 AI 推荐页面
    */
-  goAI() { wx.navigateTo({ url: '/pages/ai-recommend/ai-recommend' }) },
+  goAI() {
+    const app = getAppSafe()
+    const features = (app && app.globalData && app.globalData.features) || {}
+    if (!features.ai_recommend) {
+      wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
+      return
+    }
+    wx.navigateTo({ url: '/pages/ai-recommend/ai-recommend' })
+  },
 
   /**
    * goFamily - 跳转到家庭管理页面

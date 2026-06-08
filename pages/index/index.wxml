@@ -15,11 +15,19 @@
   </view>
 
   <!-- 菜谱列表 -->
-  <view wx:if="{{!recipes.length}}" class="empty">
+  <view wx:if="{{loading && !recipes.length}}" class="empty">加载中...</view>
+  <view wx:elif="{{loadError && !recipes.length}}" class="empty">加载失败，请下拉刷新重试</view>
+  <view wx:elif="{{!recipes.length}}" class="empty">
     {{mode === 'favorites' ? '还没有收藏哦~' : '暂无菜谱，快去添加吧~'}}
   </view>
   <view wx:for="{{recipes}}" wx:key="id" class="card recipe-card" bindtap="toDetail" data-id="{{item.id}}">
-    <image wx:if="{{item.cover_url}}" src="{{item.cover_url}}" class="recipe-img" mode="aspectFill" />
+    <image
+      wx:if="{{item.cover_url}}"
+      src="{{item.cover_url}}"
+      class="recipe-img"
+      mode="aspectFill"
+      lazy-load="{{true}}"
+    />
     <view class="recipe-info">
       <view class="recipe-name">{{item.name}}</view>
       <view class="recipe-tags">

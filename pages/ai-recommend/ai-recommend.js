@@ -5,6 +5,14 @@
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
 
+function getAppSafe() {
+  try {
+    return getApp()
+  } catch (e) {
+    return null
+  }
+}
+
 function formatRetryHint(sec) {
   if (!sec || sec <= 0) return '请稍后再试'
   const h = Math.ceil(sec / 3600)
@@ -22,7 +30,21 @@ Page({
 
   onLoad() {
     if (!requireLogin()) return
-    this.loadWeather()
+    const app = getAppSafe()
+    const start = () => {
+      const features = (app && app.globalData && app.globalData.features) || {}
+      if (!features.ai_recommend) {
+        wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
+        wx.navigateBack()
+        return
+      }
+      this.loadWeather()
+    }
+    if (app && app._featuresPromise) {
+      app._featuresPromise.then(start).catch(start)
+      return
+    }
+    start()
   },
 
   async loadWeather() {
