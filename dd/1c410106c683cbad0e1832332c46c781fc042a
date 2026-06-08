@@ -1,0 +1,35 @@
+pages/recipe-edit/recipe-edit.js
+  s_a81105b91fb95e::t_8602c488da23a9 22
+  s_a81105b91fb95e::t_3bcf0ec3786202 38,40,45,52-58
+  s_a81105b91fb95e::t_fa54a4ab658c2d 75-81,84-86
+  s_a81105b91fb95e::t_8f7fb8db1f44b2 13
+pages/index/index.js
+  s_a81105b91fb95e::t_b57c1a2f19a988 65,70-71,74-75,79,82-83
+  s_a81105b91fb95e::t_d1423edac55ba1 69,72-73,76-78,80-81
+  s_a81105b91fb95e::t_00fc2e2f8dbe0a 11-14,17
+  s_a81105b91fb95e::t_4205c193ed7d80 33
+  s_a81105b91fb95e::t_363489649c0432 84-93
+  s_a81105b91fb95e::t_6b7023afa906f7 15-16
+utils/category.js
+  s_a81105b91fb95e::t_0dd99494590808 36-47,51-52
+  s_a81105b91fb95e::t_c14d873f05b0d2 1-35,48-50,53
+utils/api.js
+  s_a81105b91fb95e::t_354279dcd9f814 130-135
+  s_a81105b91fb95e::t_f68021ddea4984 136-140
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "dd1c410106c683cbad0e1832332c46c781fc042a",
+  "prompts": {},
+  "sessions": {
+    "s_a81105b91fb95e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "516cca10-8d3e-4e52-a07f-2845ebcb5590",
+        "model": "default"
+      },
+      "human_author": "张津川 <jinchuan@uxin.com>"
+    }
+  }
+}
