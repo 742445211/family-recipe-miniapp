@@ -1,0 +1,54 @@
+utils/api.js
+  s_be4c49022fcdb9::t_1290cf3bcacfad 222-227
+AGENTS.md
+  s_be4c49022fcdb9::t_134f39a6c5f5a0 75-80
+utils/features.js
+  s_be4c49022fcdb9::t_e66de24ac6ce2a 1-30
+pages/mine/mine.wxml
+  s_be4c49022fcdb9::t_f81ad3296dafa9 3
+  s_be4c49022fcdb9::t_9293c5c713fb39 50
+  s_be4c49022fcdb9::t_629b4d9437e70e 19
+pages/ai-recommend/ai-recommend.js
+  s_be4c49022fcdb9::t_4efbd9a87f1c85 45-46
+  s_be4c49022fcdb9::t_e6b49bc6913f2a 33-44,47
+  s_be4c49022fcdb9::t_e9beed198360e3 8-15
+app.js
+  s_be4c49022fcdb9::t_2efb05d5916f9e 34-35,41-42
+  s_be4c49022fcdb9::t_e37feac9e7add1 10
+  s_be4c49022fcdb9::t_c6ed21a89ea8a7 30-33
+  s_be4c49022fcdb9::t_393c6c9039772a 5
+pages/index/index.wxml
+  s_be4c49022fcdb9::t_6afd17ebfd772d 18-20,24-30
+pages/order/order.wxml
+  s_be4c49022fcdb9::t_fd2092e83e7454 35
+  s_be4c49022fcdb9::t_0d4ffe6441425a 44
+pages/recipe-detail/recipe-detail.wxml
+  s_be4c49022fcdb9::t_6c0a486f74dd2e 2
+pages/recipe-edit/recipe-edit.wxml
+  s_be4c49022fcdb9::t_f12aa96633c5c3 31
+pages/index/index.js
+  s_be4c49022fcdb9::t_2980afc11be86e 13-20,28-30,34-35,42-45,48-49,51,54-57,69-70,72,75,77-81,83-84,86-87,93-94,98
+pages/mine/mine.js
+  s_be4c49022fcdb9::t_a5184470a48710 159-160
+  s_be4c49022fcdb9::t_3ad0af91943cd3 40-50
+  s_be4c49022fcdb9::t_76ca35e6fcbf41 15-22
+  s_be4c49022fcdb9::t_7983af096aa46b 37
+  s_be4c49022fcdb9::t_21126830a89c10 158,161-166
+  s_be4c49022fcdb9::t_5a2d9b569fb0cf 27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "858179428dd098e41800964dcb8687ec206b0dd2",
+  "prompts": {},
+  "sessions": {
+    "s_be4c49022fcdb9": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "6a825391-c157-479f-9c5d-9c0c7b3273d5",
+        "model": "default"
+      },
+      "human_author": "张津川 <jinchuan@uxin.com>"
+    }
+  }
+}
