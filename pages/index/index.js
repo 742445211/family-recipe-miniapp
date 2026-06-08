@@ -8,7 +8,13 @@
  */
 
 const api = require('../../utils/api')
-const { requireLogin } = require('../../utils/auth')
+const { requireLogin, isLoggedIn } = require('../../utils/auth')
+const {
+  DEFAULT_CATEGORY_NAMES,
+  mergeCategoryNames,
+  buildIndexPickerCategories,
+  categoriesFromPublicAPI
+} = require('../../utils/category')
 
 function getAppSafe() {
   try {
@@ -24,7 +30,7 @@ Page({
     keyword: '',           // 搜索关键词
     category: '',          // 当前分类（空字符串 = 全部）
     categoryIndex: -1,     // 分类选择器当前索引（-1 = 全部，pick mode 用）
-    categories: ['全部', '荤菜', '素菜', '汤', '主食', '凉菜', '其他'],
+    categories: buildIndexPickerCategories(DEFAULT_CATEGORY_NAMES),
     mode: 'recipes',       // 当前模式：'recipes'（菜谱）或 'favorites'（收藏）
     loading: false,
     loadError: false
@@ -56,7 +62,35 @@ Page({
       this.setData({ mode: 'recipes', keyword: '', category: '', categoryIndex: -1 })
       wx.setNavigationBarTitle({ title: '家庭菜谱' })
     }
+    this.loadCategories()
     this.loadRecipes()
+  },
+
+  /** 未登录拉公开分类；已登录拉家庭分类 */
+  async loadCategories() {
+    let names = DEFAULT_CATEGORY_NAMES.slice()
+    try {
+      if (isLoggedIn()) {
+        const data = await api.getCategories()
+        names = mergeCategoryNames(data)
+      } else {
+        const data = await api.getPublicCategories()
+        names = categoriesFromPublicAPI(data)
+      }
+    } catch (e) {
+      // 网络失败时保留默认分类
+    }
+    const categories = buildIndexPickerCategories(names)
+    let category = this.data.category
+    let categoryIndex = -1
+    if (category) {
+      categoryIndex = categories.indexOf(category)
+      if (categoryIndex < 0) {
+        category = ''
+        categoryIndex = -1
+      }
+    }
+    this.setData({ categories, category, categoryIndex })
   },
 
   backToRecipes() {

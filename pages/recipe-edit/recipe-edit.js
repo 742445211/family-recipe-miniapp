@@ -10,6 +10,7 @@
 
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
+const { DEFAULT_CATEGORY_NAMES, mergeCategoryNames } = require('../../utils/category')
 
 Page({
   data: {
@@ -18,7 +19,7 @@ Page({
     name: '',             // 菜名
     category: '',         // 分类
     categoryIndex: -1,    // 分类 picker 索引
-    categories: ['荤菜', '素菜', '汤', '主食', '凉菜', '其他'],
+    categories: DEFAULT_CATEGORY_NAMES.slice(),
     difficulty: 'medium', // 难度：easy/medium/hard
     cookTime: 0,          // 烹饪时间（分钟）
     coverUrl: '',         // 封面图 URL
@@ -34,16 +35,27 @@ Page({
    * 根据是否有 id 参数判断新增还是编辑模式
    * @param {Object} options - 页面参数，options.id 存在则为编辑模式
    */
-  onLoad(options) {
+  async onLoad(options) {
     if (!requireLogin()) return
+    await this.loadCategories()
     if (options.id) {
       // 编辑模式：设置 ID，加载现有菜谱数据
       this.setData({ id: options.id, isEdit: true })
       wx.setNavigationBarTitle({ title: '编辑菜谱' })
-      this.loadRecipe(options.id)
+      await this.loadRecipe(options.id)
     } else {
       // 新增模式
       wx.setNavigationBarTitle({ title: '新增菜谱' })
+    }
+  },
+
+  /** 从服务端拉取家庭分类，失败时用默认列表 */
+  async loadCategories() {
+    try {
+      const data = await api.getCategories()
+      this.setData({ categories: mergeCategoryNames(data) })
+    } catch (e) {
+      this.setData({ categories: DEFAULT_CATEGORY_NAMES.slice() })
     }
   },
 
@@ -60,11 +72,18 @@ Page({
       // 解析 JSON 字段（食材和步骤）
       const ing = JSON.parse(r.ingredients || '[]')
       const steps = JSON.parse(r.steps || '[]')
+      let categories = this.data.categories.slice()
+      let category = r.category || ''
+      let categoryIndex = category ? categories.indexOf(category) : -1
+      if (category && categoryIndex < 0) {
+        categories = [...categories, category]
+        categoryIndex = categories.length - 1
+      }
       this.setData({
         name: r.name,
-        category: r.category || '',
-        // 计算分类在 picker 中的索引
-        categoryIndex: Math.max(0, this.data.categories.indexOf(r.category)),
+        category,
+        categories,
+        categoryIndex,
         difficulty: r.difficulty || 'medium',
         cookTime: r.cook_time || 0,
         coverUrl: r.cover_url || '',

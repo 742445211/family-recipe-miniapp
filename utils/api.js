@@ -127,6 +127,18 @@ const api = {
   deleteRecipe: (id) => request('/recipes/' + id, 'DELETE'),
 
   /**
+   * getCategories - 获取当前家庭的菜谱分类列表（需登录且已加入家庭）
+   * @returns {Promise} - 返回分类对象数组 [{ id, name, sort_order, ... }]
+   */
+  getCategories: () => request('/categories'),
+
+  /**
+   * getPublicCategories - 公开菜谱中出现过的分类（无需登录）
+   * @returns {Promise} - 返回分类名字符串数组
+   */
+  getPublicCategories: () => request('/categories/public'),
+
+  /**
    * markCooked - 标记菜谱已做过（cook_count +1）
    * @param {number|string} id - 菜谱 ID
    * @returns {Promise}
