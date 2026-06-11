@@ -1,35 +1,78 @@
-<view class="container">
-  <view class="card ai-header">
-    <text class="ai-icon">🤖</text>
-    <text class="ai-title">AI 智能推荐</text>
-    <text class="ai-desc">基于菜谱库、点菜历史与天气，推荐今晚吃什么</text>
-    <text class="weather-line" wx:if="{{weatherText}}">🌤 {{weatherText}}</text>
+<view class="ai-page">
+  <view wx:if="{{!ready}}" class="state-block">
+    <view class="state-bubble">AI</view>
+    <text class="state-title">锅还没热...</text>
+    <text class="state-desc">大厨正在系围裙</text>
   </view>
 
-  <button class="btn-primary" bindtap="getRecommend" loading="{{loading}}">
-    {{loading ? '正在思考...' : '开始推荐'}}
-  </button>
+  <block wx:elif="{{enabled}}">
+    <!-- Hero + 操作（合并为一块，避免卡片套卡片） -->
+    <view class="gradient-border hero-card">
+      <view class="gradient-border-inner is-flush hero-inner">
+        <text class="hero-kicker">AI 大厨在线</text>
+        <text class="hero-title">今晚吃啥，别纠结了</text>
+        <text class="hero-desc" user-select>翻翻菜谱、回忆你点过的、再看看天气——一次端上 {{recommendCount}} 道</text>
+        <text class="hero-weather" wx:if="{{weatherText}}" user-select>{{weatherText}}</text>
 
-  <view class="quota-hint" wx:if="{{rateLimit}}">
-    剩余推荐次数：{{rateLimit.remaining}} / {{rateLimit.limit}}
-  </view>
+        <text class="quota-line" wx:if="{{rateLimit}}">
+          这 {{rateWindowHours}} 小时还能喊我 {{rateLimit.remaining}} 次（最多 {{rateLimit.limit}} 次）
+        </text>
+        <text class="quota-line quota-muted" wx:else>
+          每 {{rateWindowHours}} 小时最多 {{rateLimitMax}} 次，别贪心哦
+        </text>
 
-  <view wx:if="{{items.length}}" class="result-list">
-    <view class="result-title">📋 推荐结果（点击查看详情）</view>
-    <view
-      wx:for="{{items}}"
-      wx:key="item_id"
-      class="card result-item tap-item"
-      bindtap="toAIRecipeDetail"
-      data-id="{{item.item_id}}"
-    >
-      <view class="result-rank">{{index + 1}}</view>
-      <view class="result-body">
-        <text class="result-name">{{item.name}}</text>
-        <text class="badge" wx:if="{{item.existing_recipe_id}}">已在菜谱库</text>
-        <text class="result-reason" wx:if="{{item.reason}}">{{item.reason}}</text>
+        <button
+          class="btn-primary btn-block hero-btn"
+          hover-class="btn-hover"
+          bindtap="getRecommend"
+          loading="{{loading}}"
+          disabled="{{loading}}"
+        >
+          {{btnText}}
+        </button>
       </view>
-      <text class="arrow">›</text>
     </view>
-  </view>
+
+    <!-- 加载 -->
+    <view wx:if="{{loading}}" class="menu-panel menu-panel-loading">
+      <text class="menu-loading-tip">{{loadingTip}}</text>
+      <view wx:for="{{skeletonSlots}}" wx:key="*this" class="menu-row menu-row-skeleton">
+        <view class="menu-dot"></view>
+        <view class="sk-line sk-line-title"></view>
+      </view>
+    </view>
+
+    <!-- 结果 -->
+    <view wx:elif="{{items.length}}" class="gradient-border menu-panel-wrap">
+      <view class="gradient-border-inner is-flush menu-panel">
+        <text class="menu-head">好了，上菜！</text>
+        <view
+          wx:for="{{items}}"
+          wx:key="item_id"
+          class="menu-row {{index < items.length - 1 ? 'has-line' : ''}}"
+          bindtap="toAIRecipeDetail"
+          data-id="{{item.item_id}}"
+          hover-class="menu-row-hover"
+          hover-stay-time="80"
+        >
+          <view class="menu-num num-{{index < 3 ? index + 1 : 'n'}}">{{index + 1}}</view>
+          <view class="menu-body">
+            <view class="menu-name-row">
+              <text class="menu-name" user-select>{{item.name}}</text>
+              <text class="menu-tag" wx:if="{{item.existing_recipe_id}}">库里有</text>
+            </view>
+            <text class="menu-reason" wx:if="{{item.reason}}" user-select>{{item.reason}}</text>
+          </view>
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空状态：不重复说 5 道菜 -->
+    <view wx:else class="state-block state-block-sm">
+      <view class="state-pan">开</view>
+      <text class="state-title">灶台还凉着呢</text>
+      <text class="state-desc">戳一下上面那颗橙色按钮，让大厨开伙</text>
+    </view>
+  </block>
 </view>

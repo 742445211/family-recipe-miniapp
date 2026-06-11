@@ -1,44 +1,54 @@
-<view class="container">
-  <view class="card">
-    <view class="name-row">
-      <text class="name">{{draft.name}}</text>
-    </view>
-    <view class="tags">
-      <text class="tag tag-category">{{draft.category || '其他'}}</text>
-      <text class="tag">{{difficultyText}}</text>
-      <text wx:if="{{draft.cook_time}}">⏱ {{draft.cook_time}}分钟</text>
-    </view>
-    <text class="reason" wx:if="{{draft.reason}}">💡 {{draft.reason}}</text>
-    <text class="badge" wx:if="{{inLibrary}}">已在家庭菜谱库</text>
-  </view>
-
-  <view class="card" wx:if="{{ingredients.length}}">
-    <view class="section-title">🥬 食材</view>
-    <view wx:for="{{ingredients}}" wx:key="index" class="ingredient-item">
-      <text>{{item.name}}</text>
-      <text class="amount" wx:if="{{item.amount}}">{{item.amount}}</text>
+<view class="container detail-page">
+  <view class="gradient-border">
+    <view class="gradient-border-inner">
+      <view class="name-row">
+        <text class="name">{{draft.name}}</text>
+      </view>
+      <view class="tags">
+        <text class="tag tag-category">{{draft.category || '其他'}}</text>
+        <text class="tag tag-{{draft.difficulty || 'medium'}}">{{difficultyText}}</text>
+        <text wx:if="{{draft.cook_time}}" class="meta-text">{{draft.cook_time}}分钟</text>
+      </view>
+      <text class="reason" wx:if="{{draft.reason}}">{{draft.reason}}</text>
+      <text class="badge" wx:if="{{inLibrary}}">已在家庭菜谱库</text>
     </view>
   </view>
 
-  <view class="card" wx:if="{{seasonings.length}}">
-    <view class="section-title">🧂 调料</view>
-    <view wx:for="{{seasonings}}" wx:key="index" class="ingredient-item">
-      <text>{{item.name}}</text>
-      <text class="amount" wx:if="{{item.amount}}">{{item.amount}}</text>
+  <view class="gradient-border" wx:if="{{ingredients.length}}">
+    <view class="gradient-border-inner">
+      <view class="section-title">食材</view>
+      <view wx:for="{{ingredients}}" wx:key="index" class="ingredient-item">
+        <text>{{item.name}}</text>
+        <text class="amount" wx:if="{{item.amount}}">{{item.amount}}</text>
+      </view>
     </view>
   </view>
 
-  <view class="card" wx:if="{{steps.length}}">
-    <view class="section-title">📝 步骤</view>
-    <view wx:for="{{steps}}" wx:key="index" class="step-item">
-      <view class="step-num">{{index + 1}}</view>
-      <text>{{item}}</text>
+  <view class="gradient-border" wx:if="{{seasonings.length}}">
+    <view class="gradient-border-inner">
+      <view class="section-title">调料</view>
+      <view wx:for="{{seasonings}}" wx:key="index" class="ingredient-item">
+        <text>{{item.name}}</text>
+        <text class="amount" wx:if="{{item.amount}}">{{item.amount}}</text>
+      </view>
     </view>
   </view>
 
-  <view class="card" wx:if="{{draft.tips}}">
-    <view class="section-title">💡 小贴士</view>
-    <text>{{draft.tips}}</text>
+  <view class="gradient-border" wx:if="{{steps.length}}">
+    <view class="gradient-border-inner">
+      <view class="section-title">步骤</view>
+      <view wx:for="{{steps}}" wx:key="index" class="step-item">
+        <view class="step-num">{{index + 1}}</view>
+        <text class="step-text">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="gradient-border" wx:if="{{draft.tips}}">
+    <view class="gradient-border-inner">
+      <view class="section-title">小贴士</view>
+      <text class="tips-text">{{draft.tips}}</text>
+    </view>
   </view>
 
   <view class="bottom-bar">
@@ -48,15 +58,15 @@
 
   <view wx:if="{{showOrderModal}}" class="modal-mask" bindtap="hideOrderModal" catchtouchmove="stopPropagation">
     <view class="modal" catchtap="stopPropagation">
-      <view class="modal-title">加入今日点菜</view>
+      <view class="modal-title">加入今日菜单</view>
       <text class="modal-recipe">{{draft.name}}</text>
 
       <view class="form-group">
         <text class="label">餐次</text>
-        <view class="meal-row">
-          <view class="meal-item {{orderMeal === 'breakfast' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="breakfast">🌅 早餐</view>
-          <view class="meal-item {{orderMeal === 'lunch' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="lunch">☀️ 午餐</view>
-          <view class="meal-item {{orderMeal === 'dinner' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="dinner">🌙 晚餐</view>
+        <view class="segment-bar meal-row">
+          <view class="segment-item {{orderMeal === 'breakfast' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="breakfast">早餐</view>
+          <view class="segment-item {{orderMeal === 'lunch' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="lunch">午餐</view>
+          <view class="segment-item {{orderMeal === 'dinner' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="dinner">晚餐</view>
         </view>
       </view>
 

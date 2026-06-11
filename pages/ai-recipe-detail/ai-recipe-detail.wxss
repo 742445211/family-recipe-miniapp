@@ -2,38 +2,27 @@
 
 .reason {
   display: block;
-  margin-top: 16rpx;
-  font-size: 26rpx;
-  color: #666;
-  line-height: 1.6;
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+  padding: var(--space-2);
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
 }
+
 .badge {
   display: inline-block;
-  margin-top: 12rpx;
-  font-size: 24rpx;
-  color: #FF6B35;
-  background: #fff3ee;
-  padding: 6rpx 16rpx;
-  border-radius: 8rpx;
+  margin-top: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-primary);
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+  padding: 6rpx 18rpx;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  line-height: var(--leading-normal);
 }
 
 .bottom-bar {
   z-index: 100;
-}
-
-.btn-tap {
-  flex: 1;
-  margin: 0;
-  text-align: center;
-  line-height: 1.4;
-  box-sizing: border-box;
-}
-
-.btn-disabled {
-  opacity: 0.45;
-  pointer-events: none;
-}
-
-.modal-btns .btn-tap {
-  padding: 16rpx 0;
 }

@@ -1,27 +1,35 @@
 <view class="container">
-  <view class="card" wx:for="{{families}}" wx:key="id">
-    <view class="family-row">
-      <view>
-        <text class="family-name">{{item.name}}</text>
-        <text class="invite-code">邀请码: {{item.invite_code}}</text>
+  <view wx:if="{{!families.length}}" class="empty">
+    <text class="empty-title">还没有家庭</text>
+    <text>创建一个，邀请家人一起点菜吧~</text>
+  </view>
+
+  <view wx:for="{{families}}" wx:key="id" class="gradient-border">
+    <view class="gradient-border-inner family-card">
+      <view class="family-row">
+        <view>
+          <text class="family-name">{{item.name}}</text>
+          <text class="invite-code">邀请码：{{item.invite_code}}</text>
+        </view>
+        <text class="switch-btn">当前</text>
       </view>
-      <text class="switch-btn">当前</text>
     </view>
   </view>
 
   <view class="section">
-    <button class="btn-primary" bindtap="showCreate">创建家庭</button>
-    <button class="btn-outline" bindtap="goJoin" style="margin-top: 16rpx;">加入家庭</button>
+    <button class="btn-primary btn-block" hover-class="btn-hover" bindtap="showCreate">创建家庭</button>
+    <button class="btn-outline btn-block section-btn" hover-class="btn-hover" bindtap="goJoin">加入家庭</button>
   </view>
 
-  <!-- 创建弹窗 -->
-  <view class="modal" wx:if="{{showCreateModal}}">
-    <view class="modal-content">
-      <text class="modal-title">创建家庭</text>
-      <input value="{{newName}}" bindinput="onNewName" placeholder="家庭名称" />
+  <view wx:if="{{showCreateModal}}" class="modal-mask" bindtap="hideCreate">
+    <view class="modal" catchtap>
+      <view class="modal-title">创建家庭</view>
+      <view class="form-group">
+        <input value="{{newName}}" bindinput="onNewName" placeholder="给家起个名字" />
+      </view>
       <view class="modal-btns">
-        <button size="mini" bindtap="hideCreate">取消</button>
-        <button size="mini" type="primary" bindtap="createFamily">创建</button>
+        <button class="btn-outline" hover-class="btn-hover" bindtap="hideCreate">取消</button>
+        <button class="btn-primary" hover-class="btn-hover" bindtap="createFamily">创建</button>
       </view>
     </view>
   </view>

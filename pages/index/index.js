@@ -32,6 +32,7 @@ Page({
     categoryIndex: -1,     // 分类选择器当前索引（-1 = 全部，pick mode 用）
     categories: buildIndexPickerCategories(DEFAULT_CATEGORY_NAMES),
     mode: 'recipes',       // 当前模式：'recipes'（菜谱）或 'favorites'（收藏）
+    viewMode: 'waterfall', // 视图模式：'waterfall' 瀑布流 | 'list' 列表
     loading: false,
     loadError: false
   },
@@ -39,6 +40,10 @@ Page({
   onLoad(options) {
     this._searchTimer = null
     this._loadToken = 0
+    const savedView = wx.getStorageSync('indexViewMode')
+    if (savedView === 'list' || savedView === 'waterfall') {
+      this.setData({ viewMode: savedView })
+    }
     if (options.mode === 'favorites') {
       this.setData({ mode: 'favorites' })
       wx.setNavigationBarTitle({ title: '我的收藏' })
@@ -142,5 +147,12 @@ Page({
   addRecipe() {
     if (!requireLogin()) return
     wx.navigateTo({ url: '/pages/recipe-edit/recipe-edit' })
+  },
+
+  switchView(e) {
+    const mode = e.currentTarget.dataset.mode
+    if (mode !== 'waterfall' && mode !== 'list') return
+    this.setData({ viewMode: mode })
+    wx.setStorageSync('indexViewMode', mode)
   }
 })

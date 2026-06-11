@@ -33,7 +33,16 @@
   "libVersion": "3.5.5",
   "simulatorPluginLibVersion": {},
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "folder",
+        "value": ".cursor"
+      },
+      {
+        "type": "folder",
+        "value": ".codegraph"
+      }
+    ],
     "include": []
   },
   "editorSetting": {}

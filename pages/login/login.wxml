@@ -1,10 +1,15 @@
 <view class="login-container">
+  <view class="login-bg-deco deco-1"></view>
+  <view class="login-bg-deco deco-2"></view>
   <view class="logo-area">
-    <text class="logo">🍳</text>
+    <view class="logo-ring">
+      <text class="logo-text">厨</text>
+    </view>
     <text class="title">家庭菜谱</text>
-    <text class="subtitle">记录家的味道</text>
+    <text class="subtitle">家的味道，从登录开始</text>
   </view>
-  <button class="btn-login" bindtap="handleLogin" loading="{{loading}}">
+  <button class="btn-login btn-block" hover-class="btn-hover" bindtap="handleLogin" loading="{{loading}}">
     微信一键登录
   </button>
+  <text class="login-hint">登录后才能点菜、编辑和家庭协作哦~</text>
 </view>

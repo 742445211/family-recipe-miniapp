@@ -20,13 +20,15 @@
     "navigationBarBackgroundColor": "#FF6B35",
     "navigationBarTitleText": "家庭菜谱",
     "navigationBarTextStyle": "white",
-    "backgroundColor": "#F5F5F5"
+    "backgroundColor": "#FFF8F0"
   },
   "_window注释": "window - 全局窗口样式配置。navigationBarBackgroundColor: 导航栏背景色(橙色); navigationBarTitleText: 默认标题; navigationBarTextStyle: 标题文字颜色(white/black); backgroundColor: 页面下拉背景色",
 
   "tabBar": {
-    "color": "#999",
+    "color": "#B8956A",
     "selectedColor": "#FF6B35",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
     "list": [
       {
         "pagePath": "pages/index/index",

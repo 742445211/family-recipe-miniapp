@@ -1,2 +1,32 @@
-.section-title { font-size: 30rpx; font-weight: bold; margin-bottom: 20rpx; display: block; }
-input { background: #f5f5f5; border-radius: 12rpx; padding: 24rpx; font-size: 40rpx; text-align: center; letter-spacing: 10rpx; }
+.join-card {
+  padding: var(--space-4);
+  margin-bottom: 0;
+}
+
+.join-hint {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  display: block;
+  margin-bottom: var(--space-3);
+  line-height: var(--leading-relaxed);
+}
+
+.code-input {
+  background: var(--color-bg);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+  font-size: var(--text-2xl);
+  text-align: center;
+  letter-spacing: 12rpx;
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--color-primary);
+  border: 2rpx solid var(--color-border);
+  margin-bottom: var(--space-3);
+  min-height: 88rpx;
+  box-sizing: border-box;
+}
+
+.join-btn {
+  margin-top: var(--space-1);
+}

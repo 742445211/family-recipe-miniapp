@@ -4,19 +4,100 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 60rpx;
-  background: linear-gradient(135deg, #FF6B35, #FF8F5E);
+  padding: var(--space-6);
+  background: var(--gradient-brand);
+  position: relative;
+  overflow: hidden;
 }
-.logo-area { text-align: center; margin-bottom: 100rpx; }
-.logo { font-size: 120rpx; display: block; margin-bottom: 30rpx; }
-.title { font-size: 48rpx; color: #fff; font-weight: bold; display: block; }
-.subtitle { font-size: 28rpx; color: rgba(255,255,255,0.8); margin-top: 10rpx; display: block; }
+
+.login-bg-deco {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.15;
+  background: #fff;
+}
+
+.deco-1 {
+  width: 400rpx;
+  height: 400rpx;
+  top: -100rpx;
+  right: -100rpx;
+}
+
+.deco-2 {
+  width: 300rpx;
+  height: 300rpx;
+  bottom: 100rpx;
+  left: -80rpx;
+}
+
+.logo-area {
+  text-align: center;
+  margin-bottom: 100rpx;
+  z-index: 1;
+}
+
+.logo-ring {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-4);
+  border: 4rpx solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 16rpx 48rpx rgba(0, 0, 0, 0.1);
+}
+
+.logo-text {
+  font-size: 72rpx;
+  font-weight: 700;
+  line-height: 1;
+  color: #fff;
+}
+
+.title {
+  font-size: var(--text-display);
+  color: #fff;
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  display: block;
+}
+
+.subtitle {
+  font-size: var(--text-base);
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: var(--space-2);
+  display: block;
+  line-height: var(--leading-normal);
+}
+
 .btn-login {
   width: 100%;
-  background: #fff;
-  color: #FF6B35;
-  border-radius: 50rpx;
-  font-size: 34rpx;
-  font-weight: bold;
-  padding: 24rpx 0;
+  min-height: 96rpx;
+  background: #fff !important;
+  color: var(--color-primary) !important;
+  border-radius: var(--radius-full) !important;
+  font-size: var(--text-lg) !important;
+  font-weight: 700;
+  padding: var(--space-3) var(--space-4) !important;
+  box-shadow: 0 12rpx 40rpx rgba(0, 0, 0, 0.15);
+  z-index: 1;
+  box-sizing: border-box;
+  border: none !important;
+  line-height: var(--leading-tight);
+}
+
+.btn-login::after {
+  border: none !important;
+}
+
+.login-hint {
+  margin-top: var(--space-4);
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.75);
+  z-index: 1;
+  line-height: var(--leading-relaxed);
+  text-align: center;
 }

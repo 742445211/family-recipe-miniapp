@@ -1,43 +1,127 @@
-<view class="container">
+<view class="page-index page-with-fab">
   <!-- 收藏模式标题栏 -->
-  <view wx:if="{{mode === 'favorites'}}" class="fav-header">
-    <text class="fav-back" bindtap="backToRecipes">← 返回菜谱</text>
-    <text class="fav-title">❤️ 我的收藏</text>
-    <text class="fav-placeholder"></text>
+  <view wx:if="{{mode === 'favorites'}}" class="fav-header gradient-border">
+    <view class="gradient-border-inner fav-header-inner">
+      <text class="fav-back" bindtap="backToRecipes">← 回去逛菜</text>
+      <text class="fav-title">我的收藏</text>
+      <text class="fav-placeholder"></text>
+    </view>
   </view>
 
-  <!-- 搜索栏（菜谱模式） -->
-  <view wx:if="{{mode === 'recipes'}}" class="search-bar">
-    <input placeholder="搜索菜谱..." bindinput="onSearch" value="{{keyword}}" />
-    <picker bindchange="onCategory" value="{{categoryIndex}}" range="{{categories}}">
-      <view class="category-picker">{{categories[categoryIndex] || '分类'}}</view>
-    </picker>
+  <!-- 工具栏（菜谱模式） -->
+  <view wx:if="{{mode === 'recipes'}}" class="toolbar">
+    <view class="search-wrap">
+      <input
+        class="search-input"
+        placeholder="搜搜今天想吃什么..."
+        bindinput="onSearch"
+        value="{{keyword}}"
+      />
+    </view>
+    <view class="toolbar-row">
+      <picker bindchange="onCategory" value="{{categoryIndex}}" range="{{categories}}">
+        <view class="category-chip">{{categories[categoryIndex] || '全部分类'}}</view>
+      </picker>
+      <view class="view-toggle">
+        <view
+          class="view-toggle-item {{viewMode === 'waterfall' ? 'active' : ''}}"
+          bindtap="switchView"
+          data-mode="waterfall"
+        >▦</view>
+        <view
+          class="view-toggle-item {{viewMode === 'list' ? 'active' : ''}}"
+          bindtap="switchView"
+          data-mode="list"
+        >☰</view>
+      </view>
+    </view>
   </view>
 
-  <!-- 菜谱列表 -->
-  <view wx:if="{{loading && !recipes.length}}" class="empty">加载中...</view>
-  <view wx:elif="{{loadError && !recipes.length}}" class="empty">加载失败，请下拉刷新重试</view>
+  <!-- 加载 / 错误 / 空状态 -->
+  <view wx:if="{{loading && !recipes.length}}" class="empty">
+    <text class="empty-title">锅还没热...</text>
+    <text>正在捞菜谱</text>
+  </view>
+  <view wx:elif="{{loadError && !recipes.length}}" class="empty">
+    <text class="empty-title">网络开小差了</text>
+    <text>下拉刷新，厨师马上到</text>
+  </view>
   <view wx:elif="{{!recipes.length}}" class="empty">
-    {{mode === 'favorites' ? '还没有收藏哦~' : '暂无菜谱，快去添加吧~'}}
+    <text class="empty-title">{{mode === 'favorites' ? '收藏夹空空如也' : '厨房还缺一道菜'}}</text>
+    <text>{{mode === 'favorites' ? '看到喜欢的，记得点个小爱心~' : '点右下角 + ，添第一道菜吧！'}}</text>
   </view>
-  <view wx:for="{{recipes}}" wx:key="id" class="card recipe-card" bindtap="toDetail" data-id="{{item.id}}">
-    <image
-      wx:if="{{item.cover_url}}"
-      src="{{item.cover_url}}"
-      class="recipe-img"
-      mode="aspectFill"
-      lazy-load="{{true}}"
-    />
-    <view class="recipe-info">
-      <view class="recipe-name">{{item.name}}</view>
-      <view class="recipe-tags">
-        <text class="tag tag-category">{{item.category}}</text>
-        <text class="tag tag-{{item.difficulty}}">{{item.difficulty === 'easy' ? '简单' : item.difficulty === 'hard' ? '困难' : '中等'}}</text>
-        <text wx:if="{{item.cook_time}}">{{item.cook_time}}分钟</text>
+
+  <!-- 瀑布流视图 -->
+  <view wx:elif="{{viewMode === 'waterfall'}}" class="waterfall">
+    <view
+      wx:for="{{recipes}}"
+      wx:key="id"
+      class="waterfall-item gradient-border"
+      bindtap="toDetail"
+      data-id="{{item.id}}"
+    >
+      <view class="gradient-border-inner waterfall-card is-flush">
+        <image
+          wx:if="{{item.cover_url}}"
+          src="{{item.cover_url}}"
+          class="waterfall-img"
+          mode="widthFix"
+          lazy-load="{{true}}"
+        />
+        <view wx:else class="waterfall-img-placeholder">暂无封面</view>
+        <view class="waterfall-info">
+          <view class="recipe-name waterfall-name">{{item.name}}</view>
+          <view class="waterfall-meta">
+            <text class="tag tag-sm tag-category">{{item.category}}</text>
+            <text class="tag tag-sm tag-{{item.difficulty}}">{{item.difficulty === 'easy' ? '简' : item.difficulty === 'hard' ? '难' : '中'}}</text>
+            <text wx:if="{{item.cook_time}}" class="meta-dot">{{item.cook_time}}′</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 列表视图 -->
+  <view wx:else class="list-view">
+    <view
+      wx:for="{{recipes}}"
+      wx:key="id"
+      class="gradient-border list-item-wrap"
+      bindtap="toDetail"
+      data-id="{{item.id}}"
+    >
+      <view class="gradient-border-inner recipe-card is-flush">
+        <image
+          wx:if="{{item.cover_url}}"
+          src="{{item.cover_url}}"
+          class="recipe-img"
+          mode="aspectFill"
+          lazy-load="{{true}}"
+        />
+        <view wx:else class="recipe-img recipe-img-placeholder">菜</view>
+        <view class="recipe-info">
+          <view class="recipe-name">{{item.name}}</view>
+          <view class="recipe-tags">
+            <text class="tag tag-category">{{item.category}}</text>
+            <text class="tag tag-{{item.difficulty}}">{{item.difficulty === 'easy' ? '简单' : item.difficulty === 'hard' ? '困难' : '中等'}}</text>
+            <text wx:if="{{item.cook_time}}" class="cook-time-inline">{{item.cook_time}}分钟</text>
+          </view>
+        </view>
       </view>
     </view>
   </view>
 
   <!-- 浮动添加按钮（菜谱模式） -->
-  <view wx:if="{{mode === 'recipes'}}" class="float-btn" bindtap="addRecipe">+</view>
+  <view
+    wx:if="{{mode === 'recipes'}}"
+    class="float-btn-wrap"
+    bindtap="addRecipe"
+    hover-class="float-btn-wrap-hover"
+    hover-stay-time="80"
+    aria-label="添加菜谱"
+  >
+    <view class="float-btn">
+      <text class="float-btn-plus">+</text>
+    </view>
+  </view>
 </view>

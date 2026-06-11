@@ -1,54 +1,70 @@
-<view class="container">
+<view class="container page-with-fab">
   <!-- 日期选择 -->
-  <view class="date-bar">
-    <text class="date-nav" bindtap="prevDay">◀</text>
-    <text class="date-str">{{dateStr}}</text>
-    <text class="date-nav" bindtap="nextDay">▶</text>
-    <button class="share-btn" open-type="share">📤</button>
+  <view class="gradient-border date-bar-wrap">
+    <view class="gradient-border-inner date-bar">
+      <text class="date-nav" bindtap="prevDay">◀</text>
+      <text class="date-str">{{dateStr}}</text>
+      <text class="date-nav" bindtap="nextDay">▶</text>
+      <button class="share-btn" hover-class="btn-hover" open-type="share">分享</button>
+    </view>
   </view>
 
   <!-- 未读通知 -->
-  <view wx:if="{{unreadCount > 0}}" class="notify-bar">
-    <view class="notify-header">
-      <text class="notify-badge">{{unreadCount}}</text>
-      <text class="notify-title">未读点菜通知</text>
-    </view>
-    <view wx:for="{{unreadNotifications}}" wx:key="id" class="notify-item"
-      bindtap="onNotificationTap" data-id="{{item.id}}" data-date="{{item.order_date}}" data-meal="{{item.meal_type}}">
-      <text class="notify-content">{{item.content}}</text>
+  <view wx:if="{{unreadCount > 0}}" class="gradient-border notify-wrap">
+    <view class="gradient-border-inner notify-bar">
+      <view class="notify-header">
+        <text class="notify-badge">{{unreadCount}}</text>
+        <text class="notify-title">有人点菜啦！</text>
+      </view>
+      <view wx:for="{{unreadNotifications}}" wx:key="id" class="notify-item"
+        bindtap="onNotificationTap" data-id="{{item.id}}" data-date="{{item.order_date}}" data-meal="{{item.meal_type}}">
+        <text class="notify-content">{{item.content}}</text>
+      </view>
     </view>
   </view>
 
   <!-- 餐次切换 -->
-  <view class="meal-tabs">
-    <view wx:for="{{meals}}" wx:key="key" class="meal-tab {{mealType === item.key ? 'active' : ''}}" bindtap="switchMeal" data-val="{{item.key}}">
+  <view class="segment-bar meal-tabs">
+    <view wx:for="{{meals}}" wx:key="key" class="segment-item {{mealType === item.key ? 'active' : ''}}" bindtap="switchMeal" data-val="{{item.key}}">
       {{item.label}}
     </view>
   </view>
 
   <view wx:if="{{!orders.length}}" class="empty">
-    <text>今天还没点菜</text>
-    <text>去菜谱页面添加吧~</text>
+    <text class="empty-title">今天还没点菜</text>
+    <text>肚子叫了？去菜谱页挑几道吧~</text>
   </view>
 
-  <view wx:for="{{orders}}" wx:key="id" class="card order-item">
-    <image wx:if="{{item.recipe.cover_url}}" src="{{item.recipe.cover_url}}" class="item-img" mode="aspectFill" lazy-load="{{true}}" />
-    <view class="item-info">
-      <text class="item-name">{{item.recipe.name}}</text>
-      <text class="item-meta">
-        {{item.quantity}}份
-        <text wx:if="{{item.meal_type}}"> | {{item.meal_type === 'breakfast' ? '早餐' : item.meal_type === 'lunch' ? '午餐' : '晚餐'}}</text>
-      </text>
-      <text class="item-note" wx:if="{{item.note}}">📝 {{item.note}}</text>
-      <view class="item-adder" wx:if="{{item.adder}}">
-        <image wx:if="{{item.adder.avatar_url}}" src="{{item.adder.avatar_url}}" class="adder-avatar" mode="aspectFill" lazy-load="{{true}}" />
-        <text wx:else class="adder-placeholder">👤</text>
-        <text class="adder-name">{{item.adder.nickname || '匿名'}}</text>
+  <view wx:for="{{orders}}" wx:key="id" class="gradient-border order-wrap">
+    <view class="gradient-border-inner order-item">
+      <image wx:if="{{item.recipe.cover_url}}" src="{{item.recipe.cover_url}}" class="item-img" mode="aspectFill" lazy-load="{{true}}" />
+      <view wx:else class="item-img item-img-placeholder">菜</view>
+      <view class="item-info">
+        <text class="item-name">{{item.recipe.name}}</text>
+        <text class="item-meta">
+          {{item.quantity}}份
+          <text wx:if="{{item.meal_type}}"> · {{item.meal_type === 'breakfast' ? '早餐' : item.meal_type === 'lunch' ? '午餐' : '晚餐'}}</text>
+        </text>
+        <text class="item-note" wx:if="{{item.note}}">备注：{{item.note}}</text>
+        <view class="item-adder" wx:if="{{item.adder}}">
+          <image wx:if="{{item.adder.avatar_url}}" src="{{item.adder.avatar_url}}" class="adder-avatar" mode="aspectFill" lazy-load="{{true}}" />
+          <view wx:else class="adder-placeholder">{{item.adder.nickname ? item.adder.nickname[0] : '?'}}</view>
+          <text class="adder-name">{{item.adder.nickname || '匿名'}} 点的</text>
+        </view>
       </view>
+      <text class="del-btn" bindtap="removeOrder" data-id="{{item.id}}">×</text>
     </view>
-    <text class="del-btn" bindtap="removeOrder" data-id="{{item.id}}">✕</text>
   </view>
 
-  <!-- 浮动按钮：去菜谱选菜 -->
-  <view class="float-btn" bindtap="addRecipe">+</view>
+  <view
+    class="float-btn-wrap"
+    bindtap="addRecipe"
+    hover-class="float-btn-wrap-hover"
+    hover-stay-time="80"
+    aria-label="去加菜"
+  >
+    <view class="float-btn">
+      <text class="float-btn-plus">+</text>
+    </view>
+  </view>
 </view>

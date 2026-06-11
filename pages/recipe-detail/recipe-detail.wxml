@@ -1,68 +1,81 @@
-<view class="container">
-  <image wx:if="{{recipe.cover_url}}" src="{{recipe.cover_url}}" class="cover" mode="aspectFill" lazy-load="{{true}}" />
-  
-  <view class="card">
-    <view class="name-row">
-      <text class="name">{{recipe.name}}</text>
-      <view class="actions">
-        <text class="action-btn" bindtap="toggleFavorite">{{isFav ? '❤️' : '🤍'}}</text>
-        <text class="action-btn" bindtap="markCooked">🍳</text>
+<view class="container detail-page">
+  <view class="cover-wrap gradient-border" wx:if="{{recipe.cover_url}}">
+    <image src="{{recipe.cover_url}}" class="cover" mode="aspectFill" lazy-load="{{true}}" />
+  </view>
+  <view wx:else class="cover cover-placeholder">暂无封面</view>
+
+  <view class="gradient-border">
+    <view class="gradient-border-inner">
+      <view class="name-row">
+        <text class="name">{{recipe.name}}</text>
+        <view class="actions">
+          <view class="action-btn {{isFav ? 'active' : ''}}" bindtap="toggleFavorite">{{isFav ? '已收藏' : '收藏'}}</view>
+          <view class="action-btn cook-btn" bindtap="markCooked">做过+1</view>
+        </view>
+      </view>
+      <view class="tags">
+        <text class="tag tag-category">{{recipe.category}}</text>
+        <text class="tag tag-{{recipe.difficulty}}">{{recipe.difficulty === 'easy' ? '简单' : recipe.difficulty === 'hard' ? '困难' : '中等'}}</text>
+        <text wx:if="{{recipe.cook_time}}" class="meta-text">{{recipe.cook_time}}分钟</text>
+        <text class="meta-text">做过 {{recipe.cook_count}} 次</text>
       </view>
     </view>
-    <view class="tags">
-      <text class="tag tag-category">{{recipe.category}}</text>
-      <text class="tag tag-{{recipe.difficulty}}">{{recipe.difficulty === 'easy' ? '简单' : recipe.difficulty === 'hard' ? '困难' : '中等'}}</text>
-      <text wx:if="{{recipe.cook_time}}">⏱ {{recipe.cook_time}}分钟</text>
-      <text>👨‍🍳 做过 {{recipe.cook_count}} 次</text>
+  </view>
+
+  <view class="gradient-border" wx:if="{{recipe.ingredients}}">
+    <view class="gradient-border-inner">
+      <view class="section-title">食材</view>
+      <view wx:for="{{ingredients}}" wx:key="index" class="ingredient-item">
+        <text>{{item.name}}</text>
+        <text class="amount" wx:if="{{item.amount}}">{{item.amount}}</text>
+      </view>
     </view>
   </view>
 
-  <view class="card" wx:if="{{recipe.ingredients}}">
-    <view class="section-title">🥬 食材</view>
-    <view wx:for="{{ingredients}}" wx:key="index" class="ingredient-item">
-      <text>{{item.name}}</text>
-      <text class="amount" wx:if="{{item.amount}}">{{item.amount}}</text>
+  <view class="gradient-border" wx:if="{{recipe.seasonings}}">
+    <view class="gradient-border-inner">
+      <view class="section-title">调料</view>
+      <view wx:for="{{seasonings}}" wx:key="index" class="ingredient-item">
+        <text>{{item.name}}</text>
+        <text class="amount" wx:if="{{item.amount}}">{{item.amount}}</text>
+      </view>
     </view>
   </view>
 
-  <view class="card" wx:if="{{recipe.seasonings}}">
-    <view class="section-title">🧂 调料</view>
-    <view wx:for="{{seasonings}}" wx:key="index" class="ingredient-item">
-      <text>{{item.name}}</text>
-      <text class="amount" wx:if="{{item.amount}}">{{item.amount}}</text>
+  <view class="gradient-border" wx:if="{{recipe.steps}}">
+    <view class="gradient-border-inner">
+      <view class="section-title">步骤</view>
+      <view wx:for="{{steps}}" wx:key="index" class="step-item">
+        <view class="step-num">{{index + 1}}</view>
+        <text class="step-text">{{item}}</text>
+      </view>
     </view>
   </view>
 
-  <view class="card" wx:if="{{recipe.steps}}">
-    <view class="section-title">📝 步骤</view>
-    <view wx:for="{{steps}}" wx:key="index" class="step-item">
-      <view class="step-num">{{index + 1}}</view>
-      <text>{{item}}</text>
+  <view class="gradient-border" wx:if="{{recipe.tips}}">
+    <view class="gradient-border-inner">
+      <view class="section-title">小贴士</view>
+      <text class="tips-text">{{recipe.tips}}</text>
     </view>
-  </view>
-
-  <view class="card" wx:if="{{recipe.tips}}">
-    <view class="section-title">💡 小贴士</view>
-    <text>{{recipe.tips}}</text>
   </view>
 
   <view class="bottom-bar">
-    <button class="btn-outline" bindtap="editRecipe">编辑</button>
-    <button class="btn-primary" bindtap="showOrder">加入点菜</button>
+    <button class="btn-outline" hover-class="btn-hover" bindtap="editRecipe">编辑</button>
+    <button class="btn-primary" hover-class="btn-hover" bindtap="showOrder">加入点菜</button>
   </view>
 
   <!-- 点菜弹窗 -->
   <view hidden="{{!showOrderModal}}" class="modal-mask" bindtap="hideOrderModal" catchtouchmove>
     <view class="modal" catchtap>
-      <view class="modal-title">加入今日点菜</view>
+      <view class="modal-title">加入今日菜单</view>
       <text class="modal-recipe">{{recipe.name}}</text>
-      
+
       <view class="form-group">
         <text class="label">餐次</text>
-        <view class="meal-row">
-          <view class="meal-item {{orderMeal === 'breakfast' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="breakfast">🌅 早餐</view>
-          <view class="meal-item {{orderMeal === 'lunch' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="lunch">☀️ 午餐</view>
-          <view class="meal-item {{orderMeal === 'dinner' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="dinner">🌙 晚餐</view>
+        <view class="segment-bar meal-row">
+          <view class="segment-item {{orderMeal === 'breakfast' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="breakfast">早餐</view>
+          <view class="segment-item {{orderMeal === 'lunch' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="lunch">午餐</view>
+          <view class="segment-item {{orderMeal === 'dinner' ? 'active' : ''}}" bindtap="onOrderMealChange" data-val="dinner">晚餐</view>
         </view>
       </view>
 
@@ -79,8 +92,8 @@
       </view>
 
       <view class="modal-btns">
-        <button class="btn-outline" bindtap="hideOrderModal">取消</button>
-        <button class="btn-primary" bindtap="confirmOrder">确定</button>
+        <button class="btn-outline" hover-class="btn-hover" bindtap="hideOrderModal">取消</button>
+        <button class="btn-primary" hover-class="btn-hover" bindtap="confirmOrder">确定</button>
       </view>
     </view>
   </view>

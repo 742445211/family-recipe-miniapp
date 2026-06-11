@@ -1,60 +1,91 @@
 <view class="container">
-  <view class="card user-card" bindtap="showEditDialog">
-    <image wx:if="{{userInfo.avatar}}" src="{{userInfo.avatar}}" class="avatar" lazy-load="{{true}}" />
-    <text wx:else class="avatar-placeholder">👤</text>
-    <view class="user-text">
-      <text class="nickname">{{userInfo.nickname || '未设置昵称'}}</text>
-      <text class="edit-hint">点击编辑</text>
+  <view class="gradient-border" bindtap="showEditDialog">
+    <view class="gradient-border-inner user-card">
+      <image wx:if="{{userInfo.avatar}}" src="{{userInfo.avatar}}" class="avatar" lazy-load="{{true}}" />
+      <view wx:else class="avatar avatar-placeholder">{{userInfo.nickname ? userInfo.nickname[0] : '我'}}</view>
+      <view class="user-text">
+        <text class="nickname">{{userInfo.nickname || '还没起名字的大厨'}}</text>
+        <text class="edit-hint">点我改改昵称和头像</text>
+      </view>
     </view>
   </view>
 
-  <view class="card chef-card">
-    <view class="menu-item">
-      <text>👨‍🍳 厨师身份</text>
-      <switch checked="{{isChef}}" bindchange="toggleChef" color="#FF6B35" />
+  <view class="gradient-border">
+    <view class="gradient-border-inner chef-card">
+      <view class="menu-item">
+        <view class="menu-icon menu-icon-chef">厨</view>
+        <text>厨师身份</text>
+        <switch checked="{{isChef}}" bindchange="toggleChef" color="#FF6B35" style="margin-left:auto;" />
+      </view>
+      <text class="chef-hint">开启后，家人点菜时你会收到通知——该进厨房啦！</text>
     </view>
-    <text class="chef-hint">开启后，家人点菜时将收到订阅消息通知</text>
   </view>
 
-  <view class="card" wx:if="{{showAI}}" bindtap="goAI">
-    <view class="menu-item">🤖 AI 推荐菜谱</view>
+  <view wx:if="{{showAI}}" class="gradient-border" bindtap="goAI">
+    <view class="gradient-border-inner card-plain menu-row">
+      <view class="menu-item">
+        <view class="menu-icon menu-icon-ai">AI</view>
+        <text>AI 推荐菜谱</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
   </view>
 
-  <view class="card" bindtap="goFamily">
-    <view class="menu-item">🏠 家庭管理</view>
+  <view class="gradient-border" bindtap="goFamily">
+    <view class="gradient-border-inner card-plain menu-row">
+      <view class="menu-item">
+        <view class="menu-icon menu-icon-family">家</view>
+        <text>家庭管理</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
   </view>
 
-  <view class="card" bindtap="goFavorites">
-    <view class="menu-item">❤️ 我的收藏</view>
+  <view class="gradient-border" bindtap="goFavorites">
+    <view class="gradient-border-inner card-plain menu-row">
+      <view class="menu-item">
+        <view class="menu-icon menu-icon-fav">♥</view>
+        <text>我的收藏</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
   </view>
 
-  <view class="card" bindtap="goNotificationSettings">
-    <view class="menu-item">🔔 通知设置</view>
+  <view class="gradient-border" bindtap="goNotificationSettings">
+    <view class="gradient-border-inner card-plain menu-row">
+      <view class="menu-item">
+        <view class="menu-icon menu-icon-notify">铃</view>
+        <text>通知设置</text>
+        <text class="menu-arrow">›</text>
+      </view>
+    </view>
   </view>
 
-  <view class="card" bindtap="logout">
-    <view class="menu-item" style="color: #F44336;">退出登录</view>
+  <view class="gradient-border" bindtap="logout">
+    <view class="gradient-border-inner card-plain menu-row">
+      <view class="menu-item logout-item">
+        <text>退出登录</text>
+      </view>
+    </view>
   </view>
 
-  <!-- 编辑弹窗 -->
   <view wx:if="{{showEdit}}" class="modal-mask" bindtap="hideEditDialog">
     <view class="modal" catchtap>
-      <view class="modal-title">编辑资料</view>
+      <view class="modal-title">改改资料</view>
       <view class="form-group">
         <text class="label">昵称</text>
-        <input value="{{editNickname}}" bindinput="onNicknameInput" placeholder="请输入昵称" />
+        <input value="{{editNickname}}" bindinput="onNicknameInput" placeholder="起个好记的名字" />
       </view>
       <view class="form-group">
         <text class="label">头像</text>
         <view class="avatar-upload" bindtap="chooseAvatar">
           <image wx:if="{{editAvatar}}" src="{{editAvatar}}" class="avatar-preview" mode="aspectFill" lazy-load="{{true}}" />
-          <text wx:else class="avatar-tip">📷 点击上传</text>
+          <text wx:else class="avatar-tip">点我上传</text>
         </view>
-        <text class="url-hint" wx:if="{{editAvatar}}">{{editAvatar}}</text>
       </view>
       <view class="modal-btns">
-        <button class="btn-outline" bindtap="hideEditDialog">取消</button>
-        <button class="btn-primary" bindtap="saveProfile">保存</button>
+        <button class="btn-outline" hover-class="btn-hover" bindtap="hideEditDialog">算了</button>
+        <button class="btn-primary" hover-class="btn-hover" bindtap="saveProfile">保存</button>
       </view>
     </view>
   </view>

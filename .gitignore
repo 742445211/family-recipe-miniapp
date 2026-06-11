@@ -1,6 +1,8 @@
 # WeChat mini program
 .idea/
 .vscode/
+.cursor/
+.codegraph/
 *.swp
 *.swo
 .DS_Store
