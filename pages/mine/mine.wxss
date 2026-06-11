@@ -11,10 +11,8 @@
   height: 108rpx;
   border-radius: 50%;
   flex-shrink: 0;
-  border: 4rpx solid transparent;
-  background: var(--gradient-brand);
-  background-clip: padding-box;
-  box-shadow: var(--shadow-soft);
+  border: 4rpx solid var(--color-accent-soft);
+  box-shadow: var(--shadow-surface);
 }
 
 .avatar-placeholder {
@@ -24,7 +22,7 @@
   font-size: var(--text-2xl);
   font-weight: 700;
   color: #fff;
-  background: var(--gradient-brand);
+  background: var(--color-primary);
 }
 
 .user-text {

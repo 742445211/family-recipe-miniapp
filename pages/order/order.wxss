@@ -31,11 +31,12 @@
 .share-btn {
   font-size: var(--text-xs) !important;
   padding: 10rpx var(--space-3) !important;
-  background: var(--gradient-warm) !important;
+  background: var(--color-primary) !important;
   color: #fff !important;
   border-radius: var(--radius-full) !important;
   line-height: var(--leading-normal) !important;
   margin: 0;
+  box-shadow: var(--shadow-soft) !important;
 }
 
 .share-btn::after {
@@ -60,7 +61,7 @@
 }
 
 .notify-badge {
-  background: var(--gradient-brand);
+  background: var(--color-primary);
   color: #fff;
   font-size: var(--text-xs);
   padding: 4rpx 14rpx;

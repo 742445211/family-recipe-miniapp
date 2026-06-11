@@ -1,19 +1,31 @@
-/* ===== 家庭菜谱 · 活泼食欲风设计系统 ===== */
+/* ===== 家庭菜谱 · HeroUI v3 + shadcn 适配设计系统（微信 WXSS） ===== */
 page {
-  /* 色彩 */
+  /* 品牌色 */
   --color-primary: #FF6B35;
   --color-primary-light: #FF8F5C;
   --color-primary-dark: #E85A24;
   --color-secondary: #FFB020;
   --color-accent: #FF4757;
   --color-fresh: #52C41A;
+  --color-danger: #FF4757;
+
+  /* HeroUI surface / shadcn muted 语义色 */
   --color-bg: #FFF8F0;
   --color-surface: #FFFFFF;
+  --color-surface-secondary: #F5F0EB;
+  --color-surface-tertiary: #EDE6DE;
+  --color-default: #F0EBE6;
   --color-text: #2D1810;
   --color-text-secondary: #8B5E3C;
   --color-text-muted: #B8956A;
-  --color-danger: #FF4757;
-  --color-border: rgba(255, 107, 53, 0.15);
+  --color-border: rgba(45, 24, 16, 0.08);
+  --color-border-strong: rgba(45, 24, 16, 0.12);
+  --color-border-subtle: rgba(45, 24, 16, 0.06);
+  --color-muted: #B8956A;
+  --color-accent-soft: rgba(255, 107, 53, 0.14);
+  --color-success-soft: rgba(82, 196, 26, 0.14);
+  --color-warning-soft: rgba(255, 176, 32, 0.18);
+  --color-danger-soft: rgba(255, 71, 87, 0.12);
 
   /* 排版阶梯（8rpx 基准） */
   --text-xs: 22rpx;
@@ -51,14 +63,25 @@ page {
   --gradient-brand: linear-gradient(135deg, #FF6B35 0%, #FFB020 38%, #FF5E4D 100%);
   --gradient-warm: linear-gradient(135deg, #FFB84D 0%, #FF6B35 100%);
   --gradient-soft: linear-gradient(180deg, #FFF8F0 0%, #FFE8D6 100%);
+  /* HeroUI surface-shadow / shadcn shadow-sm */
+  --shadow-surface: 0 2rpx 8rpx rgba(0, 0, 0, 0.04), 0 1rpx 4rpx rgba(0, 0, 0, 0.06), 0 0 2rpx rgba(0, 0, 0, 0.04);
+  --shadow-field: 0 2rpx 8rpx rgba(0, 0, 0, 0.04), 0 1rpx 4rpx rgba(0, 0, 0, 0.06), 0 0 2rpx rgba(0, 0, 0, 0.04);
   --shadow-soft: 0 8rpx 32rpx rgba(255, 107, 53, 0.12);
-  --shadow-card: 0 4rpx 20rpx rgba(45, 24, 16, 0.06);
-  --shadow-float: 0 12rpx 40rpx rgba(255, 107, 53, 0.35);
+  --shadow-card: var(--shadow-surface);
+  --shadow-overlay: 0 8rpx 24rpx rgba(0, 0, 0, 0.06), 0 -6rpx 24rpx rgba(0, 0, 0, 0.03), 0 28rpx 56rpx rgba(0, 0, 0, 0.08);
+  /* shadcn shadow-lg + 品牌色光晕，FAB 浮于 Tab 之上 */
+  --shadow-float: 0 16rpx 40rpx rgba(255, 107, 53, 0.32), 0 6rpx 16rpx rgba(45, 24, 16, 0.1), 0 0 0 2rpx rgba(255, 255, 255, 0.45);
   --radius-sm: 12rpx;
   --radius-md: 20rpx;
   --radius-lg: 28rpx;
+  --radius-card: 32rpx;
   --radius-xl: 36rpx;
   --radius-full: 999rpx;
+  --field-radius: 24rpx;
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
 
   /* 悬浮按钮（Tab 页需避开底栏） */
   --fab-size: 112rpx;
@@ -129,22 +152,22 @@ page {
   color: var(--color-text-muted);
 }
 
-/* ===== 渐变边框卡片 ===== */
+/* ===== 卡片（HeroUI Card / shadcn Card 语义） ===== */
 .gradient-border {
-  padding: 3rpx;
+  padding: 2rpx;
   background: var(--gradient-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-soft);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-surface);
   overflow: hidden;
 }
 
 .gradient-border-inner,
 .card {
   background: var(--color-surface);
-  border-radius: calc(var(--radius-lg) - 3rpx);
+  border-radius: calc(var(--radius-card) - 2rpx);
   padding: var(--space-3);
   margin-bottom: var(--space-2);
-  box-shadow: var(--shadow-card);
+  box-shadow: none;
 }
 
 .gradient-border-inner.is-flush {
@@ -157,10 +180,11 @@ page {
 
 .card-plain {
   background: var(--color-surface);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-card);
   padding: var(--space-3);
   margin-bottom: var(--space-2);
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-surface);
+  border: 2rpx solid var(--color-border-subtle);
 }
 
 /* ===== 按钮系统 ===== */
@@ -185,17 +209,19 @@ button.btn-outline::after {
 }
 
 .btn-primary {
-  background: var(--gradient-brand) !important;
+  background: var(--color-primary) !important;
   color: #fff !important;
   border: none !important;
   box-shadow: var(--shadow-soft);
+  transition: transform var(--duration-normal) var(--ease-smooth), background-color var(--duration-fast) var(--ease-out), box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .btn-outline {
   background: var(--color-surface) !important;
   color: var(--color-primary) !important;
-  border: 3rpx solid var(--color-primary) !important;
-  box-shadow: none;
+  border: 2rpx solid var(--color-border-strong) !important;
+  box-shadow: var(--shadow-field);
+  transition: transform var(--duration-normal) var(--ease-smooth), background-color var(--duration-fast) var(--ease-out);
 }
 
 /* 全宽主/次按钮 */
@@ -222,19 +248,23 @@ button.btn-outline::after {
 }
 
 .btn-tap.btn-primary {
-  background: var(--gradient-brand);
+  background: var(--color-primary);
   color: #fff;
   box-shadow: var(--shadow-soft);
+  transition: transform var(--duration-normal) var(--ease-smooth);
 }
 
 .btn-tap.btn-outline {
   background: var(--color-surface);
   color: var(--color-primary);
-  border: 3rpx solid var(--color-primary);
+  border: 2rpx solid var(--color-border-strong);
+  box-shadow: var(--shadow-field);
+  transition: transform var(--duration-normal) var(--ease-smooth);
 }
 
 .btn-hover {
-  opacity: 0.88;
+  transform: scale(0.97);
+  opacity: 0.96;
 }
 
 .btn-disabled {
@@ -252,23 +282,24 @@ button.btn-outline::after {
   font-weight: 500;
 }
 
+/* HeroUI Chip soft 变体 */
 .tag-category {
-  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+  background: var(--color-warning-soft);
   color: var(--color-primary-dark);
 }
 
 .tag-easy {
-  background: linear-gradient(135deg, #E8F5E9, #C8E6C9);
+  background: var(--color-success-soft);
   color: #2E7D32;
 }
 
 .tag-medium {
-  background: linear-gradient(135deg, #FFF8E1, #FFECB3);
-  color: #F57C00;
+  background: var(--color-warning-soft);
+  color: #E85A24;
 }
 
 .tag-hard {
-  background: linear-gradient(135deg, #FFEBEE, #FFCDD2);
+  background: var(--color-danger-soft);
   color: #C62828;
 }
 
@@ -296,68 +327,111 @@ button.btn-outline::after {
   margin-bottom: var(--space-2);
 }
 
-/* ===== 浮动按钮（渐变描边 + 白底，与点菜页卡片同系） ===== */
+/* ===== 浮动按钮（HeroUI button--icon-only + shadcn size-icon） ===== */
 .float-btn-wrap {
   position: fixed;
   right: var(--space-3);
   bottom: var(--fab-offset-bottom);
   width: var(--fab-size);
   height: var(--fab-size);
-  padding: 3rpx;
+  padding: 0;
   border-radius: 50%;
-  background: var(--gradient-border);
+  background: var(--color-primary);
   box-shadow: var(--shadow-float);
   z-index: 100;
   box-sizing: border-box;
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  isolation: isolate;
+  transition:
+    transform var(--duration-normal) var(--ease-smooth),
+    background-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+/* 顶部高光（HeroUI surface 质感） */
+.float-btn-wrap::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, transparent 52%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 .float-btn-wrap-hover {
-  transform: scale(0.94);
-  opacity: 0.96;
+  transform: scale(0.97);
+  background: var(--color-primary-dark);
 }
 
 .float-btn {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  background: var(--color-surface);
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.float-btn-plus {
-  font-size: 56rpx;
-  font-weight: 400;
-  color: var(--color-primary);
-  line-height: 1;
-  margin-top: -6rpx;
+/* Lucide Plus 风格矢量加号（替代文本 +，避免字号偏移） */
+.float-btn-icon {
+  width: 44rpx;
+  height: 44rpx;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.float-btn-icon::before,
+.float-btn-icon::after {
+  content: '';
+  position: absolute;
+  background: #fff;
+  border-radius: var(--radius-full);
+}
+
+.float-btn-icon::before {
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 4rpx;
+  margin-top: -2rpx;
+}
+
+.float-btn-icon::after {
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 4rpx;
+  margin-left: -2rpx;
 }
 
 .page-with-fab {
   padding-bottom: var(--fab-scroll-padding) !important;
 }
 
-/* ===== 搜索框 ===== */
+/* ===== 搜索框（HeroUI Input / shadcn field） ===== */
 .search-input {
   flex: 1;
   background: var(--color-surface);
-  border-radius: var(--radius-full);
+  border-radius: var(--field-radius);
   padding: var(--space-2) var(--space-3);
   font-size: var(--text-base);
   line-height: var(--leading-normal);
-  box-shadow: var(--shadow-card);
-  border: 2rpx solid var(--color-border);
+  box-shadow: var(--shadow-field);
+  border: 2rpx solid transparent;
   min-height: 80rpx;
   box-sizing: border-box;
+  color: var(--color-text);
+  transition: border-color var(--duration-fast) var(--ease-smooth), box-shadow var(--duration-fast) var(--ease-out);
 }
 
-/* ===== 分段选择器 ===== */
+/* ===== 分段选择器（HeroUI Tabs segment） ===== */
 .segment-bar {
   display: flex;
-  background: rgba(255, 107, 53, 0.08);
-  border-radius: var(--radius-full);
+  background: var(--color-default);
+  border-radius: calc(var(--radius-md) * 2.5);
   padding: 6rpx;
   gap: 6rpx;
 }
@@ -368,27 +442,27 @@ button.btn-outline::after {
   padding: var(--space-2) 0;
   border-radius: var(--radius-full);
   font-size: var(--text-sm);
-  color: var(--color-text-secondary);
+  color: var(--color-muted);
   font-weight: 500;
   line-height: var(--leading-normal);
-  transition: all 0.2s ease;
+  transition: color var(--duration-fast) var(--ease-smooth), background-color var(--duration-fast) var(--ease-smooth), box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .segment-item.active {
-  background: var(--gradient-brand);
-  color: #fff;
-  box-shadow: var(--shadow-soft);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-surface);
 }
 
-/* ===== 视图切换 ===== */
+/* ===== 视图切换（HeroUI Tabs 指示器风格） ===== */
 .view-toggle {
   display: flex;
-  gap: 8rpx;
-  background: var(--color-surface);
-  border-radius: var(--radius-md);
+  gap: 6rpx;
+  background: var(--color-default);
+  border-radius: calc(var(--radius-md) * 2.5);
   padding: 6rpx;
-  box-shadow: var(--shadow-card);
-  border: 2rpx solid var(--color-border);
+  box-shadow: none;
+  border: none;
 }
 
 .view-toggle-item {
@@ -397,14 +471,16 @@ button.btn-outline::after {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
   font-size: 32rpx;
-  color: var(--color-text-muted);
+  color: var(--color-muted);
+  transition: color var(--duration-fast) var(--ease-smooth), background-color var(--duration-fast) var(--ease-smooth), box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .view-toggle-item.active {
-  background: var(--gradient-warm);
-  color: #fff;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-surface);
 }
 
 /* ===== 菜单项 ===== */
@@ -431,11 +507,11 @@ button.btn-outline::after {
   flex-shrink: 0;
 }
 
-.menu-icon-ai { background: linear-gradient(135deg, #667eea, #764ba2); }
-.menu-icon-family { background: var(--gradient-warm); }
-.menu-icon-fav { background: linear-gradient(135deg, #FF4757, #FF6B35); }
-.menu-icon-notify { background: linear-gradient(135deg, #FFB020, #FF8F5C); }
-.menu-icon-chef { background: linear-gradient(135deg, #52C41A, #73D13D); }
+.menu-icon-ai { background: #6B7AE8; }
+.menu-icon-family { background: var(--color-primary); }
+.menu-icon-fav { background: var(--color-accent); }
+.menu-icon-notify { background: var(--color-secondary); }
+.menu-icon-chef { background: var(--color-fresh); }
 
 .menu-arrow {
   margin-left: auto;
@@ -450,7 +526,7 @@ button.btn-outline::after {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(45, 24, 16, 0.55);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -462,19 +538,9 @@ button.btn-outline::after {
   background: var(--color-surface);
   border-radius: var(--radius-xl);
   padding: 40rpx;
-  box-shadow: 0 24rpx 80rpx rgba(45, 24, 16, 0.2);
-  border: 3rpx solid transparent;
-  background-clip: padding-box;
-  position: relative;
-}
-
-.modal::before {
-  content: '';
-  position: absolute;
-  inset: -3rpx;
-  border-radius: var(--radius-xl);
-  background: var(--gradient-brand);
-  z-index: -1;
+  box-shadow: var(--shadow-overlay);
+  border: 2rpx solid var(--color-border);
+  box-sizing: border-box;
 }
 
 .modal-title {
@@ -503,15 +569,16 @@ button.btn-outline::after {
 .form-group textarea,
 .picker-text,
 .picker-val {
-  background: var(--color-bg);
-  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  border-radius: var(--field-radius);
   padding: var(--space-2) var(--space-3);
   font-size: var(--text-base);
   width: 100%;
   box-sizing: border-box;
   min-height: 88rpx;
   line-height: var(--leading-normal);
-  border: 2rpx solid var(--color-border);
+  border: 2rpx solid transparent;
+  box-shadow: var(--shadow-field);
   color: var(--color-text);
 }
 
@@ -558,7 +625,7 @@ button.btn-outline::after {
   content: '';
   width: 8rpx;
   height: 28rpx;
-  background: var(--gradient-brand);
+  background: var(--color-primary);
   border-radius: 4rpx;
   flex-shrink: 0;
 }
@@ -568,7 +635,7 @@ button.btn-outline::after {
   width: 48rpx;
   height: 48rpx;
   border-radius: 50%;
-  background: var(--gradient-brand);
+  background: var(--color-primary);
   color: #fff;
   text-align: center;
   line-height: 48rpx;

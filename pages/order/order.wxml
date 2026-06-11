@@ -64,7 +64,7 @@
     aria-label="去加菜"
   >
     <view class="float-btn">
-      <text class="float-btn-plus">+</text>
+      <view class="float-btn-icon" aria-hidden="true"></view>
     </view>
   </view>
 </view>

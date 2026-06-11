@@ -20,15 +20,15 @@
 }
 
 .category-chip {
-  background: var(--color-surface);
+  background: var(--color-accent-soft);
   border-radius: var(--radius-full);
   padding: 14rpx var(--space-3);
   font-size: var(--text-sm);
-  color: var(--color-primary);
+  color: var(--color-primary-dark);
   font-weight: 600;
   line-height: var(--leading-normal);
-  box-shadow: var(--shadow-card);
-  border: 2rpx solid var(--color-border);
+  box-shadow: none;
+  border: none;
 }
 
 .waterfall {
