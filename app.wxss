@@ -39,8 +39,17 @@ page {
   --space-6: 48rpx;
 
   /* 圆角 / 阴影 / 渐变 */
-  --gradient-brand: linear-gradient(135deg, #FF6B35 0%, #FFB020 50%, #FF4757 100%);
-  --gradient-warm: linear-gradient(135deg, #FFB020 0%, #FF6B35 100%);
+  /* 描边线框：多段暖色过渡，细边不易断层；与按钮渐变分离 */
+  --gradient-border: linear-gradient(
+    145deg,
+    #FF6B35 0%,
+    #FF9848 20%,
+    #FFB84D 45%,
+    #FF9A56 72%,
+    #FF7A45 100%
+  );
+  --gradient-brand: linear-gradient(135deg, #FF6B35 0%, #FFB020 38%, #FF5E4D 100%);
+  --gradient-warm: linear-gradient(135deg, #FFB84D 0%, #FF6B35 100%);
   --gradient-soft: linear-gradient(180deg, #FFF8F0 0%, #FFE8D6 100%);
   --shadow-soft: 0 8rpx 32rpx rgba(255, 107, 53, 0.12);
   --shadow-card: 0 4rpx 20rpx rgba(45, 24, 16, 0.06);
@@ -123,9 +132,10 @@ page {
 /* ===== 渐变边框卡片 ===== */
 .gradient-border {
   padding: 3rpx;
-  background: var(--gradient-brand);
+  background: var(--gradient-border);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-soft);
+  overflow: hidden;
 }
 
 .gradient-border-inner,
@@ -295,7 +305,7 @@ button.btn-outline::after {
   height: var(--fab-size);
   padding: 3rpx;
   border-radius: 50%;
-  background: var(--gradient-brand);
+  background: var(--gradient-border);
   box-shadow: var(--shadow-float);
   z-index: 100;
   box-sizing: border-box;
