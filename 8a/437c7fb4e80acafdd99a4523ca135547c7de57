@@ -1,0 +1,195 @@
+pages/ai-recommend/ai-recommend.wxml
+  s_4fca4b61d6dd4e::t_19ef2a96505e93 1,42,63
+  s_4fca4b61d6dd4e::t_63e89ee7db91b4 43,65,76
+  s_4fca4b61d6dd4e::t_c58f5bb127062b 73
+  s_4fca4b61d6dd4e::t_0f3ee413bb3e39 3,5,9,12-13,17-22,24-32,35-41,45-48,52,55,58-60,62,66,71-72,74-75
+  s_4fca4b61d6dd4e::t_886cb659cff205 61,64
+  s_4fca4b61d6dd4e::t_0c6392a9e7afb1 2,4,10-11,49-51,53-54,56-57
+  s_4fca4b61d6dd4e::t_1d8ab272b4c7c1 14-15
+  s_4fca4b61d6dd4e::t_da11d31327d448 77
+  s_4fca4b61d6dd4e::t_93072545afb970 8
+  s_be4c49022fcdb9::t_7c345e9f6bd178 67
+  s_4fca4b61d6dd4e::t_78a58fc1140b84 70
+pages/recipe-detail/recipe-detail.wxml
+  s_4fca4b61d6dd4e::t_580b009064a078 1-20,25-31,35-41,45-51,55-59,70,72,75-78
+  s_4fca4b61d6dd4e::t_d95195ddce8d0a 63-64
+  s_4fca4b61d6dd4e::t_142f6f86b579c7 95-96
+pages/recipe-edit/recipe-edit.wxss
+  s_4fca4b61d6dd4e::t_9b6b9f210905c9 6,10,22-24,27,29,58,61-62,68,70,83,88,95-96,98,102
+  s_4fca4b61d6dd4e::t_8b46007a955cc2 1-5,7-9,11-21,28,31-33,35,37-44,49,51-57,59-60,64-66,71-82,84-87,89-94,97,99-101
+.gitignore
+  s_4fca4b61d6dd4e::t_d956b9f916a1d6 4-5
+pages/mine/mine.wxss
+  s_4fca4b61d6dd4e::t_8cf2b4e4dbe894 1,6-20,25-31,33-35,37,39-43,45,47,49-51,53-60,62,64,66-68,70-73,75-80,82-84,92,98,100-106,108
+  s_4fca4b61d6dd4e::t_c2a3245976c041 4-5,24,32,36,38,44,46,48,52,61,63,65,69,74,81,85,107
+pages/family-join/family-join.wxss
+  s_4fca4b61d6dd4e::t_899708a1270f46 1,3-6,8-9,12-16,19-21,23-24,28-30,32
+  s_4fca4b61d6dd4e::t_d65acc4b60590d 2,7,10-11,17-18,22,25-27,31
+pages/index/index.wxml
+  s_4fca4b61d6dd4e::t_2c03d8d1e7df70 3-8,11-37,40-48,50-62,64-72,78-92,94-109
+  s_4fca4b61d6dd4e::t_a037f7c3c70cab 93
+  s_4fca4b61d6dd4e::t_07afe0a2b488e0 117,119,123-125
+  s_4fca4b61d6dd4e::t_d6fce72a0c2b2c 63,73-77
+  s_4fca4b61d6dd4e::t_808733f8be724a 115-116,118,120-122,126
+  s_4fca4b61d6dd4e::t_ff28c3308c2f8d 1
+pages/ai-recipe-detail/DESIGN.md
+  s_4fca4b61d6dd4e::t_227b6a275511e2 1-20
+project.config.json
+  s_4fca4b61d6dd4e::t_c517d16c10458c 36-45
+pages/notification-settings/DESIGN.md
+  s_4fca4b61d6dd4e::t_1287a64b4e07dc 1-31
+pages/login/DESIGN.md
+  s_4fca4b61d6dd4e::t_2b2077e02f8817 1-19
+pages/ai-recipe-detail/ai-recipe-detail.wxss
+  s_4fca4b61d6dd4e::t_324fae80c959ac 5-6,8-9,16-17,23
+  s_4fca4b61d6dd4e::t_32baa42a73b64a 7,10-11,13,18-22
+pages/recipe-detail/recipe-detail.wxss
+  s_4fca4b61d6dd4e::t_e0f2dea7e6b40b 6,24-25,33,37,39,52-53,60,80,86-87,96-97,106,111-112,123-125,129-130,136-137,149,152,154,162
+  s_4fca4b61d6dd4e::t_68b0112c6afb8d 1-5,7-10,13-16,18-23,26-28,32,34-36,38,40-51,54-59,61-79,81,84-85,88,90,94-95,98-101,103-105,108,113,116-122,127-128,131-133,142-144,147-148,150,153,156-158,161,163,165-166
+pages/notification-settings/notification-settings.wxss
+  s_4fca4b61d6dd4e::t_169078536941a1 1,5,7-8,15-19,21,24-29,31,36,52-57,69
+  s_4fca4b61d6dd4e::t_4bd0f1a2370183 2,6,10,13-14,20,30,34,47-48,50-51,66,68
+  s_4fca4b61d6dd4e::t_02088667cfab50 40
+  s_4fca4b61d6dd4e::t_828ee51cd7e6be 3-4,9,11-12,22-23,32-33,35,38-39,41,49,58-65,67
+  s_4fca4b61d6dd4e::t_a4c6d7959b1ddf 42
+pages/login/login.wxss
+  s_4fca4b61d6dd4e::t_b95d3d69ca2a7e 7,48,56,61,64,69,71,73,82,84,89,97-98,101-102
+  s_4fca4b61d6dd4e::t_9203d33329ba7d 8-10,12-47,49-55,57-60,62-63,65-68,70,72,74-75,79-81,83,85-86,90-92,94-96,99-100
+  s_4fca4b61d6dd4e::t_3a756b8ee30509 78,87-88,93
+pages/mine/mine.wxml
+  s_4fca4b61d6dd4e::t_9cae800a143a14 3,7-9,13-20,24-31,34-41,44-51,54-61,64-69,74,77,83
+  s_4fca4b61d6dd4e::t_21cfdfb2f1a820 2
+  s_4fca4b61d6dd4e::t_d006ce35e59526 4-6
+  s_4fca4b61d6dd4e::t_e336067be8f85b 87-88
+pages/ai-recommend/ai-recommend.js
+  s_be4c49022fcdb9::t_2123ae1f3e58ac 7,37-38,53-83,85-93,95-117,121,124,145,151,161-165,178-179,181,186
+  s_4fca4b61d6dd4e::t_b5629699f528be 24,27,42-43
+  s_4fca4b61d6dd4e::t_1e10444846b8ad 133-143,146-148,158,168-172,180
+  s_4fca4b61d6dd4e::t_5430017d48254b 18,20-21,25-26,28-34,44-48
+pages/family-join/DESIGN.md
+  s_4fca4b61d6dd4e::t_30d3b94518cbaf 1-18
+pages/ai-recommend/ai-recommend.wxss
+  s_4fca4b61d6dd4e::t_e4076643af1147 9,15-16,19-20,24-25,27-28,48-49,52,54,57,65-66,73-74,78,81,84-89,92,94,99,102,111,120,124-125,128,140,142,145,149,153,157,163,171,178,182,187,194,201-202,206,210,220,222-223,230-231,245,249-251,262
+  s_4fca4b61d6dd4e::t_b507a78a3b5760 17-18,34,36,38,63-64,77,97,123,136,151-152,158-159,170,173,186,190
+  s_4fca4b61d6dd4e::t_2ece9bc8f154fb 2,6,10,14,21-23,26,31-33,37,40-41,51,60,62,69-70,79-80,93,98,103,105-108,114-117,119,121,127,129-130,133-135,137,146,154,160,168,172,180,183,195-200,203-205,207-209,211-219,221,224-229,232-242,253,260-261,279-283,285-293
+  s_4fca4b61d6dd4e::t_faafc368679a0c 1,3-5,7-8,11-13,29-30,43,45-46,50,55,59,67-68,71-72,75,83,90-91,95-96,100-101,110,138-139,141,144,147-148,150,155-156,161-162,164-167,176-177,179,181,184,192-193,244,246,248,252,254-259,263-264,284
+  s_4fca4b61d6dd4e::t_3eb4ac60c04435 35,42,44,53,61,174-175,189,191
+  s_4fca4b61d6dd4e::t_059970bde90127 265-278
+pages/ai-recommend/DESIGN.md
+  s_4fca4b61d6dd4e::t_fcb6332bbb7bb6 5,7,9-12,17-18,21,23,25-29,33-35
+  s_4fca4b61d6dd4e::t_32fb38c22ae231 16,19,24
+  s_4fca4b61d6dd4e::t_e5646c5f88deb4 1-4,6,8,14-15,20,22,30-32
+pages/recipe-edit/recipe-edit.wxml
+  s_4fca4b61d6dd4e::t_6af825b729d5e9 73
+  s_4fca4b61d6dd4e::t_e02d52ebecd756 1-7,9-14,16-23,25-28,30-38,42-50,54-62,66-69,74
+pages/login/login.wxml
+  s_4fca4b61d6dd4e::t_5695ccd43a33e5 11
+  s_4fca4b61d6dd4e::t_fdf2b15669728f 2-3,5-7,9,14
+pages/family/family.wxml
+  s_4fca4b61d6dd4e::t_11fb7bc6a101d2 20-21
+  s_4fca4b61d6dd4e::t_f5729b5b4c04de 31-32
+  s_4fca4b61d6dd4e::t_876bcbc1f479a3 2-14,24-29
+app.wxss
+  s_4fca4b61d6dd4e::t_30d7280e349c9f 156-163,167-174,178-181,187-188,191-202,204,215-232
+  s_4fca4b61d6dd4e::t_c14e2f0b6cbe11 512,515-516,518-523,525-532
+  s_4fca4b61d6dd4e::t_10a9b81d6b615e 151-152
+  s_4fca4b61d6dd4e::t_bebfad949001e9 54-59
+  s_4fca4b61d6dd4e::t_da002a6332fe84 265-266,268-270
+  s_4fca4b61d6dd4e::t_c976468aabf33d 1,4-16,42-53,60-62,70-71,121-131,133-134,137-139,144-150,153,165-166,185-186,233-235,238-239,242-257,260-263,271,275,280-281,283,285,298,300,303-304,330-336,340-341,344-357,359,361-362,364-368,370-386,390-403,407,409-417,419-470,472,474,476-479,481-483,485,487-488,490-497,500-501,504,506-509,513-514,517,533-536,538,541-543,545-549,551-552,554-564,566-568
+  s_4fca4b61d6dd4e::t_c86804b0f265a8 3,17-41,63-65,69,72-86,89-120
+  s_4fca4b61d6dd4e::t_7ced859c86ec57 164
+  s_4fca4b61d6dd4e::t_0a69c77c856311 203,205
+  s_4fca4b61d6dd4e::t_093d522a1f07cf 206-214
+  s_4fca4b61d6dd4e::t_d6dabd07e51f1d 267
+  s_4fca4b61d6dd4e::t_ca07a39aee5a9d 289-290,296,299,301-302,305,307,310,312,314-317,320-325
+  s_4fca4b61d6dd4e::t_7d8fbf0fb79709 358,360,363
+  s_4fca4b61d6dd4e::t_0f288af0aba1fa 471,473,475,480,484,486,489,498-499,502-503,505
+  s_4fca4b61d6dd4e::t_acfe562aadc7c9 404-406,408
+  s_4fca4b61d6dd4e::t_f4d40882439702 240,418
+  s_4fca4b61d6dd4e::t_a2313cdf029361 135-136
+  s_4fca4b61d6dd4e::t_a2284fb0d74324 510-511
+  s_4fca4b61d6dd4e::t_97b9ca46bb875c 524
+  s_4fca4b61d6dd4e::t_b369d1169885e4 140-143
+  s_4fca4b61d6dd4e::t_e400153c5c5b94 537,539-540,544,550,553
+  s_4fca4b61d6dd4e::t_8c6296d6a76b23 565
+  s_4fca4b61d6dd4e::t_f195b28bc59bd4 274,276-277,282,284,286
+  s_4fca4b61d6dd4e::t_2acb49d543b5c9 292-295,306,308-309,311,318-319,326-329
+  s_4fca4b61d6dd4e::t_ac7c1fd0b5c69a 337-339,342-343
+pages/ai-recipe-detail/ai-recipe-detail.wxml
+  s_4fca4b61d6dd4e::t_d6036d94debcc8 1-13,17-23,27-33,37-43,47-51,61,66-69
+app.json
+  s_4fca4b61d6dd4e::t_66ad9093e1c1ea 23
+  s_4fca4b61d6dd4e::t_8f0807b38a8e22 28,30-31
+pages/order/order.wxss
+  s_4fca4b61d6dd4e::t_269145ec4e4b35 18
+  s_4fca4b61d6dd4e::t_6e61efb1a796d5 1,3-8,11-14,16,19-21,24-27,29-31,34-36,38-45,47-48,51-57,61,63,66-68,70,74,76,78-86,89-92,94-96,98-100,104,108-116,118-119,121-122,124-125,127-130,132,134-139,142-147,150-172,174-181,184-187,190-191
+  s_4fca4b61d6dd4e::t_56ca5fef02d89b 2,9-10,15,17,22-23,28,32-33,37,46,50,58-59,65,71,75,77,87-88,93,97,103,105,120,131,133,140-141,148-149,173,182-183,188-189
+pages/index/index.js
+  s_4fca4b61d6dd4e::t_e45794212c7899 150-156
+  s_4fca4b61d6dd4e::t_df148eefbe05c2 35
+  s_4fca4b61d6dd4e::t_48e1646b881c42 43-46
+pages/notification-settings/notification-settings.wxml
+  s_4fca4b61d6dd4e::t_47b025f0d517b8 36
+  s_4fca4b61d6dd4e::t_b8a9d75e541720 1,3,11,14-15,17,22,24-25,27,32,34-35,37,42,44-45,47,52,55
+  s_4fca4b61d6dd4e::t_ac08a37c91fbb2 46
+  s_4fca4b61d6dd4e::t_3b19470984e049 16
+  s_4fca4b61d6dd4e::t_100b8c94d621b0 6
+  s_4fca4b61d6dd4e::t_9e3248bfc89991 2,4-5,7,10,12-13,18,21,23,28,31,33,38,41,43,48,51,53-54,56-57
+  s_4fca4b61d6dd4e::t_af21129852fccf 26
+pages/order/DESIGN.md
+  s_4fca4b61d6dd4e::t_e99277bea2a44d 20
+  s_4fca4b61d6dd4e::t_733dca6d71455a 1-19,21-30
+pages/family/family.wxss
+  s_4fca4b61d6dd4e::t_963158c247622b 1,3-9,11-13,15,17-22,26-30,33-35,38-40,42-44,46-48,50
+  s_4fca4b61d6dd4e::t_8e06b2c69ed531 2,10,14,16,23-25,31-32,36-37,41,45,49
+pages/mine/DESIGN.md
+  s_4fca4b61d6dd4e::t_8e388f4c9d2e22 1-27,29-31,33
+  s_4fca4b61d6dd4e::t_2dce172d337292 28,32
+pages/recipe-detail/DESIGN.md
+  s_4fca4b61d6dd4e::t_9a31c50011c632 1-25
+pages/index/DESIGN.md
+  s_4fca4b61d6dd4e::t_60e03594f75ac1 1-13,15-47
+  s_4fca4b61d6dd4e::t_dfc083cb21c4d3 14
+pages/family-join/family-join.wxml
+  s_4fca4b61d6dd4e::t_40831e5678d20c 7
+  s_4fca4b61d6dd4e::t_03a7ecba8efff1 2-6,8
+pages/index/index.wxss
+  s_4fca4b61d6dd4e::t_bb54120cb126c2 55,60,70-73,75,77-82,84-93,95-96
+  s_4fca4b61d6dd4e::t_59e71b418f0947 8,12,19,25-26,29,36,41,66,74,76,94,100,102-103,117,127,135,144,156-161,165,172,177,180,184,186
+  s_4fca4b61d6dd4e::t_3f07d279bb4aec 2
+  s_4fca4b61d6dd4e::t_15b6d52a715389 1,3-7,9-11,13-15,17-18,21-24,27-28,30-35,37-40,42-54,56-59,61-65,67-69,97-99,101,104-116,118-123,128,130,132-134,136-137,139-143,145-155,166-168,173-176,178-179,181-183,185,187-191
+pages/recipe-edit/DESIGN.md
+  s_4fca4b61d6dd4e::t_a9e88be3338c74 1-25
+pages/family/DESIGN.md
+  s_4fca4b61d6dd4e::t_2d55f02a4419aa 1-22
+pages/order/order.wxml
+  s_4fca4b61d6dd4e::t_d1bd0e785d6b5c 1
+  s_4fca4b61d6dd4e::t_80f0074a165254 8
+  s_4fca4b61d6dd4e::t_6ee3356ceee858 59,61,63-65,69
+  s_4fca4b61d6dd4e::t_fdc4690bd8cd08 60,62,66-68
+  s_4fca4b61d6dd4e::t_db27f3ccc5be2d 3-7,9,13-22,27-28,34-35,38-53,55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.6",
+  "base_commit_sha": "8a437c7fb4e80acafdd99a4523ca135547c7de57",
+  "prompts": {},
+  "sessions": {
+    "s_4fca4b61d6dd4e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "dbf17b86-8c70-4e02-b26f-7a4d10cbd9e2",
+        "model": "default"
+      },
+      "human_author": "张津川 <jinchuan@uxin.com>"
+    },
+    "s_be4c49022fcdb9": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "6a825391-c157-479f-9c5d-9c0c7b3273d5",
+        "model": "default"
+      },
+      "human_author": "张津川 <jinchuan@uxin.com>"
+    }
+  }
+}
