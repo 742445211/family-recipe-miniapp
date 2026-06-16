@@ -1,0 +1,43 @@
+.edit-page {
+  padding-bottom: 60rpx;
+}
+
+.edit-page .form-group {
+  margin-bottom: var(--space-3);
+}
+
+.edit-page .form-group:last-child {
+  margin-bottom: 0;
+}
+
+.edit-page input,
+.edit-page textarea,
+.edit-page .picker-text {
+  background: var(--color-surface);
+  border-radius: var(--field-radius);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 88rpx;
+  border: 2rpx solid transparent;
+  box-shadow: var(--shadow-field);
+  color: var(--color-text);
+}
+
+.edit-page textarea {
+  min-height: 120rpx;
+}
+
+.clear-link {
+  display: inline-block;
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.submit-btn {
+  margin-top: var(--space-2);
+}

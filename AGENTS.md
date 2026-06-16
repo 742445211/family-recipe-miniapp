@@ -20,6 +20,7 @@ utils/
 pages/
   index/                       # Tab：菜谱列表（可切换收藏模式）
   order/                       # Tab：点菜 + 未读通知
+  fridge/ fridge-edit/ fridge-scan/  # Tab：冰箱库存 + 录入/识别
   mine/                        # Tab：我的
   recipe-detail/ recipe-edit/  # 菜谱详情与编辑
   family/ family-join/         # 家庭管理
@@ -52,6 +53,7 @@ docs/
 | 登录 | `api.login` | `POST /auth/login` |
 | 菜谱 | `getRecipes` / `getRecipe` | `GET /recipes` |
 | 点菜 | `getOrders` / `addOrder` | `GET|POST /orders` |
+| 冰箱 | `getFridgeItems` / `uploadFridgeScan` 等 | `GET|POST /fridge/*` |
 | 通知 | `getUnreadNotifications` | `GET /notifications/unread` |
 | 通道 | `createNotificationChannel` | `POST /notification-channels` |
 

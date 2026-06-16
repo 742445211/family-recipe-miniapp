@@ -6,11 +6,52 @@
         <input value="{{name}}" bindinput="onInput" data-field="name" placeholder="给这道菜起个响亮的名字" />
       </view>
 
+      <view wx:if="{{!isEdit && catalogEnabled}}" class="catalog-block">
+        <button
+          class="btn-primary btn-block catalog-btn"
+          hover-class="btn-hover"
+          bindtap="onCatalogLookup"
+          loading="{{catalogLoading}}"
+          disabled="{{catalogLoading}}"
+        >搜索生成</button>
+        <text wx:if="{{catalogRateLimit}}" class="catalog-rate">
+          菜谱生成剩余 {{catalogRateLimit.remaining}}/{{catalogRateLimit.limit}} 次（{{catalogRateLimit.limit === 5 ? '2 小时内' : '限流周期内'}}）
+        </text>
+        <view wx:if="{{catalogVariants.length > 1}}" class="variant-row">
+          <view
+            class="select-trigger variant-trigger {{variantSheetVisible ? 'is-open' : ''}}"
+            bindtap="openVariantSheet"
+            hover-class="select-trigger-hover"
+            hover-stay-time="80"
+          >
+            <text class="select-trigger-text">{{currentVariantLabel || '选择做法'}}</text>
+            <text class="variant-switch-hint">切换做法</text>
+            <view class="select-trigger-chevron"></view>
+          </view>
+        </view>
+        <button
+          wx:if="{{catalogVariants.length}}"
+          class="btn-outline btn-block catalog-alt-btn"
+          hover-class="btn-hover"
+          bindtap="onCatalogLookup"
+          data-new-variant="{{true}}"
+          loading="{{catalogLoading}}"
+          disabled="{{catalogLoading}}"
+        >生成另一种做法</button>
+        <text wx:if="{{selectedCatalogId}}" class="catalog-disclaimer">内容由 AI 生成，仅供参考，请核对后保存</text>
+      </view>
+
       <view class="form-group">
         <text class="label">分类</text>
-        <picker bindchange="onCategory" value="{{categoryIndex}}" range="{{categories}}">
-          <view class="picker-val">{{category || '选个分类'}}</view>
-        </picker>
+        <view
+          class="select-trigger {{categorySheetVisible ? 'is-open' : ''}}"
+          bindtap="openCategorySheet"
+          hover-class="select-trigger-hover"
+          hover-stay-time="80"
+        >
+          <text class="select-trigger-text {{category ? '' : 'select-trigger-placeholder'}}">{{category || '选个分类'}}</text>
+          <view class="select-trigger-chevron"></view>
+        </view>
       </view>
 
       <view class="form-group">
@@ -53,6 +94,18 @@
 
   <view class="gradient-border">
     <view class="gradient-border-inner">
+      <view class="section-title">调料</view>
+      <view wx:for="{{seasonings}}" wx:key="index" class="ingredient-row">
+        <input value="{{item.name}}" data-idx="{{index}}" data-field="sname" bindinput="onSeasoning" placeholder="调料名" />
+        <input value="{{item.amount}}" data-idx="{{index}}" data-field="samount" bindinput="onSeasoning" placeholder="用量" />
+        <text class="del" bindtap="delSeasoning" data-idx="{{index}}">×</text>
+      </view>
+      <view class="add-btn" bindtap="addSeasoning">+ 再加一种调料</view>
+    </view>
+  </view>
+
+  <view class="gradient-border">
+    <view class="gradient-border-inner">
       <view class="section-title">步骤</view>
       <view wx:for="{{steps}}" wx:key="index" class="step-row">
         <text class="step-num">{{index + 1}}</text>
@@ -73,4 +126,22 @@
   <button class="btn-primary btn-block submit-btn" hover-class="btn-hover" bindtap="submit" loading="{{submitting}}">
     {{isEdit ? '保存修改' : '出锅！添加菜谱'}}
   </button>
+
+  <select-sheet
+    visible="{{categorySheetVisible}}"
+    title="选择分类"
+    options="{{categoryOptions}}"
+    value="{{category}}"
+    bind:close="closeCategorySheet"
+    bind:select="onCategorySelect"
+  />
+
+  <select-sheet
+    visible="{{variantSheetVisible}}"
+    title="选择做法"
+    options="{{variantOptions}}"
+    value="{{selectedCatalogId}}"
+    bind:close="closeVariantSheet"
+    bind:select="onVariantSelect"
+  />
 </view>

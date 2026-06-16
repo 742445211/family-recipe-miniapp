@@ -1,0 +1,5 @@
+{
+  "usingComponents": {
+    "select-sheet": "/components/select-sheet/select-sheet"
+  }
+}

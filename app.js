@@ -39,7 +39,7 @@ App({
     indexMode: null,
     lastNotification: null,
     unreadCount: 0,
-    features: { ai_recommend: false }
+    features: { ai_recommend: false, catalog_recipe: false, fridge: false }
   },
 
   setNotificationCallback(fn) {

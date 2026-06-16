@@ -22,8 +22,8 @@ function formatRetryHint(sec) {
 }
 
 const RECOMMEND_COUNT = 5
-const RATE_WINDOW_HOURS = 3
-const RATE_LIMIT_MAX = 3
+const RATE_WINDOW_HOURS = 2
+const RATE_LIMIT_MAX = 5
 
 const LOADING_TIPS = [
   '正在翻你的收藏...',

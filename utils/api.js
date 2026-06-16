@@ -253,6 +253,75 @@ const api = {
 
   getWeather: () => request('/weather'),
 
+  // ========== 全局菜谱库 ==========
+
+  /**
+   * lookupCatalogRecipe - 按菜名查全局库或 AI 生成
+   * @param {string} name
+   * @param {boolean} newVariant
+   * @returns {Promise} - { name, generated, selected_id, variants, rate_limit }
+   */
+  lookupCatalogRecipe: (name, newVariant = false) =>
+    request('/catalog-recipes/lookup', 'POST', { name, new_variant: !!newVariant }),
+
+  getCatalogRecipe: (id) => request('/catalog-recipes/' + id),
+
+  markCatalogRecipeUsed: (id) => request('/catalog-recipes/' + id + '/use', 'POST'),
+
+  // ========== 冰箱食材 ==========
+
+  getFridgeItems: () => request('/fridge/items'),
+
+  createFridgeItem: (data) => request('/fridge/items', 'POST', data),
+
+  createFridgeItems: (items) => request('/fridge/items', 'POST', { items }),
+
+  updateFridgeItem: (id, data) => request('/fridge/items/' + id, 'PUT', data),
+
+  deleteFridgeItem: (id) => request('/fridge/items/' + id, 'DELETE'),
+
+  getFridgeScan: (id) => request('/fridge/scans/' + id),
+
+  confirmFridgeScan: (id, items) => request('/fridge/scans/' + id + '/confirm', 'POST', { items }),
+
+  /**
+   * uploadFridgeScan - 拍照上传并发起冰箱识别
+   * 503 时不弹全局 toast，由页面展示离线提示
+   */
+  uploadFridgeScan: (filePath) => new Promise((resolve, reject) => {
+    const token = wx.getStorageSync('token')
+    wx.uploadFile({
+      url: BASE_URL + '/fridge/scans',
+      filePath,
+      name: 'file',
+      header: { Authorization: token ? 'Bearer ' + token : '' },
+      success(res) {
+        let data
+        try {
+          data = JSON.parse(res.data)
+        } catch (e) {
+          reject({ msg: '响应解析失败' })
+          return
+        }
+        if (res.statusCode === 401 || data.code === 401) {
+          notification.handleAuthExpired()
+          reject(data)
+          return
+        }
+        if (data.code === 0) {
+          resolve(data.data)
+          return
+        }
+        if (res.statusCode === 503 || data.code === 503) {
+          reject({ code: 503, msg: data.msg || '图片识别服务离线', data: data.data })
+          return
+        }
+        reject(data)
+      },
+      fail: reject
+    })
+  }),
+
   // ========== 文件上传 ==========
 
   /**

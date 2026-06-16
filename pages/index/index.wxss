@@ -19,16 +19,12 @@
   gap: var(--space-2);
 }
 
-.category-chip {
-  background: var(--color-accent-soft);
+.category-trigger {
+  flex: 1;
+  min-width: 0;
   border-radius: var(--radius-full);
-  padding: 14rpx var(--space-3);
-  font-size: var(--text-sm);
-  color: var(--color-primary-dark);
-  font-weight: 600;
-  line-height: var(--leading-normal);
-  box-shadow: none;
-  border: none;
+  min-height: 72rpx;
+  padding: 12rpx var(--space-3);
 }
 
 .waterfall {

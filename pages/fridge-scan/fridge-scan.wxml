@@ -1,0 +1,45 @@
+<view class="container scan-page">
+  <view wx:if="{{imageUrl}}" class="preview-wrap gradient-border">
+    <view class="gradient-border-inner is-flush preview-inner">
+      <image src="{{imageUrl}}" mode="aspectFit" class="preview-img" lazy-load="{{true}}" />
+    </view>
+  </view>
+
+  <view wx:if="{{polling || status === 'pending' || status === 'processing'}}" class="status-box">
+    <text class="status-title">正在识别食材...</text>
+    <text class="status-desc">请稍等，大约需要几秒</text>
+  </view>
+
+  <view wx:elif="{{status === 'failed'}}" class="status-box">
+    <text class="status-title">识别失败</text>
+    <text class="status-desc">{{errorMsg || '请重试或手动添加'}}</text>
+    <button class="btn-outline btn-block" hover-class="btn-hover" bindtap="goBack">返回</button>
+  </view>
+
+  <view wx:elif="{{status === 'confirmed'}}" class="status-box">
+    <text class="status-title">已确认入库</text>
+    <button class="btn-primary btn-block" hover-class="btn-hover" bindtap="goBack">返回冰箱</button>
+  </view>
+
+  <view wx:elif="{{status === 'done'}}" class="confirm-section">
+    <text class="section-hint">勾选并编辑识别结果，确认后写入冰箱</text>
+    <view wx:for="{{candidates}}" wx:key="key" class="gradient-border candidate-wrap">
+      <view class="gradient-border-inner candidate-card">
+        <view class="candidate-head">
+          <checkbox checked="{{item.checked}}" bindtap="toggleCandidate" data-idx="{{index}}" color="#FF6B35" />
+          <input class="candidate-name" value="{{item.name}}" data-idx="{{index}}" data-field="name" bindinput="onCandidateInput" placeholder="食材名" />
+        </view>
+        <view class="candidate-fields">
+          <input value="{{item.amount}}" data-idx="{{index}}" data-field="amount" bindinput="onCandidateInput" placeholder="数量" />
+          <picker mode="date" value="{{item.expiryDate}}" data-idx="{{index}}" bindchange="onCandidateDate">
+            <view class="picker-text picker-inline">{{item.expiryDate || '保质期'}}</view>
+          </picker>
+        </view>
+        <input class="candidate-note" value="{{item.note}}" data-idx="{{index}}" data-field="note" bindinput="onCandidateInput" placeholder="备注（可选）" />
+      </view>
+    </view>
+    <button class="btn-primary btn-block confirm-btn" hover-class="btn-hover" bindtap="confirmItems" loading="{{submitting}}">
+      确认入库
+    </button>
+  </view>
+</view>

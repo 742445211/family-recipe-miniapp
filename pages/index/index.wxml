@@ -19,9 +19,15 @@
       />
     </view>
     <view class="toolbar-row">
-      <picker bindchange="onCategory" value="{{categoryIndex}}" range="{{categories}}">
-        <view class="category-chip">{{categories[categoryIndex] || '全部分类'}}</view>
-      </picker>
+      <view
+        class="select-trigger category-trigger {{categorySheetVisible ? 'is-open' : ''}}"
+        bindtap="openCategorySheet"
+        hover-class="select-trigger-hover"
+        hover-stay-time="80"
+      >
+        <text class="select-trigger-text">{{categoryIndex >= 0 ? categories[categoryIndex] : '全部分类'}}</text>
+        <view class="select-trigger-chevron"></view>
+      </view>
       <view class="view-toggle">
         <view
           class="view-toggle-item {{viewMode === 'waterfall' ? 'active' : ''}}"
@@ -124,4 +130,13 @@
       <view class="float-btn-icon" aria-hidden="true"></view>
     </view>
   </view>
+
+  <select-sheet
+    visible="{{categorySheetVisible}}"
+    title="选择分类"
+    options="{{categoryOptions}}"
+    value="{{category}}"
+    bind:close="closeCategorySheet"
+    bind:select="onCategorySelect"
+  />
 </view>

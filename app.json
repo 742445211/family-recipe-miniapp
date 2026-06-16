@@ -6,6 +6,9 @@
     "pages/recipe-detail/recipe-detail",
     "pages/recipe-edit/recipe-edit",
     "pages/order/order",
+    "pages/fridge/fridge",
+    "pages/fridge-edit/fridge-edit",
+    "pages/fridge-scan/fridge-scan",
     "pages/mine/mine",
     "pages/family/family",
     "pages/family-join/family-join",
@@ -41,6 +44,12 @@
         "text": "点菜",
         "iconPath": "images/tab-menu.png",
         "selectedIconPath": "images/tab-menu-active.png"
+      },
+      {
+        "pagePath": "pages/fridge/fridge",
+        "text": "冰箱",
+        "iconPath": "images/tab-fridge.png",
+        "selectedIconPath": "images/tab-fridge-active.png"
       },
       {
         "pagePath": "pages/mine/mine",

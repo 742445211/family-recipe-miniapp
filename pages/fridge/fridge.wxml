@@ -1,0 +1,64 @@
+<view class="container page-fridge page-with-fridge-bar">
+  <view wx:if="{{!enabled}}" class="empty">
+    <text class="empty-title">冰箱功能未开启</text>
+    <text>请联系管理员在服务端开启 fridge 功能</text>
+  </view>
+
+  <view wx:elif="{{needFamily}}" class="empty">
+    <text class="empty-title">还没加入家庭</text>
+    <text>加入家庭后才能共享冰箱库存</text>
+    <view class="empty-action btn-tap btn-primary" bindtap="goFamily">去加入家庭</view>
+  </view>
+
+  <view wx:elif="{{loadError}}" class="empty">
+    <text class="empty-title">加载失败</text>
+    <text>下拉刷新再试试</text>
+  </view>
+
+  <view wx:elif="{{loading && !items.length}}" class="empty">
+    <text class="empty-title">打开冰箱门...</text>
+    <text>正在清点库存</text>
+  </view>
+
+  <view wx:elif="{{!items.length}}" class="empty">
+    <text class="empty-title">冰箱空空如也</text>
+    <text>手动添加或拍张照片识别吧</text>
+  </view>
+
+  <view wx:else class="item-list">
+    <view
+      wx:for="{{items}}"
+      wx:key="id"
+      class="gradient-border item-wrap"
+      bindtap="goEdit"
+      data-id="{{item.id}}"
+    >
+      <view class="gradient-border-inner item-card is-flush {{item.expiryStatus === 'expired' ? 'is-expired' : ''}} {{item.expiryStatus === 'soon' ? 'is-soon' : ''}}">
+        <view class="item-main">
+          <view class="item-head">
+            <text class="item-name">{{item.name}}</text>
+            <text class="tag tag-sm tag-source">{{item.sourceLabel}}</text>
+          </view>
+          <view class="item-meta">
+            <text wx:if="{{item.amount}}" class="item-amount">{{item.amount}}</text>
+            <text wx:if="{{item.expiry_date}}" class="item-expiry">{{item.expiry_date}}</text>
+            <text wx:if="{{item.expiryHint}}" class="item-expiry-hint">{{item.expiryHint}}</text>
+          </view>
+          <text wx:if="{{item.note}}" class="item-note">{{item.note}}</text>
+        </view>
+        <text class="del-btn" catchtap="removeItem" data-id="{{item.id}}" data-name="{{item.name}}">×</text>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{enabled && !needFamily}}" class="fridge-action-bar">
+    <view class="fridge-action-btn fridge-action-add" bindtap="goAdd" hover-class="fridge-action-hover" hover-stay-time="80">
+      <view class="fridge-action-icon fridge-icon-plus" aria-hidden="true"></view>
+      <text>手动添加</text>
+    </view>
+    <view class="fridge-action-btn fridge-action-scan" bindtap="scanPhoto" hover-class="fridge-action-hover" hover-stay-time="80">
+      <view class="fridge-action-icon fridge-icon-camera" aria-hidden="true"></view>
+      <text>拍照识别</text>
+    </view>
+  </view>
+</view>

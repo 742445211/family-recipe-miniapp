@@ -1,0 +1,32 @@
+<view class="container edit-page">
+  <view class="gradient-border">
+    <view class="gradient-border-inner">
+      <view class="form-group">
+        <text class="label">食材名称 *</text>
+        <input value="{{name}}" bindinput="onInput" data-field="name" placeholder="如：鸡蛋、牛奶" />
+      </view>
+
+      <view class="form-group">
+        <text class="label">数量</text>
+        <input value="{{amount}}" bindinput="onInput" data-field="amount" placeholder="如：6个、1盒" />
+      </view>
+
+      <view class="form-group">
+        <text class="label">保质期</text>
+        <picker mode="date" value="{{expiryDate}}" bindchange="onExpiryChange">
+          <view class="picker-text">{{expiryDate || '选择日期（可选）'}}</view>
+        </picker>
+        <text wx:if="{{expiryDate}}" class="clear-link" bindtap="clearExpiry">清除日期</text>
+      </view>
+
+      <view class="form-group">
+        <text class="label">备注</text>
+        <textarea value="{{note}}" bindinput="onInput" data-field="note" placeholder="如：冷藏、上层" auto-height />
+      </view>
+    </view>
+  </view>
+
+  <button class="btn-primary btn-block submit-btn" hover-class="btn-hover" bindtap="submit" loading="{{submitting}}">
+    {{isEdit ? '保存修改' : '放进冰箱'}}
+  </button>
+</view>

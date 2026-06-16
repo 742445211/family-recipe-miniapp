@@ -34,7 +34,9 @@ Page({
     mode: 'recipes',       // 当前模式：'recipes'（菜谱）或 'favorites'（收藏）
     viewMode: 'waterfall', // 视图模式：'waterfall' 瀑布流 | 'list' 列表
     loading: false,
-    loadError: false
+    loadError: false,
+    categorySheetVisible: false,
+    categoryOptions: []
   },
 
   onLoad(options) {
@@ -95,7 +97,11 @@ Page({
         categoryIndex = -1
       }
     }
-    this.setData({ categories, category, categoryIndex })
+    const categoryOptions = categories.map((c, i) => ({
+      value: i === 0 ? '' : c,
+      label: c
+    }))
+    this.setData({ categories, category, categoryIndex, categoryOptions })
   },
 
   backToRecipes() {
@@ -133,10 +139,22 @@ Page({
     this._searchTimer = setTimeout(() => this.loadRecipes(), 300)
   },
 
-  onCategory(e) {
-    const idx = parseInt(e.detail.value, 10)
-    const cat = idx === 0 ? '' : this.data.categories[idx]
-    this.setData({ categoryIndex: idx, category: cat })
+  openCategorySheet() {
+    this.setData({ categorySheetVisible: true })
+  },
+
+  closeCategorySheet() {
+    this.setData({ categorySheetVisible: false })
+  },
+
+  onCategorySelect(e) {
+    const { value } = e.detail
+    const idx = value === '' ? 0 : this.data.categories.indexOf(value)
+    this.setData({
+      category: value,
+      categoryIndex: idx >= 0 ? idx : -1,
+      categorySheetVisible: false
+    })
     this.loadRecipes()
   },
 

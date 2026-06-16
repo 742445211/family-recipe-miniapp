@@ -1,76 +1,118 @@
 /**
  * pages/recipe-edit/recipe-edit.js - 菜谱编辑 / 新增页
- * 职责：
- *   1. 新增菜谱：填写菜名、分类、难度、时间、封面、食材、步骤
- *   2. 编辑菜谱：加载已有菜谱数据，修改后保存
- *   3. 图片上传（wx.chooseImage → api.upload）
- *   4. 食材 / 步骤的动态增删
- *   5. 表单验证 + 提交保存
  */
 
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
 const { DEFAULT_CATEGORY_NAMES, mergeCategoryNames } = require('../../utils/category')
 
+const CATALOG_RATE_LIMIT_MAX = 5
+const CATALOG_RATE_WINDOW_HOURS = 2
+
+function getAppSafe() {
+  try {
+    return getApp()
+  } catch (e) {
+    return null
+  }
+}
+
+function formatCatalogRetryHint(sec) {
+  if (!sec || sec <= 0) return '稍后再试'
+  const h = Math.ceil(sec / 3600)
+  if (h <= 1) return '约 1 小时后再试'
+  return '约 ' + h + ' 小时后再试'
+}
+
+function hasFormContent(data) {
+  if (data.name.trim()) return true
+  if (data.coverUrl) return true
+  if (data.tips.trim()) return true
+  if (data.ingredients.some(i => i.name && i.name.trim())) return true
+  if (data.seasonings.some(i => i.name && i.name.trim())) return true
+  if (data.steps.some(s => s && s.trim())) return true
+  return false
+}
+
 Page({
   data: {
-    id: null,             // 菜谱 ID（编辑模式时有值，新增模式为 null）
-    isEdit: false,        // 是否为编辑模式
-    name: '',             // 菜名
-    category: '',         // 分类
-    categoryIndex: -1,    // 分类 picker 索引
+    id: null,
+    isEdit: false,
+    name: '',
+    category: '',
+    categoryIndex: -1,
     categories: DEFAULT_CATEGORY_NAMES.slice(),
-    difficulty: 'medium', // 难度：easy/medium/hard
-    cookTime: 0,          // 烹饪时间（分钟）
-    coverUrl: '',         // 封面图 URL
-    ingredients: [{ name: '', amount: '' }],  // 食材列表 [{name, amount}]
-    seasonings: [],       // 调料列表
-    steps: [''],          // 步骤列表（字符串数组）
-    tips: '',             // 小贴士
-    submitting: false     // 是否正在提交（防重复提交）
+    categoryOptions: [],
+    categorySheetVisible: false,
+    difficulty: 'medium',
+    cookTime: 0,
+    coverUrl: '',
+    ingredients: [{ name: '', amount: '' }],
+    seasonings: [],
+    steps: [''],
+    tips: '',
+    submitting: false,
+    catalogEnabled: false,
+    catalogLoading: false,
+    catalogGenerated: false,
+    catalogVariants: [],
+    selectedCatalogId: null,
+    catalogRateLimit: null,
+    variantSheetVisible: false,
+    variantOptions: [],
+    currentVariantLabel: ''
   },
 
-  /**
-   * onLoad - 页面加载
-   * 根据是否有 id 参数判断新增还是编辑模式
-   * @param {Object} options - 页面参数，options.id 存在则为编辑模式
-   */
   async onLoad(options) {
     if (!requireLogin()) return
+    await this._initCatalogFeature()
     await this.loadCategories()
     if (options.id) {
-      // 编辑模式：设置 ID，加载现有菜谱数据
       this.setData({ id: options.id, isEdit: true })
       wx.setNavigationBarTitle({ title: '编辑菜谱' })
       await this.loadRecipe(options.id)
     } else {
-      // 新增模式
       wx.setNavigationBarTitle({ title: '新增菜谱' })
     }
   },
 
-  /** 从服务端拉取家庭分类，失败时用默认列表 */
+  async _initCatalogFeature() {
+    const app = getAppSafe()
+    if (app && app._featuresPromise) {
+      try {
+        await app._featuresPromise
+      } catch (e) { /* ignore */ }
+    }
+    const enabled = !!(app && app.globalData && app.globalData.features && app.globalData.features.catalog_recipe)
+    this.setData({ catalogEnabled: enabled })
+  },
+
+  _buildCategoryOptions(categories) {
+    return (categories || []).map((c) => ({ value: c, label: c }))
+  },
+
   async loadCategories() {
     try {
       const data = await api.getCategories()
-      this.setData({ categories: mergeCategoryNames(data) })
+      const categories = mergeCategoryNames(data)
+      this.setData({
+        categories,
+        categoryOptions: this._buildCategoryOptions(categories)
+      })
     } catch (e) {
-      this.setData({ categories: DEFAULT_CATEGORY_NAMES.slice() })
+      const categories = DEFAULT_CATEGORY_NAMES.slice()
+      this.setData({
+        categories,
+        categoryOptions: this._buildCategoryOptions(categories)
+      })
     }
   },
 
-  /**
-   * loadRecipe - 加载菜谱数据到表单（编辑模式）
-   * 将 API 返回的 JSON 字符串字段解析为数组，填入表单
-   *
-   * @param {string} id - 菜谱 ID
-   * @returns {Promise<void>}
-   */
   async loadRecipe(id) {
     try {
       const r = await api.getRecipe(id)
-      // 解析 JSON 字段（食材和步骤）
       const ing = JSON.parse(r.ingredients || '[]')
+      const seasonings = JSON.parse(r.seasonings || '[]')
       const steps = JSON.parse(r.steps || '[]')
       let categories = this.data.categories.slice()
       let category = r.category || ''
@@ -84,12 +126,12 @@ Page({
         category,
         categories,
         categoryIndex,
+        categoryOptions: this._buildCategoryOptions(categories),
         difficulty: r.difficulty || 'medium',
         cookTime: r.cook_time || 0,
         coverUrl: r.cover_url || '',
-        // 食材为空时保留一个空行
         ingredients: ing.length ? ing : [{ name: '', amount: '' }],
-        // 步骤为空时保留一个空行
+        seasonings,
         steps: steps.length ? steps : [''],
         tips: r.tips || ''
       })
@@ -98,154 +140,230 @@ Page({
     }
   },
 
-  /**
-   * onInput - 通用输入事件处理
-   * 通过 data-field 属性区分不同字段
-   * @param {Object} e - 输入事件，e.currentTarget.dataset.field 为字段名
-   */
   onInput(e) {
     const field = e.currentTarget.dataset.field
     this.setData({ [field]: e.detail.value })
   },
 
-  /**
-   * onCategory - 分类选择事件
-   * @param {Object} e - picker change 事件
-   */
-  onCategory(e) {
-    const idx = parseInt(e.detail.value)
-    this.setData({ categoryIndex: idx, category: this.data.categories[idx] })
+  openCategorySheet() {
+    this.setData({ categorySheetVisible: true })
   },
 
-  /**
-   * setDifficulty - 设置难度
-   * @param {Object} e - 点击事件，e.currentTarget.dataset.val 为难度值
-   */
+  closeCategorySheet() {
+    this.setData({ categorySheetVisible: false })
+  },
+
+  onCategorySelect(e) {
+    const { value } = e.detail
+    const idx = this.data.categories.indexOf(value)
+    this.setData({
+      category: value,
+      categoryIndex: idx >= 0 ? idx : -1,
+      categorySheetVisible: false
+    })
+  },
+
   setDifficulty(e) {
     this.setData({ difficulty: e.currentTarget.dataset.val })
   },
 
-  /**
-   * chooseImage - 选择并上传封面图
-   * 流程：wx.chooseImage 选图 → wx.showLoading → api.upload 上传 → 更新 coverUrl
-   * @returns {Promise<void>}
-   */
   async chooseImage() {
     try {
-      // 从相册选择一张压缩后的图片
       const res = await wx.chooseImage({ count: 1, sizeType: ['compressed'] })
       wx.showLoading({ title: '上传中...' })
-      // 上传到服务器，获取返回的 URL
       const data = await api.upload(res.tempFilePaths[0])
       wx.hideLoading()
       this.setData({ coverUrl: data.url })
     } catch (e) { wx.hideLoading() }
   },
 
-  // ========== 食材管理 ==========
-
-  /**
-   * addIngredient - 添加一行食材输入
-   */
   addIngredient() {
     this.setData({ ingredients: [...this.data.ingredients, { name: '', amount: '' }] })
   },
 
-  /**
-   * delIngredient - 删除指定食材行
-   * 删除后如果列表为空，保留一行空输入
-   * @param {Object} e - 点击事件，e.currentTarget.dataset.idx 为索引
-   */
   delIngredient(e) {
     const idx = e.currentTarget.dataset.idx
     const list = this.data.ingredients.filter((_, i) => i !== idx)
     this.setData({ ingredients: list.length ? list : [{ name: '', amount: '' }] })
   },
 
-  /**
-   * onIngredient - 食材输入事件
-   * @param {Object} e - 输入事件，含 dataset.idx（索引）和 dataset.field（字段名）
-   */
   onIngredient(e) {
     const idx = e.currentTarget.dataset.idx
     const field = e.currentTarget.dataset.field
-    // 构造动态 key：ingredients[N].name 或 ingredients[N].amount
     const key = 'ingredients[' + idx + '].' + (field === 'iname' ? 'name' : 'amount')
     this.setData({ [key]: e.detail.value })
   },
 
-  // ========== 步骤管理 ==========
+  addSeasoning() {
+    this.setData({ seasonings: [...this.data.seasonings, { name: '', amount: '' }] })
+  },
 
-  /**
-   * addStep - 添加一个步骤输入框
-   */
+  delSeasoning(e) {
+    const idx = e.currentTarget.dataset.idx
+    const list = this.data.seasonings.filter((_, i) => i !== idx)
+    this.setData({ seasonings: list })
+  },
+
+  onSeasoning(e) {
+    const idx = e.currentTarget.dataset.idx
+    const field = e.currentTarget.dataset.field
+    const key = 'seasonings[' + idx + '].' + (field === 'sname' ? 'name' : 'amount')
+    this.setData({ [key]: e.detail.value })
+  },
+
   addStep() {
     this.setData({ steps: [...this.data.steps, ''] })
   },
 
-  /**
-   * delStep - 删除指定步骤
-   * 删除后如果列表为空，保留一个空输入框
-   * @param {Object} e - 点击事件，e.currentTarget.dataset.idx 为索引
-   */
   delStep(e) {
     const idx = e.currentTarget.dataset.idx
     const list = this.data.steps.filter((_, i) => i !== idx)
     this.setData({ steps: list.length ? list : [''] })
   },
 
-  /**
-   * onStep - 步骤内容输入事件
-   * @param {Object} e - 输入事件，e.currentTarget.dataset.idx 为步骤索引
-   */
   onStep(e) {
     const idx = e.currentTarget.dataset.idx
     this.setData({ ['steps[' + idx + ']']: e.detail.value })
   },
 
-  /**
-   * submit - 提交保存菜谱
-   * 校验菜名不为空 → 构建 payload → 调用 createRecipe 或 updateRecipe
-   * @returns {Promise<void>}
-   */
+  applyVariant(v) {
+    const ing = JSON.parse(v.ingredients || '[]')
+    const seasonings = JSON.parse(v.seasonings || '[]')
+    const steps = JSON.parse(v.steps || '[]')
+    let categories = this.data.categories.slice()
+    let category = v.category || ''
+    let categoryIndex = category ? categories.indexOf(category) : -1
+    if (category && categoryIndex < 0) {
+      categories = [...categories, category]
+      categoryIndex = categories.length - 1
+    }
+    const variantOptions = this.data.catalogVariants.map(item => ({
+      value: item.id,
+      label: item.variant_label || item.name,
+      subtitle: item.category || ''
+    }))
+    this.setData({
+      name: v.name,
+      category,
+      categories,
+      categoryIndex,
+      categoryOptions: this._buildCategoryOptions(categories),
+      difficulty: v.difficulty || 'medium',
+      cookTime: v.cook_time || 0,
+      coverUrl: v.cover_url || '',
+      ingredients: ing.length ? ing : [{ name: '', amount: '' }],
+      seasonings: seasonings.length ? seasonings : [],
+      steps: steps.length ? steps : [''],
+      tips: v.tips || '',
+      selectedCatalogId: v.id,
+      currentVariantLabel: v.variant_label || v.name,
+      variantOptions
+    })
+  },
+
+  async _confirmOverwriteIfNeeded() {
+    if (!hasFormContent(this.data)) return true
+    const res = await new Promise((resolve) => {
+      wx.showModal({
+        title: '覆盖已填内容？',
+        content: '搜索生成将覆盖当前表单内容，是否继续？',
+        success: (r) => resolve(r.confirm)
+      })
+    })
+    return res
+  },
+
+  async onCatalogLookup(e) {
+    const ds = e && e.currentTarget && e.currentTarget.dataset
+    const newVariant = !!(ds && (ds.newVariant === true || ds.newVariant === 'true'))
+    const name = this.data.name.trim()
+    if (!name) {
+      return wx.showToast({ title: '请先输入菜名', icon: 'none' })
+    }
+    if (!newVariant && hasFormContent(this.data)) {
+      const ok = await this._confirmOverwriteIfNeeded()
+      if (!ok) return
+    }
+    this.setData({ catalogLoading: true })
+    try {
+      const data = await api.lookupCatalogRecipe(name, newVariant)
+      const variants = data.variants || []
+      if (!variants.length) {
+        return wx.showToast({ title: '未找到菜谱', icon: 'none' })
+      }
+      const selected = variants.find(v => v.id === data.selected_id) || variants[0]
+      const variantOptions = variants.map(item => ({
+        value: item.id,
+        label: item.variant_label || item.name,
+        subtitle: item.category || ''
+      }))
+      this.setData({
+        catalogVariants: variants,
+        catalogGenerated: !!data.generated,
+        catalogRateLimit: data.rate_limit || null,
+        variantOptions
+      })
+      this.applyVariant(selected)
+      const tip = data.generated ? '已生成并填入表单' : '已从菜谱库填入'
+      wx.showToast({ title: tip, icon: 'none' })
+    } catch (e) {
+      if (e && e.code === 429) {
+        const rl = e.data && e.data.rate_limit
+        const hint = formatCatalogRetryHint(rl && rl.reset_after_sec)
+        wx.showModal({ title: '生成次数已满', content: hint, showCancel: false })
+        if (e.data) this.setData({ catalogRateLimit: e.data.rate_limit })
+        return
+      }
+      wx.showToast({ title: (e && e.msg) || '生成失败', icon: 'none' })
+    } finally {
+      this.setData({ catalogLoading: false })
+    }
+  },
+
+  openVariantSheet() {
+    this.setData({ variantSheetVisible: true })
+  },
+
+  closeVariantSheet() {
+    this.setData({ variantSheetVisible: false })
+  },
+
+  onVariantSelect(e) {
+    const { value } = e.detail
+    const v = this.data.catalogVariants.find(item => item.id === value)
+    if (!v) return
+    this.applyVariant(v)
+    this.setData({ variantSheetVisible: false })
+    api.markCatalogRecipeUsed(v.id).catch(() => {})
+  },
+
   async submit() {
-    // 校验：菜名不能为空
     if (!this.data.name.trim()) {
       return wx.showToast({ title: '请输入菜名', icon: 'none' })
     }
-    // 设置提交中状态，防止重复点击
     this.setData({ submitting: true })
-
-    // 构建请求体：将食材/步骤数组转为 JSON 字符串存储
     const payload = {
       name: this.data.name.trim(),
       category: this.data.category || '其他',
       difficulty: this.data.difficulty,
-      cook_time: parseInt(this.data.cookTime) || 0,
+      cook_time: parseInt(this.data.cookTime, 10) || 0,
       cover_url: this.data.coverUrl,
-      // 过滤掉空食材行后序列化
       ingredients: JSON.stringify(this.data.ingredients.filter(i => i.name)),
-      // 过滤掉空调料后序列化
       seasonings: JSON.stringify(this.data.seasonings.filter(i => i.name)),
-      // 过滤掉空步骤后序列化
       steps: JSON.stringify(this.data.steps.filter(s => s.trim())),
       tips: this.data.tips
     }
-
     try {
-      // 根据有无 id 判断是更新还是新增
       if (this.data.id) {
         await api.updateRecipe(this.data.id, payload)
       } else {
         await api.createRecipe(payload)
       }
       wx.showToast({ title: '保存成功', icon: 'success' })
-      // 延迟返回上一页，让用户看到成功提示
       setTimeout(() => wx.navigateBack(), 1000)
     } catch (e) {
       wx.showToast({ title: '保存失败', icon: 'none' })
     } finally {
-      // 无论成功或失败都解除提交状态
       this.setData({ submitting: false })
     }
   }

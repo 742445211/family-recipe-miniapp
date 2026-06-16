@@ -1,0 +1,30 @@
+<view wx:if="{{mounted}}" class="select-sheet-root">
+  <view
+    class="select-sheet-mask {{active ? 'is-active' : ''}}"
+    catchtouchmove="noop"
+    bindtap="onMaskTap"
+  ></view>
+  <view class="select-sheet-panel {{active ? 'is-active' : ''}}" catchtap="noop">
+    <view class="select-sheet-header">
+      <text class="select-sheet-title">{{title}}</text>
+      <view class="select-sheet-cancel" bindtap="onCancel">取消</view>
+    </view>
+    <scroll-view scroll-y class="select-sheet-list" enhanced show-scrollbar="{{false}}">
+      <view
+        wx:for="{{options}}"
+        wx:key="index"
+        class="select-sheet-item {{value === item.value ? 'is-selected' : ''}}"
+        bindtap="onSelect"
+        data-index="{{index}}"
+        hover-class="select-sheet-item-hover"
+        hover-stay-time="80"
+      >
+        <view class="select-sheet-item-main">
+          <text class="select-sheet-label">{{item.label}}</text>
+          <text wx:if="{{item.subtitle}}" class="select-sheet-subtitle">{{item.subtitle}}</text>
+        </view>
+        <view wx:if="{{value === item.value}}" class="select-sheet-check" aria-hidden="true"></view>
+      </view>
+    </scroll-view>
+  </view>
+</view>
