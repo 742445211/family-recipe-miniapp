@@ -13,6 +13,13 @@
 const BASE_URL = 'https://www.zzzjc.xin/api'
 const notification = require('./notification')
 
+function buildQuery(params = {}) {
+  return Object.keys(params)
+    .filter(k => params[k] !== undefined && params[k] !== null && params[k] !== '')
+    .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+    .join('&')
+}
+
 /**
  * request - 通用网络请求函数
  * @param {string} url    - 接口路径（相对于 BASE_URL）
@@ -87,13 +94,12 @@ const api = {
   // ========== 菜谱 ==========
 
   /**
-   * getRecipes - 获取菜谱列表（支持搜索和分类筛选）
-   * @param {Object} params - 查询参数 { keyword?, category? }
-   * @returns {Promise}     - 返回 { list: [...] } 菜谱列表
+   * getRecipes - 获取菜谱列表（支持搜索、分类筛选与分页）
+   * @param {Object} params - { keyword?, category?, page?, page_size? }
+   * @returns {Promise}     - { list, total, page, page_size, has_more }
    */
   getRecipes: (params = {}) => {
-    // 将参数对象转为 query string
-    const qs = Object.keys(params).map(k => k + '=' + params[k]).join('&')
+    const qs = buildQuery(params)
     return request('/recipes' + (qs ? '?' + qs : ''))
   },
 
@@ -212,10 +218,14 @@ const api = {
   // ========== 收藏 ==========
 
   /**
-   * getFavorites - 获取用户收藏的菜谱列表
-   * @returns {Promise} - 返回收藏列表数组，每项含 recipe 字段
+   * getFavorites - 获取用户收藏的菜谱列表（分页）
+   * @param {Object} params - { page?, page_size? }
+   * @returns {Promise} - { list, total, page, page_size, has_more }
    */
-  getFavorites: () => request('/favorites'),
+  getFavorites: (params = {}) => {
+    const qs = buildQuery(params)
+    return request('/favorites' + (qs ? '?' + qs : ''))
+  },
 
   /**
    * addFavorite - 收藏菜谱

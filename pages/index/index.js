@@ -1,7 +1,7 @@
 /**
  * pages/index/index.js - 菜谱首页
  * 职责：
- *   1. 菜谱列表展示（Grid 视图）
+ *   1. 菜谱列表展示（单列信息流 + 分页触底加载）
  *   2. 关键词搜索 + 分类筛选
  *   3. 收藏模式切换（从"我的"页面跳转过来查看收藏）
  *   4. 跳转到菜谱详情 / 新增菜谱
@@ -16,6 +16,8 @@ const {
   categoriesFromPublicAPI
 } = require('../../utils/category')
 
+const PAGE_SIZE = 10
+
 function getAppSafe() {
   try {
     return getApp()
@@ -24,16 +26,41 @@ function getAppSafe() {
   }
 }
 
+/** 难度映射为 5 星制（与示意图一致：简 2 / 中 3 / 难 5） */
+function difficultyToStars(difficulty) {
+  const map = { easy: 2, medium: 3, hard: 5 }
+  const n = map[difficulty] || 3
+  return Array.from({ length: 5 }, (_, i) => ({ filled: i < n }))
+}
+
+function enrichRecipe(r) {
+  const tips = r.tips && String(r.tips).trim()
+  return {
+    ...r,
+    starList: difficultyToStars(r.difficulty),
+    summary: tips || ''
+  }
+}
+
+function resolveHasMore(data, loadedCount) {
+  if (data && typeof data.has_more === 'boolean') return data.has_more
+  const total = data && data.total
+  if (typeof total === 'number') return loadedCount < total
+  return false
+}
+
 Page({
   data: {
-    recipes: [],           // 菜谱列表数据
-    keyword: '',           // 搜索关键词
-    category: '',          // 当前分类（空字符串 = 全部）
-    categoryIndex: -1,     // 分类选择器当前索引（-1 = 全部，pick mode 用）
+    recipes: [],
+    keyword: '',
+    category: '',
+    categoryIndex: -1,
     categories: buildIndexPickerCategories(DEFAULT_CATEGORY_NAMES),
-    mode: 'recipes',       // 当前模式：'recipes'（菜谱）或 'favorites'（收藏）
-    viewMode: 'waterfall', // 视图模式：'waterfall' 瀑布流 | 'list' 列表
+    mode: 'recipes',
+    page: 1,
+    hasMore: true,
     loading: false,
+    loadingMore: false,
     loadError: false,
     categorySheetVisible: false,
     categoryOptions: []
@@ -42,10 +69,6 @@ Page({
   onLoad(options) {
     this._searchTimer = null
     this._loadToken = 0
-    const savedView = wx.getStorageSync('indexViewMode')
-    if (savedView === 'list' || savedView === 'waterfall') {
-      this.setData({ viewMode: savedView })
-    }
     if (options.mode === 'favorites') {
       this.setData({ mode: 'favorites' })
       wx.setNavigationBarTitle({ title: '我的收藏' })
@@ -70,7 +93,17 @@ Page({
       wx.setNavigationBarTitle({ title: '家庭菜谱' })
     }
     this.loadCategories()
-    this.loadRecipes()
+    this.loadRecipes(true)
+  },
+
+  onReachBottom() {
+    this.loadRecipes(false)
+  },
+
+  onPullDownRefresh() {
+    this.loadRecipes(true)
+      .then(() => wx.stopPullDownRefresh())
+      .catch(() => wx.stopPullDownRefresh())
   },
 
   /** 未登录拉公开分类；已登录拉家庭分类 */
@@ -107,36 +140,74 @@ Page({
   backToRecipes() {
     this.setData({ mode: 'recipes', keyword: '', category: '', categoryIndex: -1 })
     wx.setNavigationBarTitle({ title: '家庭菜谱' })
-    this.loadRecipes()
+    this.loadRecipes(true)
   },
 
-  async loadRecipes() {
-    const token = ++this._loadToken
-    this.setData({ loading: true, loadError: false })
+  /**
+   * @param {boolean} reset - true 从第一页刷新；false 触底加载下一页
+   */
+  async loadRecipes(reset = true) {
+    if (!reset) {
+      if (!this.data.hasMore || this.data.loadingMore || this.data.loading) return
+    }
+
+    if (reset) {
+      this.setData({ loading: true, loadError: false, page: 1, hasMore: true })
+    } else {
+      this.setData({ loadingMore: true })
+    }
+
+    const token = reset ? ++this._loadToken : this._loadToken
+    const requestPage = reset ? 1 : this.data.page
+
     try {
       let recipes = []
+      let hasMore = false
+
       if (this.data.mode === 'favorites') {
-        const data = await api.getFavorites()
-        recipes = (data || []).map(f => f.recipe || f)
+        const data = await api.getFavorites({ page: requestPage, page_size: PAGE_SIZE })
+        if (token !== this._loadToken) return
+        const list = (data && data.list) ? data.list : []
+        const batch = list.map(f => enrichRecipe(f.recipe || f))
+        recipes = reset ? batch : this.data.recipes.concat(batch)
+        hasMore = resolveHasMore(data, recipes.length)
       } else {
         const data = await api.getRecipes({
           keyword: this.data.keyword,
-          category: this.data.category
+          category: this.data.category,
+          page: requestPage,
+          page_size: PAGE_SIZE
         })
-        recipes = (data && data.list) ? data.list : []
+        if (token !== this._loadToken) return
+        const list = (data && data.list) ? data.list : []
+        const batch = list.map(enrichRecipe)
+        recipes = reset ? batch : this.data.recipes.concat(batch)
+        hasMore = resolveHasMore(data, recipes.length)
       }
-      if (token !== this._loadToken) return
-      this.setData({ recipes, loading: false })
+
+      this.setData({
+        recipes,
+        page: requestPage + 1,
+        hasMore,
+        loading: false,
+        loadingMore: false,
+        loadError: false
+      })
     } catch (e) {
       if (token !== this._loadToken) return
-      this.setData({ recipes: [], loading: false, loadError: true })
+      if (reset) {
+        this.setData({ recipes: [], loading: false, loadError: true, loadingMore: false })
+      } else {
+        this.setData({ loadingMore: false })
+        wx.showToast({ title: '加载失败', icon: 'none' })
+      }
     }
   },
 
   onSearch(e) {
     this.setData({ keyword: e.detail.value })
     if (this._searchTimer) clearTimeout(this._searchTimer)
-    this._searchTimer = setTimeout(() => this.loadRecipes(), 300)
+    this._searchTimer = setTimeout(() => this.loadRecipes(true), 300)
   },
 
   openCategorySheet() {
@@ -155,7 +226,7 @@ Page({
       categoryIndex: idx >= 0 ? idx : -1,
       categorySheetVisible: false
     })
-    this.loadRecipes()
+    this.loadRecipes(true)
   },
 
   toDetail(e) {
@@ -165,12 +236,5 @@ Page({
   addRecipe() {
     if (!requireLogin()) return
     wx.navigateTo({ url: '/pages/recipe-edit/recipe-edit' })
-  },
-
-  switchView(e) {
-    const mode = e.currentTarget.dataset.mode
-    if (mode !== 'waterfall' && mode !== 'list') return
-    this.setData({ viewMode: mode })
-    wx.setStorageSync('indexViewMode', mode)
   }
 })

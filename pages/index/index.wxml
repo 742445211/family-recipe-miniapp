@@ -28,18 +28,6 @@
         <text class="select-trigger-text">{{categoryIndex >= 0 ? categories[categoryIndex] : '全部分类'}}</text>
         <view class="select-trigger-chevron"></view>
       </view>
-      <view class="view-toggle">
-        <view
-          class="view-toggle-item {{viewMode === 'waterfall' ? 'active' : ''}}"
-          bindtap="switchView"
-          data-mode="waterfall"
-        >▦</view>
-        <view
-          class="view-toggle-item {{viewMode === 'list' ? 'active' : ''}}"
-          bindtap="switchView"
-          data-mode="list"
-        >☰</view>
-      </view>
     </view>
   </view>
 
@@ -57,63 +45,61 @@
     <text>{{mode === 'favorites' ? '看到喜欢的，记得点个小爱心~' : '点右下角 + ，添第一道菜吧！'}}</text>
   </view>
 
-  <!-- 瀑布流视图 -->
-  <view wx:elif="{{viewMode === 'waterfall'}}" class="waterfall">
+  <!-- 单列信息流 -->
+  <view wx:else class="feed-list">
     <view
       wx:for="{{recipes}}"
       wx:key="id"
-      class="waterfall-item gradient-border"
+      class="feed-card"
       bindtap="toDetail"
       data-id="{{item.id}}"
+      hover-class="feed-card-press"
+      hover-stay-time="80"
     >
-      <view class="gradient-border-inner waterfall-card is-flush">
+      <view class="feed-cover-wrap">
         <image
           wx:if="{{item.cover_url}}"
           src="{{item.cover_url}}"
-          class="waterfall-img"
-          mode="widthFix"
-          lazy-load="{{true}}"
-        />
-        <view wx:else class="waterfall-img-placeholder">暂无封面</view>
-        <view class="waterfall-info">
-          <view class="recipe-name waterfall-name">{{item.name}}</view>
-          <view class="waterfall-meta">
-            <text class="tag tag-sm tag-category">{{item.category}}</text>
-            <text class="tag tag-sm tag-{{item.difficulty}}">{{item.difficulty === 'easy' ? '简' : item.difficulty === 'hard' ? '难' : '中'}}</text>
-            <text wx:if="{{item.cook_time}}" class="meta-dot">{{item.cook_time}}′</text>
-          </view>
-        </view>
-      </view>
-    </view>
-  </view>
-
-  <!-- 列表视图 -->
-  <view wx:else class="list-view">
-    <view
-      wx:for="{{recipes}}"
-      wx:key="id"
-      class="gradient-border list-item-wrap"
-      bindtap="toDetail"
-      data-id="{{item.id}}"
-    >
-      <view class="gradient-border-inner recipe-card is-flush">
-        <image
-          wx:if="{{item.cover_url}}"
-          src="{{item.cover_url}}"
-          class="recipe-img"
+          class="feed-cover"
           mode="aspectFill"
           lazy-load="{{true}}"
         />
-        <view wx:else class="recipe-img recipe-img-placeholder">菜</view>
-        <view class="recipe-info">
-          <view class="recipe-name">{{item.name}}</view>
-          <view class="recipe-tags">
-            <text class="tag tag-category">{{item.category}}</text>
-            <text class="tag tag-{{item.difficulty}}">{{item.difficulty === 'easy' ? '简单' : item.difficulty === 'hard' ? '困难' : '中等'}}</text>
-            <text wx:if="{{item.cook_time}}" class="cook-time-inline">{{item.cook_time}}分钟</text>
-          </view>
+        <view wx:else class="feed-cover feed-cover-placeholder">
+          <text class="feed-cover-placeholder-text">{{item.name}}</text>
         </view>
       </view>
+      <view class="feed-body">
+        <view class="feed-title">{{item.name}}</view>
+        <view class="feed-meta-row">
+          <view class="feed-difficulty">
+            <text class="feed-meta-label">难度</text>
+            <view class="feed-stars">
+              <text
+                wx:for="{{item.starList}}"
+                wx:for-item="star"
+                wx:for-index="si"
+                wx:key="si"
+                class="feed-star {{star.filled ? 'is-filled' : ''}}"
+              >★</text>
+            </view>
+          </view>
+          <view class="feed-likes">
+            <view class="feed-icon-thumb" aria-hidden="true"></view>
+            <text class="feed-likes-count">{{item.cook_count || 0}}</text>
+          </view>
+        </view>
+        <view wx:if="{{item.cook_time}}" class="feed-meta-sub">
+          <view class="feed-icon-time" aria-hidden="true"></view>
+          <text>{{item.cook_time}} 分钟</text>
+        </view>
+        <view wx:if="{{item.summary}}" class="feed-desc">{{item.summary}}</view>
+      </view>
+    </view>
+    <view wx:if="{{loadingMore}}" class="feed-footer">
+      <text class="feed-footer-text">正在加载...</text>
+    </view>
+    <view wx:elif="{{!hasMore && recipes.length}}" class="feed-footer">
+      <text class="feed-footer-text">已经到底啦</text>
     </view>
   </view>
 
