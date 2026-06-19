@@ -180,6 +180,12 @@ const api = {
    */
   removeOrder: (id) => request('/orders/' + id, 'DELETE'),
 
+  /**
+   * drawBlindBox - 点菜盲盒抽取
+   * @param {Object} data - { date?, meal_type?, exclude_ids? }
+   */
+  drawBlindBox: (data) => request('/orders/blind-box/draw', 'POST', data || {}),
+
   // ========== 家庭 ==========
 
   /**

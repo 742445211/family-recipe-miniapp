@@ -12,6 +12,11 @@
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
 const { formatYMD, todayYMD, normalizeYMD } = require('../../utils/date')
+const { loadAppFeatures } = require('../../utils/features')
+
+function effectiveMealType(mealType) {
+  return mealType || 'dinner'
+}
 
 Page({
   data: {
@@ -25,7 +30,14 @@ Page({
       { key: 'breakfast', label: '🌅 早餐' },
       { key: 'lunch', label: '☀️ 午餐' },
       { key: 'dinner', label: '🌙 晚餐' }
-    ]
+    ],
+    blindBoxEnabled: true,
+    showBlindBox: false,
+    blindBoxLoading: false,
+    blindBoxRecipe: null,
+    blindBoxPoolSize: 0,
+    blindBoxMeal: 'dinner',
+    blindBoxExcludeIds: []
   },
 
   /**
@@ -35,6 +47,7 @@ Page({
   onShow() {
     wx.showTabBar()
     if (!requireLogin()) return
+    this.loadFeatureFlags()
     this.loadOrders()
     this.loadUnreadNotifications()
     this.prepareShare()
@@ -42,6 +55,15 @@ Page({
       this.loadOrders()
       this.loadUnreadNotifications()
     })
+  },
+
+  async loadFeatureFlags() {
+    try {
+      const features = await loadAppFeatures()
+      this.setData({ blindBoxEnabled: !!features.blind_box })
+    } catch (e) {
+      this.setData({ blindBoxEnabled: true })
+    }
   },
 
   async loadUnreadNotifications() {
@@ -135,6 +157,96 @@ Page({
    */
   addRecipe() {
     wx.switchTab({ url: '/pages/index/index' })
+  },
+
+  openBlindBox() {
+    this.setData({
+      showBlindBox: true,
+      blindBoxRecipe: null,
+      blindBoxExcludeIds: [],
+      blindBoxMeal: effectiveMealType(this.data.mealType)
+    })
+    this.drawBlindBox()
+  },
+
+  closeBlindBox() {
+    this.setData({ showBlindBox: false, blindBoxLoading: false })
+  },
+
+  onBlindBoxMealChange(e) {
+    const val = e.currentTarget.dataset.val
+    this.setData({ blindBoxMeal: val, blindBoxExcludeIds: [] })
+    if (!this.data.mealType) {
+      this.drawBlindBox()
+    }
+  },
+
+  blindBoxMealType() {
+    return effectiveMealType(this.data.mealType || this.data.blindBoxMeal)
+  },
+
+  async drawBlindBox() {
+    if (this.data.blindBoxLoading) return
+    this.setData({ blindBoxLoading: true, blindBoxRecipe: null })
+    try {
+      const data = await api.drawBlindBox({
+        date: this.data.dateStr,
+        meal_type: this.blindBoxMealType(),
+        exclude_ids: this.data.blindBoxExcludeIds
+      })
+      const recipe = data && data.recipe
+      if (!recipe || !recipe.id) {
+        wx.showToast({ title: '抽取失败', icon: 'none' })
+        return
+      }
+      const exclude = this.data.blindBoxExcludeIds.slice()
+      if (exclude.indexOf(recipe.id) === -1) exclude.push(recipe.id)
+      this.setData({
+        blindBoxRecipe: recipe,
+        blindBoxPoolSize: data.pool_size || 0,
+        blindBoxExcludeIds: exclude
+      })
+    } catch (e) {
+      if (e && e.code === 429) {
+        wx.showToast({ title: e.msg || '开太多次啦，稍后再试', icon: 'none' })
+      } else if (e && e.msg) {
+        wx.showToast({ title: e.msg, icon: 'none' })
+      }
+      if (e && e.msg && e.msg.indexOf('没有可选') >= 0) {
+        this.setData({ showBlindBox: false })
+      }
+    } finally {
+      this.setData({ blindBoxLoading: false })
+    }
+  },
+
+  redrawBlindBox() {
+    this.drawBlindBox()
+  },
+
+  goBlindBoxDetail() {
+    const recipe = this.data.blindBoxRecipe
+    if (!recipe || !recipe.id) return
+    wx.navigateTo({ url: '/pages/recipe-detail/recipe-detail?id=' + recipe.id })
+  },
+
+  async confirmBlindBoxOrder() {
+    const recipe = this.data.blindBoxRecipe
+    if (!recipe || !recipe.id) return
+    const meal = this.blindBoxMealType()
+    try {
+      await api.addOrder({
+        recipe_id: recipe.id,
+        date: this.data.dateStr,
+        meal_type: meal,
+        quantity: 1
+      })
+      wx.showToast({ title: '已加入菜单', icon: 'success' })
+      this.setData({ showBlindBox: false })
+      if (!this.data.mealType || this.data.mealType === meal) {
+        this.loadOrders()
+      }
+    } catch (e) {}
   },
 
   // ========== 动态消息分享 ==========

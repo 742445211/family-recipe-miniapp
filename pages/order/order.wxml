@@ -30,6 +30,17 @@
     </view>
   </view>
 
+  <view wx:if="{{blindBoxEnabled}}" class="gradient-border blind-box-entry-wrap" bindtap="openBlindBox" hover-class="blind-box-entry-hover">
+    <view class="gradient-border-inner blind-box-entry">
+      <text class="blind-box-icon">🎁</text>
+      <view class="blind-box-text">
+        <text class="blind-box-title">今天吃啥？开盲盒</text>
+        <text class="blind-box-sub">从家庭菜谱里随机抽一道</text>
+      </view>
+      <text class="blind-box-arrow">›</text>
+    </view>
+  </view>
+
   <view wx:if="{{!orders.length}}" class="empty">
     <text class="empty-title">今天还没点菜</text>
     <text>肚子叫了？去菜谱页挑几道吧~</text>
@@ -65,6 +76,43 @@
   >
     <view class="float-btn">
       <view class="float-btn-icon" aria-hidden="true"></view>
+    </view>
+  </view>
+
+  <!-- 点菜盲盒 -->
+  <view wx:if="{{showBlindBox}}" class="modal-mask" bindtap="closeBlindBox" catchtouchmove>
+    <view class="modal blind-box-modal" catchtap>
+      <view class="modal-title">🎁 点菜盲盒</view>
+      <text class="blind-box-date">{{dateStr}} · {{blindBoxMeal === 'breakfast' ? '早餐' : blindBoxMeal === 'lunch' ? '午餐' : '晚餐'}}</text>
+
+      <view class="blind-box-stage">
+        <view wx:if="{{blindBoxLoading}}" class="blind-box-shake">
+          <text class="blind-box-box">🎲</text>
+          <text class="blind-box-hint">正在摇盲盒...</text>
+        </view>
+        <view wx:elif="{{blindBoxRecipe}}" class="blind-box-result">
+          <image wx:if="{{blindBoxRecipe.cover_url}}" src="{{blindBoxRecipe.cover_url}}" class="blind-box-cover" mode="aspectFill" />
+          <view wx:else class="blind-box-cover blind-box-cover-placeholder">菜</view>
+          <text class="blind-box-name">{{blindBoxRecipe.name}}</text>
+          <text class="blind-box-meta">{{blindBoxRecipe.category || '家常菜'}} · 还有 {{blindBoxPoolSize}} 道可选</text>
+        </view>
+      </view>
+
+      <view wx:if="{{!mealType}}" class="form-group">
+        <text class="label">加入餐次</text>
+        <view class="segment-bar meal-row">
+          <view class="segment-item {{blindBoxMeal === 'breakfast' ? 'active' : ''}}" bindtap="onBlindBoxMealChange" data-val="breakfast">早餐</view>
+          <view class="segment-item {{blindBoxMeal === 'lunch' ? 'active' : ''}}" bindtap="onBlindBoxMealChange" data-val="lunch">午餐</view>
+          <view class="segment-item {{blindBoxMeal === 'dinner' ? 'active' : ''}}" bindtap="onBlindBoxMealChange" data-val="dinner">晚餐</view>
+        </view>
+      </view>
+
+      <view class="modal-btns blind-box-btns">
+        <button class="btn-outline" hover-class="btn-hover" bindtap="closeBlindBox">算了</button>
+        <button class="btn-outline" hover-class="btn-hover" bindtap="redrawBlindBox" disabled="{{blindBoxLoading || !blindBoxRecipe}}">换一个</button>
+        <button class="btn-outline" hover-class="btn-hover" bindtap="goBlindBoxDetail" disabled="{{!blindBoxRecipe}}">详情</button>
+        <button class="btn-primary" hover-class="btn-hover" bindtap="confirmBlindBoxOrder" disabled="{{!blindBoxRecipe}}">就它啦</button>
+      </view>
     </view>
   </view>
 </view>

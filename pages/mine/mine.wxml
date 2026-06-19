@@ -69,6 +69,12 @@
     </view>
   </view>
 
+  <view class="oss-footer" bindtap="openHowToCook" hover-class="oss-footer-hover" hover-stay-time="80">
+    <text class="oss-footer-label">开源致谢</text>
+    <text class="oss-footer-text">菜谱灵感来自 HowToCook 开源项目</text>
+    <text class="oss-footer-link">github.com/Anduin2017/HowToCook</text>
+  </view>
+
   <view wx:if="{{showEdit}}" class="modal-mask" bindtap="hideEditDialog">
     <view class="modal" catchtap>
       <view class="modal-title">改改资料</view>

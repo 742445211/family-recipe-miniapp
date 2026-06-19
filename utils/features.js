@@ -6,7 +6,7 @@ const BASE_URL = 'https://www.zzzjc.xin/api'
 
 /**
  * loadAppFeatures - 拉取公开功能开关，失败时返回默认关闭
- * @returns {Promise<{ ai_recommend: boolean, catalog_recipe: boolean, fridge: boolean }>}
+ * @returns {Promise<{ ai_recommend: boolean, catalog_recipe: boolean, fridge: boolean, blind_box: boolean }>}
  */
 function loadAppFeatures() {
   return new Promise((resolve) => {
@@ -18,14 +18,15 @@ function loadAppFeatures() {
           resolve({
             ai_recommend: !!res.data.data.ai_recommend,
             catalog_recipe: !!res.data.data.catalog_recipe,
-            fridge: !!res.data.data.fridge
+            fridge: !!res.data.data.fridge,
+            blind_box: res.data.data.blind_box !== false
           })
           return
         }
-        resolve({ ai_recommend: false, catalog_recipe: false, fridge: false })
+        resolve({ ai_recommend: false, catalog_recipe: false, fridge: false, blind_box: true })
       },
       fail() {
-        resolve({ ai_recommend: false, catalog_recipe: false, fridge: false })
+        resolve({ ai_recommend: false, catalog_recipe: false, fridge: false, blind_box: true })
       }
     })
   })

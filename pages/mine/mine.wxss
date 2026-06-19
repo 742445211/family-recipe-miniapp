@@ -105,3 +105,37 @@
   font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
+
+.oss-footer {
+  margin-top: var(--space-4);
+  padding: var(--space-3) var(--space-2) var(--space-6);
+  text-align: center;
+  transition: opacity var(--duration-fast) var(--ease-smooth);
+}
+
+.oss-footer-hover {
+  opacity: 0.72;
+}
+
+.oss-footer-label {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: var(--leading-normal);
+  margin-bottom: 6rpx;
+}
+
+.oss-footer-text {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+.oss-footer-link {
+  display: block;
+  margin-top: 6rpx;
+  font-size: var(--text-xs);
+  color: var(--color-primary);
+  line-height: var(--leading-normal);
+}

@@ -183,6 +183,20 @@ Page({
     wx.navigateTo({ url: '/pages/notification-settings/notification-settings' })
   },
 
+  /** 致谢 HowToCook：小程序内复制 GitHub 链接，便于在浏览器打开 */
+  openHowToCook() {
+    const url = 'https://github.com/Anduin2017/HowToCook'
+    wx.setClipboardData({
+      data: url,
+      success() {
+        wx.showToast({ title: '链接已复制', icon: 'success' })
+      },
+      fail() {
+        wx.showToast({ title: '复制失败', icon: 'none' })
+      }
+    })
+  },
+
   /**
    * logout - 退出登录
    * 清除本地所有缓存 → 跳转到登录页
