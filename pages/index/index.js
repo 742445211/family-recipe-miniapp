@@ -69,6 +69,7 @@ Page({
   onLoad(options) {
     this._searchTimer = null
     this._loadToken = 0
+    this._hasShown = false
     if (options.mode === 'favorites') {
       this.setData({ mode: 'favorites' })
       wx.setNavigationBarTitle({ title: '我的收藏' })
@@ -84,16 +85,23 @@ Page({
     const app = getAppSafe()
     const gd = (app && app.globalData) || {}
 
+    let needRefresh = !this._hasShown
+    this._hasShown = true
+
     if (gd.indexMode === 'favorites') {
       this.setData({ mode: 'favorites' })
       wx.setNavigationBarTitle({ title: '我的收藏' })
       if (app && app.globalData) app.globalData.indexMode = null
+      needRefresh = true
     } else if (this.data.mode !== 'recipes') {
       this.setData({ mode: 'recipes', keyword: '', category: '', categoryIndex: -1 })
       wx.setNavigationBarTitle({ title: '家庭菜谱' })
+      needRefresh = true
     }
     this.loadCategories()
-    this.loadRecipes(true)
+    if (needRefresh) {
+      this.loadRecipes(true)
+    }
   },
 
   onReachBottom() {
