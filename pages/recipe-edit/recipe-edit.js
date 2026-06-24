@@ -5,6 +5,8 @@
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
 const { DEFAULT_CATEGORY_NAMES, mergeCategoryNames } = require('../../utils/category')
+const { safeParse } = require('../../utils/json')
+const { markIndexNeedRefresh } = require('../../utils/index-refresh')
 
 const CATALOG_RATE_LIMIT_MAX = 5
 const CATALOG_RATE_WINDOW_HOURS = 2
@@ -111,9 +113,9 @@ Page({
   async loadRecipe(id) {
     try {
       const r = await api.getRecipe(id)
-      const ing = JSON.parse(r.ingredients || '[]')
-      const seasonings = JSON.parse(r.seasonings || '[]')
-      const steps = JSON.parse(r.steps || '[]')
+      const ing = safeParse(r.ingredients)
+      const seasonings = safeParse(r.seasonings)
+      const steps = safeParse(r.steps)
       let categories = this.data.categories.slice()
       let category = r.category || ''
       let categoryIndex = category ? categories.indexOf(category) : -1
@@ -227,9 +229,9 @@ Page({
   },
 
   applyVariant(v) {
-    const ing = JSON.parse(v.ingredients || '[]')
-    const seasonings = JSON.parse(v.seasonings || '[]')
-    const steps = JSON.parse(v.steps || '[]')
+    const ing = safeParse(v.ingredients)
+    const seasonings = safeParse(v.seasonings)
+    const steps = safeParse(v.steps)
     let categories = this.data.categories.slice()
     let category = v.category || ''
     let categoryIndex = category ? categories.indexOf(category) : -1
@@ -360,6 +362,7 @@ Page({
         await api.createRecipe(payload)
       }
       wx.showToast({ title: '保存成功', icon: 'success' })
+      markIndexNeedRefresh() // 返回首页 Tab 时刷新列表
       setTimeout(() => wx.navigateBack(), 1000)
     } catch (e) {
       wx.showToast({ title: '保存失败', icon: 'none' })

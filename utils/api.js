@@ -41,19 +41,18 @@ const request = (url, method = 'GET', data = {}) => {
         'Authorization': token ? 'Bearer ' + token : ''
       },
       success(res) {
-        if (res.statusCode === 401 || (res.data && res.data.code === 401)) {
+        // 网关/非 JSON 响应时 res.data 可能为空，须先取 body 再读 code
+        const body = res.data
+        if (res.statusCode === 401 || (body && body.code === 401)) {
           notification.handleAuthExpired()
-          reject(res.data || { code: 401, msg: '未登录' })
-        } else if (res.data.code === 0) {
-          // 业务成功：返回 data 字段
-          resolve(res.data.data)
-        } else if (res.statusCode === 429 || res.data.code === 429) {
-          // 限流：由调用方展示友好提示
-          reject(res.data)
+          reject(body || { code: 401, msg: '未登录' })
+        } else if (body && body.code === 0) {
+          resolve(body.data)
+        } else if (res.statusCode === 429 || (body && body.code === 429)) {
+          reject(body || { code: 429, msg: '请求过于频繁' })
         } else {
-          // 其他业务错误：弹出提示
-          wx.showToast({ title: res.data.msg || '请求失败', icon: 'none' })
-          reject(res.data)
+          wx.showToast({ title: (body && body.msg) || '请求失败', icon: 'none' })
+          reject(body || { code: -1, msg: '请求失败' })
         }
       },
       fail(err) {
@@ -145,9 +144,8 @@ const api = {
   getPublicCategories: () => request('/categories/public'),
 
   /**
-   * markCooked - 标记菜谱已做过（cook_count +1）
+   * markCooked - 标记菜谱已做过（cook_count +1，需登录）
    * @param {number|string} id - 菜谱 ID
-   * @returns {Promise}
    */
   markCooked: (id) => request('/recipes/' + id + '/cooked', 'POST'),
 
@@ -353,10 +351,14 @@ const api = {
       // 上传也需携带认证 token
       header: { 'Authorization': 'Bearer ' + wx.getStorageSync('token') },
       success(res) {
-        const data = JSON.parse(res.data)
-        // 上传成功：返回 data 字段（含 url）
+        let data
+        try {
+          data = JSON.parse(res.data)
+        } catch (e) {
+          reject({ msg: '响应解析失败' })
+          return
+        }
         if (data.code === 0) resolve(data.data)
-        // 上传失败
         else reject(data)
       },
       fail: reject

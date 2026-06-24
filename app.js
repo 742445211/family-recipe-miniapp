@@ -35,8 +35,8 @@ App({
 
   globalData: {
     userInfo: null,
-    currentFamily: null,
-    indexMode: null,
+    indexMode: null,           // 'favorites' 时首页切收藏模式（mine 页设置）
+    indexNeedRefresh: false,   // true 时首页 onShow 会全量刷新列表
     lastNotification: null,
     unreadCount: 0,
     features: { ai_recommend: false, catalog_recipe: false, fridge: false }

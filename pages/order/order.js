@@ -41,8 +41,8 @@ Page({
   },
 
   /**
-   * onShow - 页面显示时加载点菜数据 + 准备动态消息分享
-   * 每次切换 Tab 触发
+   * onShow - 页面显示时加载点菜数据
+   * prepareShare 仅首次调用：每次 onShow 都创建 activity_id 会增加后端压力
    */
   onShow() {
     wx.showTabBar()
@@ -50,7 +50,10 @@ Page({
     this.loadFeatureFlags()
     this.loadOrders()
     this.loadUnreadNotifications()
-    this.prepareShare()
+    if (!this._sharePrepared) {
+      this._sharePrepared = true
+      this.prepareShare()
+    }
     getApp().setNotificationCallback(() => {
       this.loadOrders()
       this.loadUnreadNotifications()
@@ -62,7 +65,8 @@ Page({
       const features = await loadAppFeatures()
       this.setData({ blindBoxEnabled: !!features.blind_box })
     } catch (e) {
-      this.setData({ blindBoxEnabled: true })
+      // 功能开关拉取失败时不展示盲盒，避免入口可见但接口 403
+      this.setData({ blindBoxEnabled: false })
     }
   },
 
@@ -265,11 +269,9 @@ Page({
           activityId: data.activity_id,
           isUpdatableMessage: true
         })
-        console.log('[动态消息] activity_id 已绑定:', data.activity_id)
       }
     } catch (e) {
       // 创建失败不影响正常使用，静默跳过
-      console.log('[动态消息] 创建失败:', e)
     }
   },
 

@@ -5,11 +5,7 @@
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
 const { todayYMD } = require('../../utils/date')
-
-function safeParse(str) {
-  if (!str || typeof str !== 'string') return []
-  try { return JSON.parse(str) } catch (e) { return [] }
-}
+const { safeParse } = require('../../utils/json')
 
 function difficultyLabel(d) {
   if (d === 'easy') return '简单'

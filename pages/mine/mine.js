@@ -228,11 +228,7 @@ Page({
 
       // 成为厨师时请求订阅消息授权（接收点菜通知）
       if (data.is_chef) {
-        wx.requestSubscribeMessage({
-          tmplIds: ['WCehmUVgB8k4zx27u9znF9h66Y1mYzLIjd6bNn0SRgw'],
-          success() {},
-          fail() {}
-        })
+        notification.requestSubscribeAuth()
       }
     } catch (err) {
       // 失败回滚开关状态：恢复到操作前的值

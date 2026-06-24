@@ -23,10 +23,10 @@ function loadAppFeatures() {
           })
           return
         }
-        resolve({ ai_recommend: false, catalog_recipe: false, fridge: false, blind_box: true })
+        resolve({ ai_recommend: false, catalog_recipe: false, fridge: false, blind_box: false })
       },
       fail() {
-        resolve({ ai_recommend: false, catalog_recipe: false, fridge: false, blind_box: true })
+        resolve({ ai_recommend: false, catalog_recipe: false, fridge: false, blind_box: false })
       }
     })
   })

@@ -68,12 +68,26 @@ function isTokenExpired(token) {
   return expMs < Date.now()
 }
 
+let authRedirecting = false
+
+/** 401 / token 过期：清本地凭证、断 WebSocket，并跳转登录页（防多次 reLaunch） */
 function handleAuthExpired() {
   intentionalClose = true
   disconnectSocket()
   wx.removeStorageSync('token')
   wx.removeStorageSync('userInfo')
+  wx.removeStorageSync('isChef')
   wx.showToast({ title: '登录已过期，请重新登录', icon: 'none' })
+  if (authRedirecting) return
+  authRedirecting = true
+  setTimeout(() => {
+    wx.reLaunch({
+      url: '/pages/login/login',
+      complete() {
+        authRedirecting = false
+      }
+    })
+  }, 400)
 }
 
 function updateMessageHandler(onMessage) {

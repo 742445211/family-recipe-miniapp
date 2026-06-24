@@ -68,8 +68,9 @@ Page({
 
   onLoad(options) {
     this._searchTimer = null
-    this._loadToken = 0
-    this._hasShown = false
+    this._loadToken = 0       // 递增序号，用于丢弃过期的列表请求（快速搜索/切换分类）
+    this._hasShown = false    // 是否已展示过，区分「首次进入」与「从详情返回」
+    this._categoriesLoaded = false
     if (options.mode === 'favorites') {
       this.setData({ mode: 'favorites' })
       wx.setNavigationBarTitle({ title: '我的收藏' })
@@ -80,6 +81,11 @@ Page({
     if (this._searchTimer) clearTimeout(this._searchTimer)
   },
 
+  /**
+   * onShow - Tab 页每次可见时触发
+   * 从详情 navigateBack 回来也会触发，因此不能无条件 loadRecipes(true)，否则会重置分页。
+   * 仅在：首次进入、切换收藏模式、或 globalData.indexNeedRefresh 时刷新列表。
+   */
   onShow() {
     wx.showTabBar()
     const app = getAppSafe()
@@ -88,17 +94,27 @@ Page({
     let needRefresh = !this._hasShown
     this._hasShown = true
 
+    // 从「我的」进入收藏模式
     if (gd.indexMode === 'favorites') {
       this.setData({ mode: 'favorites' })
       wx.setNavigationBarTitle({ title: '我的收藏' })
       if (app && app.globalData) app.globalData.indexMode = null
       needRefresh = true
     } else if (this.data.mode !== 'recipes') {
+      // 从收藏模式切回普通列表
       this.setData({ mode: 'recipes', keyword: '', category: '', categoryIndex: -1 })
       wx.setNavigationBarTitle({ title: '家庭菜谱' })
       needRefresh = true
     }
-    this.loadCategories()
+    // 编辑/收藏等操作后由 markIndexNeedRefresh() 置位
+    if (gd.indexNeedRefresh) {
+      needRefresh = true
+      if (app && app.globalData) app.globalData.indexNeedRefresh = false
+    }
+    if (needRefresh || !this._categoriesLoaded) {
+      this.loadCategories()
+      this._categoriesLoaded = true
+    }
     if (needRefresh) {
       this.loadRecipes(true)
     }
@@ -109,6 +125,7 @@ Page({
   },
 
   onPullDownRefresh() {
+    this.loadCategories()
     this.loadRecipes(true)
       .then(() => wx.stopPullDownRefresh())
       .catch(() => wx.stopPullDownRefresh())
@@ -152,6 +169,20 @@ Page({
   },
 
   /**
+   * _finishLoad - 仅在 token 仍为最新请求时更新 UI，避免并发请求互相覆盖或 loading 卡死
+   * @param {number} token - 发起请求时绑定的 _loadToken
+   */
+  _finishLoad(token, patch) {
+    if (token !== this._loadToken) return false
+    this.setData(Object.assign({
+      loading: false,
+      loadingMore: false
+    }, patch))
+    return true
+  },
+
+  /**
+   * loadRecipes - 加载菜谱/收藏列表
    * @param {boolean} reset - true 从第一页刷新；false 触底加载下一页
    */
   async loadRecipes(reset = true) {
@@ -160,7 +191,7 @@ Page({
     }
 
     if (reset) {
-      this.setData({ loading: true, loadError: false, page: 1, hasMore: true })
+      this.setData({ loading: true, loadError: false, page: 1, hasMore: true, loadingMore: false })
     } else {
       this.setData({ loadingMore: true })
     }
@@ -174,7 +205,7 @@ Page({
 
       if (this.data.mode === 'favorites') {
         const data = await api.getFavorites({ page: requestPage, page_size: PAGE_SIZE })
-        if (token !== this._loadToken) return
+        if (token !== this._loadToken) return // 已有更新的请求发出，丢弃本结果
         const list = (data && data.list) ? data.list : []
         const batch = list.map(f => enrichRecipe(f.recipe || f))
         recipes = reset ? batch : this.data.recipes.concat(batch)
@@ -193,20 +224,18 @@ Page({
         hasMore = resolveHasMore(data, recipes.length)
       }
 
-      this.setData({
+      this._finishLoad(token, {
         recipes,
         page: requestPage + 1,
         hasMore,
-        loading: false,
-        loadingMore: false,
         loadError: false
       })
     } catch (e) {
       if (token !== this._loadToken) return
       if (reset) {
-        this.setData({ recipes: [], loading: false, loadError: true, loadingMore: false })
+        this._finishLoad(token, { recipes: [], loadError: true })
       } else {
-        this.setData({ loadingMore: false })
+        this._finishLoad(token, {})
         wx.showToast({ title: '加载失败', icon: 'none' })
       }
     }

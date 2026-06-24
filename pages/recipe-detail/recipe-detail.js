@@ -11,119 +11,93 @@
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
 const { todayYMD } = require('../../utils/date')
-
-/**
- * safeParse - 安全 JSON 解析
- * 防止后端返回的 JSON 字符串解析失败导致页面崩溃
- *
- * @param {string} str - 要解析的 JSON 字符串
- * @returns {Array}    - 解析成功返回数组，失败返回空数组 []
- */
-function safeParse(str) {
-  if (!str || typeof str !== 'string') return []
-  try { return JSON.parse(str) } catch (e) { return [] }
-}
+const { safeParse, resolveFavoriteFlag } = require('../../utils/json')
+const { markIndexNeedRefresh } = require('../../utils/index-refresh')
 
 Page({
   data: {
-    recipe: {},           // 菜谱详情对象
-    ingredients: [],      // 食材列表（从 JSON 解析）
-    seasonings: [],       // 调料列表（从 JSON 解析）
-    steps: [],            // 步骤列表（从 JSON 解析）
-    isFav: false,         // 是否已收藏
-    showOrderModal: false,// 点菜模态框是否显示
-    orderMeal: 'dinner',  // 点菜选择的餐次（默认晚餐）
-    orderDate: '',        // 点菜选择的日期（默认今天）
-    orderNote: ''         // 点菜备注
+    recipe: {},
+    ingredients: [],
+    seasonings: [],
+    steps: [],
+    isFav: false,
+    showOrderModal: false,
+    orderMeal: 'dinner',
+    orderDate: '',
+    orderNote: ''
   },
 
-  /**
-   * onLoad - 页面加载，获取菜谱 ID 并加载详情
-   * @param {Object} options - 页面参数，options.id 为菜谱 ID
-   */
   onLoad(options) {
     this.setData({ recipeId: options.id })
+    // onLoad 与 onShow 在首次进入时都会触发，跳过第一次 onShow 避免重复请求
+    this._skipShowOnce = true
     this.loadRecipe(options.id)
   },
 
-  /**
-   * onShow - 页面显示时刷新数据（编辑返回后可看到最新信息）
-   */
+  /** 从编辑页返回时需刷新；首次进入已在 onLoad 加载 */
   onShow() {
+    if (this._skipShowOnce) {
+      this._skipShowOnce = false
+      return
+    }
     if (this.data.recipeId) {
       this.loadRecipe(this.data.recipeId)
     }
   },
 
-  /**
-   * loadRecipe - 加载菜谱详情
-   * 请求 API 获取详情后，将 ingredients/seasonings/steps 等 JSON 字段解析为数组
-   *
-   * @param {number|string} id - 菜谱 ID
-   * @returns {Promise<void>}
-   */
   async loadRecipe(id) {
     try {
       const r = await api.getRecipe(id)
-      // 更新页面数据：菜谱信息 + 解析 JSON 字段
       this.setData({
         recipe: r,
         ingredients: safeParse(r.ingredients),
         seasonings: safeParse(r.seasonings),
-        steps: safeParse(r.steps)
+        steps: safeParse(r.steps),
+        isFav: resolveFavoriteFlag(r)
       })
     } catch (e) {
       wx.showToast({ title: '加载失败', icon: 'none' })
     }
   },
 
-  /**
-   * toggleFavorite - 切换收藏状态
-   * 当前已收藏则取消收藏，未收藏则添加收藏
-   * @returns {Promise<void>}
-   */
   async toggleFavorite() {
     if (!requireLogin()) return
     const id = this.data.recipe.id
     try {
-      // 根据当前状态决定调用添加或取消收藏接口
       if (this.data.isFav) await api.removeFavorite(id)
       else await api.addFavorite(id)
-      // 切换前端状态
       this.setData({ isFav: !this.data.isFav })
-    } catch (e) {}
+      // 收藏列表/首页可能需要同步，返回 Tab 时刷新
+      markIndexNeedRefresh()
+    } catch (e) {
+      wx.showToast({ title: (e && e.msg) || '操作失败', icon: 'none' })
+    }
   },
 
   /**
-   * markCooked - 标记已做过这道菜
-   * 调用 API 后本地 cook_count +1
-   * @returns {Promise<void>}
+   * markCooked - 标记「做过一次」
+   * 调用 POST /recipes/:id/cooked，后端 cook_count +1；与「加入点菜」无关（点菜是计划吃什么）。
    */
   async markCooked() {
     if (!requireLogin()) return
     try {
       await api.markCooked(this.data.recipe.id)
       wx.showToast({ title: '已标记', icon: 'success' })
-      // 本地自增 cook_count，避免重新请求接口
       const r = this.data.recipe
-      r.cook_count++
-      this.setData({ recipe: r })
-    } catch (e) {}
+      // 本地 +1 避免再拉详情；用新对象避免直接 mutate data
+      this.setData({
+        recipe: Object.assign({}, r, { cook_count: (r.cook_count || 0) + 1 })
+      })
+    } catch (e) {
+      wx.showToast({ title: (e && e.msg) || '操作失败', icon: 'none' })
+    }
   },
 
-  /**
-   * editRecipe - 跳转到菜谱编辑页
-   */
   editRecipe() {
     if (!requireLogin()) return
     wx.navigateTo({ url: '/pages/recipe-edit/recipe-edit?id=' + this.data.recipe.id })
   },
 
-  /**
-   * showOrder - 点击"加入点菜"按钮
-   * 弹出模态框让用户选择餐次（早餐/午餐/晚餐）+ 输入备注
-   * 需要先校验菜谱是否已加载
-   */
   showOrder() {
     if (!requireLogin()) return
     const recipeId = this.data.recipe.id
@@ -131,46 +105,25 @@ Page({
       wx.showToast({ title: '菜谱信息未加载', icon: 'none' })
       return
     }
-    // 默认日期为今天，用户可自行修改
     this.setData({ showOrderModal: true, orderMeal: 'dinner', orderDate: todayYMD(), orderNote: '' })
   },
 
-  /**
-   * hideOrderModal - 关闭点菜模态框
-   */
   hideOrderModal() {
     this.setData({ showOrderModal: false })
   },
 
-  /**
-   * onOrderMealChange - 切换餐次选择
-   * @param {Object} e - 点击事件，e.currentTarget.dataset.val 为餐次值
-   */
   onOrderMealChange(e) {
     this.setData({ orderMeal: e.currentTarget.dataset.val })
   },
 
-  /**
-   * onOrderNoteInput - 点菜备注输入
-   * @param {Object} e - 输入事件，e.detail.value 为备注内容
-   */
   onOrderNoteInput(e) {
     this.setData({ orderNote: e.detail.value })
   },
 
-  /**
-   * onOrderDateChange - 点菜日期选择
-   * @param {Object} e - 日期选择器 change 事件，e.detail.value 为 'YYYY-MM-DD'
-   */
   onOrderDateChange(e) {
     this.setData({ orderDate: e.detail.value })
   },
 
-  /**
-   * confirmOrder - 确认加入点菜
-   * 调用 API 将菜谱加入今日指定餐次的点菜列表
-   * @returns {Promise<void>}
-   */
   async confirmOrder() {
     const recipeId = this.data.recipe.id
     try {

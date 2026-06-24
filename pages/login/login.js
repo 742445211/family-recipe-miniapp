@@ -49,11 +49,12 @@ Page({
             return
           }
 
-          // 第三步：存储登录凭证到本地
+          // 兼容 { token, user: {...} } 与扁平 { token, nickname, ... } 两种响应
+          const user = data.user || data
           wx.setStorageSync('token', data.token)
           wx.setStorageSync('userInfo', {
-            nickname: data.nickname || '',
-            avatar: data.avatar || data.avatar_url || ''
+            nickname: user.nickname || data.nickname || '',
+            avatar: user.avatar_url || user.avatar || data.avatar || data.avatar_url || ''
           })
 
           this.setData({ loading: false })
