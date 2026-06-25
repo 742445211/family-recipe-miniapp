@@ -29,4 +29,15 @@ function requireLogin() {
   return false
 }
 
-module.exports = { requireLogin, isLoggedIn }
+/** 创建/加入/切换家庭后保存服务端返回的新 JWT */
+function applyFamilyToken(data) {
+  if (!data || !data.token) return
+  wx.setStorageSync('token', data.token)
+  try {
+    const notification = require('./notification')
+    notification.disconnectSocket()
+    notification.connectSocket()
+  } catch (e) { /* ignore */ }
+}
+
+module.exports = { requireLogin, isLoggedIn, applyFamilyToken }

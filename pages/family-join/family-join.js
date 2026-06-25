@@ -7,7 +7,7 @@
  */
 
 const api = require('../../utils/api')
-const { requireLogin } = require('../../utils/auth')
+const { requireLogin, applyFamilyToken } = require('../../utils/auth')
 
 Page({
   data: {
@@ -43,7 +43,8 @@ Page({
     }
 
     try {
-      await api.joinFamily(code)
+      const data = await api.joinFamily(code)
+      applyFamilyToken(data)
       wx.showToast({ title: '加入成功', icon: 'success' })
       // 延迟 1.5s 返回上一页，让用户看到成功提示
       setTimeout(() => wx.navigateBack(), 1500)

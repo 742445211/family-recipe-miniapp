@@ -96,6 +96,21 @@ Page({
     wx.navigateBack()
   },
 
+  async retryScan() {
+    if (!this.data.scanId || this.data.polling) return
+    this.setData({ polling: true, errorMsg: '' })
+    try {
+      await api.retryFridgeScan(this.data.scanId)
+      this.pollScan()
+    } catch (e) {
+      this.setData({
+        polling: false,
+        status: 'failed',
+        errorMsg: (e && e.msg) || '重试失败'
+      })
+    }
+  },
+
   async confirmItems() {
     const selected = this.data.candidates
       .filter(c => c.checked && c.name.trim())

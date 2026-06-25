@@ -13,7 +13,8 @@
   <view wx:elif="{{status === 'failed'}}" class="status-box">
     <text class="status-title">识别失败</text>
     <text class="status-desc">{{errorMsg || '请重试或手动添加'}}</text>
-    <button class="btn-outline btn-block" hover-class="btn-hover" bindtap="goBack">返回</button>
+    <button class="btn-primary btn-block" hover-class="btn-hover" bindtap="retryScan">重新识别</button>
+    <button class="btn-outline btn-block retry-back-btn" hover-class="btn-hover" bindtap="goBack">返回</button>
   </view>
 
   <view wx:elif="{{status === 'confirmed'}}" class="status-box">

@@ -289,7 +289,7 @@ Page({
    */
   async prepareShare() {
     try {
-      const data = await api.shareOrder()
+      const data = await api.shareOrder(this.data.dateStr)
       if (data && data.activity_id) {
         wx.updateShareMenu({
           withShareTicket: true,

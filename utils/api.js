@@ -296,6 +296,8 @@ const api = {
 
   getFridgeScan: (id) => request('/fridge/scans/' + id),
 
+  retryFridgeScan: (id) => request('/fridge/scans/' + id + '/retry', 'POST'),
+
   confirmFridgeScan: (id, items) => request('/fridge/scans/' + id + '/confirm', 'POST', { items }),
 
   /**
@@ -369,10 +371,10 @@ const api = {
 
   /**
    * shareOrder - 创建动态消息 activity_id
-   * 用于分享菜点到群聊，后续点菜时卡片内容自动刷新
+   * @param {string} [date] - 菜单日期 YYYY-MM-DD，默认今天
    * @returns {Promise} - 返回 { activity_id }
    */
-  shareOrder: () => request('/orders/share', 'POST'),
+  shareOrder: (date) => request('/orders/share', 'POST', date ? { date } : {}),
 
   // ========== 厨师通知 ==========
 

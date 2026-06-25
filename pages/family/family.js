@@ -7,7 +7,7 @@
  */
 
 const api = require('../../utils/api')
-const { requireLogin } = require('../../utils/auth')
+const { requireLogin, applyFamilyToken } = require('../../utils/auth')
 
 Page({
   data: {
@@ -57,7 +57,8 @@ Page({
     // 校验：家庭名称不能为空
     if (!this.data.newName) return wx.showToast({ title: '请输入名称', icon: 'none' })
     try {
-      await api.createFamily({ name: this.data.newName })
+      const data = await api.createFamily({ name: this.data.newName })
+      applyFamilyToken(data)
       this.hideCreate()
       // 创建成功后刷新列表
       this.loadFamilies()
