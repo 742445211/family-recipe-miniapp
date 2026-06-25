@@ -19,6 +19,7 @@ test('safeParse 非法 JSON 返回空数组', () => {
 test('resolveFavoriteFlag 兼容多种字段', () => {
   assert.equal(resolveFavoriteFlag({ is_favorited: true }), true)
   assert.equal(resolveFavoriteFlag({ is_favorite: true }), true)
+  assert.equal(resolveFavoriteFlag({ favorited: true }), true)
   assert.equal(resolveFavoriteFlag({}), false)
 })
 

@@ -96,15 +96,14 @@ Page({
 
     // 从「我的」进入收藏模式
     if (gd.indexMode === 'favorites') {
-      this.setData({ mode: 'favorites' })
-      wx.setNavigationBarTitle({ title: '我的收藏' })
       if (app && app.globalData) app.globalData.indexMode = null
-      needRefresh = true
-    } else if (this.data.mode !== 'recipes') {
-      // 从收藏模式切回普通列表
-      this.setData({ mode: 'recipes', keyword: '', category: '', categoryIndex: -1 })
-      wx.setNavigationBarTitle({ title: '家庭菜谱' })
-      needRefresh = true
+      if (!isLoggedIn()) {
+        wx.showToast({ title: '请先登录', icon: 'none' })
+      } else {
+        this.setData({ mode: 'favorites' })
+        wx.setNavigationBarTitle({ title: '我的收藏' })
+        needRefresh = true
+      }
     }
     // 编辑/收藏等操作后由 markIndexNeedRefresh() 置位
     if (gd.indexNeedRefresh) {
@@ -204,6 +203,11 @@ Page({
       let hasMore = false
 
       if (this.data.mode === 'favorites') {
+        if (!isLoggedIn()) {
+          if (token !== this._loadToken) return
+          this._finishLoad(token, { recipes: [], hasMore: false, loadError: false })
+          return
+        }
         const data = await api.getFavorites({ page: requestPage, page_size: PAGE_SIZE })
         if (token !== this._loadToken) return // 已有更新的请求发出，丢弃本结果
         const list = (data && data.list) ? data.list : []

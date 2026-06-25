@@ -23,7 +23,7 @@ function safeParse(str, fallback) {
 function resolveFavoriteFlag(recipe) {
   if (!recipe || typeof recipe !== 'object') return false
   if (recipe.is_favorited === true || recipe.is_favorite === true) return true
-  if (recipe.is_fav === true) return true
+  if (recipe.is_fav === true || recipe.favorited === true) return true
   return false
 }
 

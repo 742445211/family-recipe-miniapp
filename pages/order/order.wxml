@@ -1,4 +1,11 @@
 <view class="container page-with-fab">
+  <view wx:if="{{needLogin}}" class="empty order-login-empty">
+    <text class="empty-title">登录后可点菜</text>
+    <text>登录后与家人一起安排今日菜单</text>
+    <button class="btn-primary btn-block order-login-btn" hover-class="btn-hover" bindtap="goLogin">去登录</button>
+  </view>
+
+  <block wx:else>
   <!-- 日期选择 -->
   <view class="gradient-border date-bar-wrap">
     <view class="gradient-border-inner date-bar">
@@ -115,4 +122,5 @@
       </view>
     </view>
   </view>
+  </block>
 </view>

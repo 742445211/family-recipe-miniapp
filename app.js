@@ -9,17 +9,35 @@ App({
   onLaunch() {
     this._featuresPromise = this._loadFeatures()
     this._ensureSocket()
+    this._refreshUnreadNotifications()
   },
 
   onShow() {
     this._ensureSocket()
+    this._refreshUnreadNotifications()
   },
 
   _onNotification(msg) {
     this.globalData.lastNotification = msg
+    if (msg && msg.type === 'ORDER_CREATED') {
+      this._refreshUnreadNotifications()
+    }
     if (typeof this.notificationCallback === 'function') {
       this.notificationCallback(msg)
     }
+  },
+
+  _refreshUnreadNotifications() {
+    if (!wx.getStorageSync('token')) return
+    try {
+      const api = require('./utils/api')
+      api.getUnreadNotifications()
+        .then((list) => {
+          const count = Array.isArray(list) ? list.length : 0
+          this.globalData.unreadCount = count
+        })
+        .catch(() => {})
+    } catch (e) { /* ignore */ }
   },
 
   _ensureSocket() {

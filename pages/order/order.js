@@ -10,7 +10,7 @@
  */
 
 const api = require('../../utils/api')
-const { requireLogin } = require('../../utils/auth')
+const { isLoggedIn } = require('../../utils/auth')
 const { formatYMD, todayYMD, normalizeYMD } = require('../../utils/date')
 const { loadAppFeatures } = require('../../utils/features')
 
@@ -23,6 +23,7 @@ Page({
     orders: [],
     dateStr: todayYMD(),
     mealType: '',
+    needLogin: false,
     unreadNotifications: [],
     unreadCount: 0,
     meals: [
@@ -46,18 +47,30 @@ Page({
    */
   onShow() {
     wx.showTabBar()
-    if (!requireLogin()) return
+    if (!isLoggedIn()) {
+      this.setData({ needLogin: true, orders: [], unreadCount: 0, unreadNotifications: [] })
+      return
+    }
+    this.setData({ needLogin: false })
     this.loadFeatureFlags()
     this.loadOrders()
     this.loadUnreadNotifications()
-    if (!this._sharePrepared) {
-      this._sharePrepared = true
-      this.prepareShare()
-    }
+    this._ensureShareForDate()
     getApp().setNotificationCallback(() => {
       this.loadOrders()
       this.loadUnreadNotifications()
     })
+  },
+
+  goLogin() {
+    wx.navigateTo({ url: '/pages/login/login' })
+  },
+
+  _ensureShareForDate() {
+    const dateStr = this.data.dateStr
+    if (this._lastShareDate === dateStr) return
+    this._lastShareDate = dateStr
+    this.prepareShare()
   },
 
   async loadFeatureFlags() {
@@ -93,7 +106,9 @@ Page({
     } catch (e) {}
     if (date) {
       this.setData({ dateStr: normalizeYMD(date), mealType: meal || '' })
+      this._lastShareDate = null
       this.loadOrders()
+      this._ensureShareForDate()
     }
     this.loadUnreadNotifications()
   },
@@ -131,7 +146,9 @@ Page({
     const prev = new Date(y, m-1, d)
     prev.setDate(prev.getDate() - 1)
     this.setData({ dateStr: formatYMD(prev) })
+    this._lastShareDate = null
     this.loadOrders()
+    this._ensureShareForDate()
   },
 
   /**
@@ -142,7 +159,9 @@ Page({
     const next = new Date(y, m-1, d)
     next.setDate(next.getDate() + 1)
     this.setData({ dateStr: formatYMD(next) })
+    this._lastShareDate = null
     this.loadOrders()
+    this._ensureShareForDate()
   },
 
   /**
@@ -153,7 +172,9 @@ Page({
     try {
       await api.removeOrder(e.currentTarget.dataset.id)
       this.loadOrders()
-    } catch (e) {}
+    } catch (e) {
+      wx.showToast({ title: (e && e.msg) || '删除失败', icon: 'none' })
+    }
   },
 
   /**
@@ -237,6 +258,8 @@ Page({
   async confirmBlindBoxOrder() {
     const recipe = this.data.blindBoxRecipe
     if (!recipe || !recipe.id) return
+    if (this._blindBoxOrdering) return
+    this._blindBoxOrdering = true
     const meal = this.blindBoxMealType()
     try {
       await api.addOrder({
@@ -250,7 +273,11 @@ Page({
       if (!this.data.mealType || this.data.mealType === meal) {
         this.loadOrders()
       }
-    } catch (e) {}
+    } catch (e) {
+      wx.showToast({ title: (e && e.msg) || '添加失败', icon: 'none' })
+    } finally {
+      this._blindBoxOrdering = false
+    }
   },
 
   // ========== 动态消息分享 ==========
