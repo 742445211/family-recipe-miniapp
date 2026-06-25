@@ -2,7 +2,7 @@
   <!-- 收藏模式标题栏 -->
   <view wx:if="{{mode === 'favorites'}}" class="fav-header gradient-border">
     <view class="gradient-border-inner fav-header-inner">
-      <text class="fav-back" bindtap="backToRecipes">← 回去逛菜</text>
+      <text class="fav-back" bindtap="backToRecipes">← 回到菜谱</text>
       <text class="fav-title">我的收藏</text>
       <text class="fav-placeholder"></text>
     </view>
@@ -13,7 +13,7 @@
     <view class="search-wrap">
       <input
         class="search-input"
-        placeholder="搜搜今天想吃什么..."
+        placeholder="今天想吃什么？"
         bindinput="onSearch"
         value="{{keyword}}"
       />
@@ -33,16 +33,16 @@
 
   <!-- 加载 / 错误 / 空状态 -->
   <view wx:if="{{loading && !recipes.length}}" class="empty">
-    <text class="empty-title">锅还没热...</text>
-    <text>正在捞菜谱</text>
+    <text class="empty-title">正在加载</text>
+    <text>菜谱马上就来</text>
   </view>
   <view wx:elif="{{loadError && !recipes.length}}" class="empty">
-    <text class="empty-title">网络开小差了</text>
-    <text>下拉刷新，厨师马上到</text>
+    <text class="empty-title">加载失败了</text>
+    <text>下拉刷新试试</text>
   </view>
   <view wx:elif="{{!recipes.length}}" class="empty">
-    <text class="empty-title">{{mode === 'favorites' ? '收藏夹空空如也' : '厨房还缺一道菜'}}</text>
-    <text>{{mode === 'favorites' ? '看到喜欢的，记得点个小爱心~' : '点右下角 + ，添第一道菜吧！'}}</text>
+    <text class="empty-title">{{mode === 'favorites' ? '还没有收藏' : '还没有菜谱'}}</text>
+    <text>{{mode === 'favorites' ? '遇到喜欢的菜，记得点收藏' : '点右下角 +，添第一道菜吧'}}</text>
   </view>
 
   <!-- 单列信息流 -->
@@ -99,7 +99,7 @@
       <text class="feed-footer-text">正在加载...</text>
     </view>
     <view wx:elif="{{!hasMore && recipes.length}}" class="feed-footer">
-      <text class="feed-footer-text">已经到底啦</text>
+      <text class="feed-footer-text">已经到底了</text>
     </view>
   </view>
 

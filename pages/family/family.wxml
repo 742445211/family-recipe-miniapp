@@ -1,7 +1,7 @@
 <view class="container">
   <view wx:if="{{!families.length}}" class="empty">
     <text class="empty-title">还没有家庭</text>
-    <text>创建一个，邀请家人一起点菜吧~</text>
+    <text>创建一个，邀请家人一起用</text>
   </view>
 
   <view wx:for="{{families}}" wx:key="id" class="gradient-border">

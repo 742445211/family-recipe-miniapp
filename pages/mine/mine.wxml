@@ -4,8 +4,8 @@
       <image wx:if="{{userInfo.avatar}}" src="{{userInfo.avatar}}" class="avatar" lazy-load="{{true}}" />
       <view wx:else class="avatar avatar-placeholder">{{userInfo.nickname ? userInfo.nickname[0] : '我'}}</view>
       <view class="user-text">
-        <text class="nickname">{{userInfo.nickname || '还没起名字的大厨'}}</text>
-        <text class="edit-hint">点我改改昵称和头像</text>
+        <text class="nickname">{{userInfo.nickname || '还没有昵称'}}</text>
+        <text class="edit-hint">点击编辑昵称和头像</text>
       </view>
     </view>
   </view>
@@ -17,7 +17,7 @@
         <text>厨师身份</text>
         <switch checked="{{isChef}}" bindchange="toggleChef" color="#FF6B35" style="margin-left:auto;" />
       </view>
-      <text class="chef-hint">开启后，家人点菜时你会收到通知——该进厨房啦！</text>
+      <text class="chef-hint">开启后，家人点菜时会通知你</text>
     </view>
   </view>
 
@@ -77,7 +77,7 @@
 
   <view wx:if="{{showEdit}}" class="modal-mask" bindtap="hideEditDialog">
     <view class="modal" catchtap>
-      <view class="modal-title">改改资料</view>
+      <view class="modal-title">编辑资料</view>
       <view class="form-group">
         <text class="label">昵称</text>
         <input value="{{editNickname}}" bindinput="onNicknameInput" placeholder="起个好记的名字" />
@@ -86,11 +86,11 @@
         <text class="label">头像</text>
         <view class="avatar-upload" bindtap="chooseAvatar">
           <image wx:if="{{editAvatar}}" src="{{editAvatar}}" class="avatar-preview" mode="aspectFill" lazy-load="{{true}}" />
-          <text wx:else class="avatar-tip">点我上传</text>
+          <text wx:else class="avatar-tip">点击上传</text>
         </view>
       </view>
       <view class="modal-btns">
-        <button class="btn-outline" hover-class="btn-hover" bindtap="hideEditDialog">算了</button>
+        <button class="btn-outline" hover-class="btn-hover" bindtap="hideEditDialog">取消</button>
         <button class="btn-primary" hover-class="btn-hover" bindtap="saveProfile">保存</button>
       </view>
     </view>

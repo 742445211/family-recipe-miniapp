@@ -212,7 +212,7 @@ Page({
       })
     } catch (e) {
       if (e && e.code === 429) {
-        wx.showToast({ title: e.msg || '开太多次啦，稍后再试', icon: 'none' })
+        wx.showToast({ title: e.msg || '抽太勤了，稍后再试', icon: 'none' })
       } else if (e && e.msg) {
         wx.showToast({ title: e.msg, icon: 'none' })
       }

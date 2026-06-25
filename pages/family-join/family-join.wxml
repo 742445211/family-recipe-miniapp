@@ -2,7 +2,7 @@
   <view class="gradient-border">
     <view class="gradient-border-inner join-card">
       <view class="section-title">输入邀请码</view>
-      <text class="join-hint">拿到家人的 6 位码，就能同桌吃饭了~</text>
+      <text class="join-hint">输入家人分享的 6 位邀请码</text>
       <input class="code-input" value="{{code}}" bindinput="onCode" placeholder="6位邀请码" maxlength="6" />
       <button class="btn-primary btn-block join-btn" hover-class="btn-hover" bindtap="join">加入家庭</button>
     </view>

@@ -6,10 +6,10 @@
       <text class="logo-text">厨</text>
     </view>
     <text class="title">家庭菜谱</text>
-    <text class="subtitle">家的味道，从登录开始</text>
+    <text class="subtitle">记录一家人的味道</text>
   </view>
   <button class="btn-login btn-block" hover-class="btn-hover" bindtap="handleLogin" loading="{{loading}}">
     微信一键登录
   </button>
-  <text class="login-hint">登录后才能点菜、编辑和家庭协作哦~</text>
+  <text class="login-hint">登录后可点菜、编辑菜谱和管理家庭</text>
 </view>

@@ -3,7 +3,7 @@
     <view class="gradient-border-inner">
       <view class="form-group">
         <text class="label">菜名 *</text>
-        <input value="{{name}}" bindinput="onInput" data-field="name" placeholder="给这道菜起个响亮的名字" />
+        <input value="{{name}}" bindinput="onInput" data-field="name" placeholder="给这道菜起个名字" />
       </view>
 
       <view wx:if="{{!isEdit && catalogEnabled}}" class="catalog-block">
@@ -65,7 +65,7 @@
 
       <view class="form-group">
         <text class="label">烹饪时长(分钟)</text>
-        <input type="number" value="{{cookTime}}" bindinput="onInput" data-field="cookTime" placeholder="大概多久能出锅？" />
+        <input type="number" value="{{cookTime}}" bindinput="onInput" data-field="cookTime" placeholder="大概多少分钟" />
       </view>
 
       <view class="form-group">
@@ -73,7 +73,7 @@
         <view class="upload-area gradient-border" bindtap="chooseImage">
           <view class="gradient-border-inner upload-inner">
             <image wx:if="{{coverUrl}}" src="{{coverUrl}}" mode="aspectFill" lazy-load="{{true}}" />
-            <text wx:else class="upload-tip">点我上传，馋哭邻居</text>
+            <text wx:else class="upload-tip">点一下上传封面</text>
           </view>
         </view>
       </view>
@@ -119,12 +119,12 @@
   <view class="gradient-border">
     <view class="gradient-border-inner">
       <view class="section-title">小贴士</view>
-      <textarea value="{{tips}}" bindinput="onInput" data-field="tips" placeholder="独门秘籍，Optional~" auto-height />
+      <textarea value="{{tips}}" bindinput="onInput" data-field="tips" placeholder="小窍门、注意事项（选填）" auto-height />
     </view>
   </view>
 
   <button class="btn-primary btn-block submit-btn" hover-class="btn-hover" bindtap="submit" loading="{{submitting}}">
-    {{isEdit ? '保存修改' : '出锅！添加菜谱'}}
+    {{isEdit ? '保存修改' : '添加菜谱'}}
   </button>
 
   <select-sheet

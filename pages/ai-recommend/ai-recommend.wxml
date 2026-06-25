@@ -1,24 +1,23 @@
 <view class="ai-page">
   <view wx:if="{{!ready}}" class="state-block">
     <view class="state-bubble">AI</view>
-    <text class="state-title">锅还没热...</text>
-    <text class="state-desc">大厨正在系围裙</text>
+    <text class="state-title">稍等片刻</text>
+    <text class="state-desc">正在准备推荐</text>
   </view>
 
   <block wx:elif="{{enabled}}">
-    <!-- Hero + 操作（合并为一块，避免卡片套卡片） -->
     <view class="gradient-border hero-card">
       <view class="gradient-border-inner is-flush hero-inner">
-        <text class="hero-kicker">AI 大厨在线</text>
-        <text class="hero-title">今晚吃啥，别纠结了</text>
-        <text class="hero-desc" user-select>翻翻菜谱、回忆你点过的、再看看天气——一次端上 {{recommendCount}} 道</text>
+        <text class="hero-kicker">AI 推荐</text>
+        <text class="hero-title">今晚吃什么，帮你想想</text>
+        <text class="hero-desc" user-select>会参考收藏、点过的菜和天气，一次推荐 {{recommendCount}} 道</text>
         <text class="hero-weather" wx:if="{{weatherText}}" user-select>{{weatherText}}</text>
 
         <text class="quota-line" wx:if="{{rateLimit}}">
-          这 {{rateWindowHours}} 小时还能喊我 {{rateLimit.remaining}} 次（最多 {{rateLimit.limit}} 次）
+          还能推荐 {{rateLimit.remaining}} 次（每 {{rateWindowHours}} 小时 {{rateLimit.limit}} 次）
         </text>
         <text class="quota-line quota-muted" wx:else>
-          每 {{rateWindowHours}} 小时最多 {{rateLimitMax}} 次，别贪心哦
+          每 {{rateWindowHours}} 小时最多 {{rateLimitMax}} 次
         </text>
 
         <button
@@ -33,7 +32,6 @@
       </view>
     </view>
 
-    <!-- 加载 -->
     <view wx:if="{{loading}}" class="menu-panel menu-panel-loading">
       <text class="menu-loading-tip">{{loadingTip}}</text>
       <view wx:for="{{skeletonSlots}}" wx:key="*this" class="menu-row menu-row-skeleton">
@@ -42,10 +40,9 @@
       </view>
     </view>
 
-    <!-- 结果 -->
     <view wx:elif="{{items.length}}" class="gradient-border menu-panel-wrap">
       <view class="gradient-border-inner is-flush menu-panel">
-        <text class="menu-head">好了，上菜！</text>
+        <text class="menu-head">今天就做这个</text>
         <view
           wx:for="{{items}}"
           wx:key="item_id"
@@ -59,7 +56,7 @@
           <view class="menu-body">
             <view class="menu-name-row">
               <text class="menu-name" user-select>{{item.name}}</text>
-              <text class="menu-tag" wx:if="{{item.existing_recipe_id}}">库里有</text>
+              <text class="menu-tag" wx:if="{{item.existing_recipe_id}}">菜谱库里有了</text>
             </view>
             <text class="menu-reason" wx:if="{{item.reason}}" user-select>{{item.reason}}</text>
           </view>
@@ -68,11 +65,10 @@
       </view>
     </view>
 
-    <!-- 空状态：不重复说 5 道菜 -->
     <view wx:else class="state-block state-block-sm">
-      <view class="state-pan">开</view>
-      <text class="state-title">灶台还凉着呢</text>
-      <text class="state-desc">戳一下上面那颗橙色按钮，让大厨开伙</text>
+      <view class="state-pan">荐</view>
+      <text class="state-title">还没开始推荐</text>
+      <text class="state-desc">点上面的按钮，让 AI 帮你想</text>
     </view>
   </block>
 </view>

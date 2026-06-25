@@ -15,10 +15,10 @@ function getAppSafe() {
 }
 
 function formatRetryHint(sec) {
-  if (!sec || sec <= 0) return '稍后再喊我'
+  if (!sec || sec <= 0) return '请稍后再试'
   const h = Math.ceil(sec / 3600)
-  if (h <= 1) return '约 1 小时后再喊'
-  return '约 ' + h + ' 小时后再喊'
+  if (h <= 1) return '约 1 小时后再试'
+  return '约 ' + h + ' 小时后再试'
 }
 
 const RECOMMEND_COUNT = 5
@@ -26,10 +26,10 @@ const RATE_WINDOW_HOURS = 2
 const RATE_LIMIT_MAX = 5
 
 const LOADING_TIPS = [
-  '正在翻你的收藏...',
-  '回忆上次点的啥...',
-  '瞅眼窗外天气...',
-  '大脑正在下锅...'
+  '翻翻你的收藏...',
+  '回忆最近点过的...',
+  '看看外面天气...',
+  '正在组合推荐...'
 ]
 
 Page({
@@ -44,7 +44,7 @@ Page({
     rateWindowHours: RATE_WINDOW_HOURS,
     rateLimitMax: RATE_LIMIT_MAX,
     skeletonSlots: [1, 2, 3, 4, 5],
-    btnText: '开饭！给我推荐',
+    btnText: '开始推荐',
     loadingTip: LOADING_TIPS[0]
   },
 
@@ -132,11 +132,11 @@ Page({
 
   _syncBtnText() {
     const { loading, items } = this.data
-    let btnText = '开饭！给我推荐'
+    let btnText = '开始推荐'
     if (loading) {
-      btnText = '大脑正在下锅...'
+      btnText = '正在挑选...'
     } else if (items.length) {
-      btnText = '不满意？再来一桌'
+      btnText = '换一批推荐'
     }
     this.setData({ btnText })
   },
@@ -155,7 +155,7 @@ Page({
         rateLimit: data.rate_limit || null
       })
       if (!items.length) {
-        wx.showToast({ title: '大厨挠头了，没想出菜', icon: 'none' })
+        wx.showToast({ title: '这次没想出合适的菜', icon: 'none' })
       }
     } catch (e) {
       if (!this.data.enabled) return
@@ -166,7 +166,7 @@ Page({
       if (e && e.code === 429) {
         const hint = formatRetryHint(e.data && e.data.retry_after_sec)
         wx.showToast({
-          title: '每 3 小时就 3 次啦，' + hint,
+          title: '推荐次数用完了，' + hint,
           icon: 'none',
           duration: 3000
         })

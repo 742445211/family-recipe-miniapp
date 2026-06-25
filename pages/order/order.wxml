@@ -14,7 +14,7 @@
     <view class="gradient-border-inner notify-bar">
       <view class="notify-header">
         <text class="notify-badge">{{unreadCount}}</text>
-        <text class="notify-title">有人点菜啦！</text>
+        <text class="notify-title">家人点菜了</text>
       </view>
       <view wx:for="{{unreadNotifications}}" wx:key="id" class="notify-item"
         bindtap="onNotificationTap" data-id="{{item.id}}" data-date="{{item.order_date}}" data-meal="{{item.meal_type}}">
@@ -34,8 +34,8 @@
     <view class="gradient-border-inner blind-box-entry">
       <text class="blind-box-icon">🎁</text>
       <view class="blind-box-text">
-        <text class="blind-box-title">今天吃啥？开盲盒</text>
-        <text class="blind-box-sub">从家庭菜谱里随机抽一道</text>
+        <text class="blind-box-title">不知道吃什么？</text>
+        <text class="blind-box-sub">从家庭菜谱里随机来一道</text>
       </view>
       <text class="blind-box-arrow">›</text>
     </view>
@@ -43,7 +43,7 @@
 
   <view wx:if="{{!orders.length}}" class="empty">
     <text class="empty-title">今天还没点菜</text>
-    <text>肚子叫了？去菜谱页挑几道吧~</text>
+    <text>去菜谱页挑几道吧</text>
   </view>
 
   <view wx:for="{{orders}}" wx:key="id" class="gradient-border order-wrap">
@@ -88,7 +88,7 @@
       <view class="blind-box-stage">
         <view wx:if="{{blindBoxLoading}}" class="blind-box-shake">
           <text class="blind-box-box">🎲</text>
-          <text class="blind-box-hint">正在摇盲盒...</text>
+          <text class="blind-box-hint">正在抽取...</text>
         </view>
         <view wx:elif="{{blindBoxRecipe}}" class="blind-box-result">
           <image wx:if="{{blindBoxRecipe.cover_url}}" src="{{blindBoxRecipe.cover_url}}" class="blind-box-cover" mode="aspectFill" />
@@ -108,10 +108,10 @@
       </view>
 
       <view class="modal-btns blind-box-btns">
-        <button class="btn-outline" hover-class="btn-hover" bindtap="closeBlindBox">算了</button>
+        <button class="btn-outline" hover-class="btn-hover" bindtap="closeBlindBox">取消</button>
         <button class="btn-outline" hover-class="btn-hover" bindtap="redrawBlindBox" disabled="{{blindBoxLoading || !blindBoxRecipe}}">换一个</button>
         <button class="btn-outline" hover-class="btn-hover" bindtap="goBlindBoxDetail" disabled="{{!blindBoxRecipe}}">详情</button>
-        <button class="btn-primary" hover-class="btn-hover" bindtap="confirmBlindBoxOrder" disabled="{{!blindBoxRecipe}}">就它啦</button>
+        <button class="btn-primary" hover-class="btn-hover" bindtap="confirmBlindBoxOrder" disabled="{{!blindBoxRecipe}}">就选这道</button>
       </view>
     </view>
   </view>

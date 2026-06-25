@@ -12,17 +12,17 @@
 
   <view wx:elif="{{loadError}}" class="empty">
     <text class="empty-title">加载失败</text>
-    <text>下拉刷新再试试</text>
+    <text>下拉刷新试试</text>
   </view>
 
   <view wx:elif="{{loading && !items.length}}" class="empty">
-    <text class="empty-title">打开冰箱门...</text>
-    <text>正在清点库存</text>
+    <text class="empty-title">正在加载</text>
+    <text>清点冰箱库存中</text>
   </view>
 
   <view wx:elif="{{!items.length}}" class="empty">
-    <text class="empty-title">冰箱空空如也</text>
-    <text>手动添加或拍张照片识别吧</text>
+    <text class="empty-title">冰箱还是空的</text>
+    <text>手动添加，或拍照识别</text>
   </view>
 
   <view wx:else class="item-list">
