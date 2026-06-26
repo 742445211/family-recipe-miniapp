@@ -12,7 +12,7 @@
 const api = require('../../utils/api')
 const { isLoggedIn } = require('../../utils/auth')
 const { formatYMD, todayYMD, normalizeYMD } = require('../../utils/date')
-const { loadAppFeatures } = require('../../utils/features')
+const { loadAppFeatures, syncFeaturesToApp } = require('../../utils/features')
 
 function effectiveMealType(mealType) {
   return mealType || 'dinner'
@@ -76,6 +76,7 @@ Page({
   async loadFeatureFlags() {
     try {
       const features = await loadAppFeatures()
+      syncFeaturesToApp(getApp(), features)
       this.setData({ blindBoxEnabled: !!features.blind_box })
     } catch (e) {
       // 功能开关拉取失败时不展示盲盒，避免入口可见但接口 403

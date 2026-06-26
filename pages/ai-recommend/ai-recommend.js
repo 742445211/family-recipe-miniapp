@@ -4,7 +4,7 @@
 
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
-const { loadAppFeatures } = require('../../utils/features')
+const { refreshAppFeatures, getCachedFeatures } = require('../../utils/features')
 
 function getAppSafe() {
   try {
@@ -52,6 +52,10 @@ Page({
     if (!requireLogin()) return
     this._weatherLoaded = false
     this._leftForDisabled = false
+    const app = getAppSafe()
+    if (getCachedFeatures(app).ai_recommend) {
+      this.setData({ ready: true, enabled: true })
+    }
     this._checkEnabled()
   },
 
@@ -95,11 +99,8 @@ Page({
   },
 
   _checkEnabled() {
-    return loadAppFeatures().then((features) => {
-      const app = getAppSafe()
-      if (app && app.globalData) {
-        app.globalData.features = features
-      }
+    const app = getAppSafe()
+    return refreshAppFeatures(app).then((features) => {
       if (!features.ai_recommend) {
         this._applyDisabled()
         return false

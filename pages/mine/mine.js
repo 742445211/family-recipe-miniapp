@@ -11,6 +11,7 @@
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
 const notification = require('../../utils/notification')
+const { refreshAppFeatures, getCachedFeatures } = require('../../utils/features')
 
 function getAppSafe() {
   try {
@@ -38,13 +39,13 @@ Page({
     wx.showTabBar()
     if (!requireLogin()) return
     const app = getAppSafe()
-    const apply = () => {
-      const features = (app && app.globalData && app.globalData.features) || {}
-      this.setData({ showAI: !!features.ai_recommend })
+    const apply = (features) => {
+      const f = features || getCachedFeatures(app)
+      this.setData({ showAI: !!f.ai_recommend })
       this.loadProfile()
     }
-    if (app && app._featuresPromise) {
-      app._featuresPromise.then(apply).catch(apply)
+    if (app) {
+      refreshAppFeatures(app).then(apply).catch(() => apply())
       return
     }
     apply()
@@ -157,7 +158,7 @@ Page({
    */
   goAI() {
     const app = getAppSafe()
-    const features = (app && app.globalData && app.globalData.features) || {}
+    const features = getCachedFeatures(app)
     if (!features.ai_recommend) {
       wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
       return

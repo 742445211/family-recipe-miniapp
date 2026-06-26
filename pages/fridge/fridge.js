@@ -5,6 +5,7 @@
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
 const { normalizeYMD, todayYMD } = require('../../utils/date')
+const { refreshAppFeatures, getCachedFeatures } = require('../../utils/features')
 
 function getAppSafe() {
   try {
@@ -56,11 +57,13 @@ Page({
 
   async _loadFeatureFlag() {
     const app = getAppSafe()
-    if (app && app._featuresPromise) {
-      try { await app._featuresPromise } catch (e) { /* ignore */ }
+    let features = getCachedFeatures(app)
+    if (app) {
+      try {
+        features = await refreshAppFeatures(app)
+      } catch (e) { /* 使用缓存 */ }
     }
-    const enabled = !!(app && app.globalData && app.globalData.features && app.globalData.features.fridge)
-    this.setData({ enabled })
+    this.setData({ enabled: !!features.fridge })
   },
 
   async loadItems() {

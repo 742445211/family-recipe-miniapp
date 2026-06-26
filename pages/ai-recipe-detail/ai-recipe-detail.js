@@ -6,6 +6,15 @@ const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
 const { todayYMD } = require('../../utils/date')
 const { safeParse } = require('../../utils/json')
+const { refreshAppFeatures } = require('../../utils/features')
+
+function getAppSafe() {
+  try {
+    return getApp()
+  } catch (e) {
+    return null
+  }
+}
 
 function difficultyLabel(d) {
   if (d === 'easy') return '简单'
@@ -36,7 +45,50 @@ Page({
       return
     }
     this.setData({ itemId, orderDate: todayYMD() })
-    this.loadDraft(itemId)
+    this._checkEnabled(itemId)
+  },
+
+  onShow() {
+    if (!requireLogin()) return
+    if (this.data.itemId) {
+      this._checkEnabled(this.data.itemId)
+    }
+  },
+
+  _goBack() {
+    const pages = getCurrentPages()
+    if (pages.length > 1) {
+      wx.navigateBack()
+    } else {
+      wx.switchTab({ url: '/pages/mine/mine' })
+    }
+  },
+
+  _applyDisabled() {
+    if (!this._leftForDisabled) {
+      this._leftForDisabled = true
+      wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
+      this._goBack()
+    }
+  },
+
+  _checkEnabled(itemId) {
+    const app = getAppSafe()
+    return refreshAppFeatures(app).then((features) => {
+      if (!features.ai_recommend) {
+        this._applyDisabled()
+        return false
+      }
+      this._leftForDisabled = false
+      if (itemId && !this._draftLoaded) {
+        this._draftLoaded = true
+        this.loadDraft(itemId)
+      }
+      return true
+    }).catch(() => {
+      this._applyDisabled()
+      return false
+    })
   },
 
   async loadDraft(itemId) {

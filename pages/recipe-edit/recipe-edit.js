@@ -5,6 +5,7 @@
 const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
 const { DEFAULT_CATEGORY_NAMES, mergeCategoryNames } = require('../../utils/category')
+const { refreshAppFeatures, getCachedFeatures, DEFAULT_FEATURES } = require('../../utils/features')
 const { safeParse } = require('../../utils/json')
 const { markIndexNeedRefresh } = require('../../utils/index-refresh')
 
@@ -67,7 +68,7 @@ Page({
 
   async onLoad(options) {
     if (!requireLogin()) return
-    await this._initCatalogFeature()
+    await this._syncCatalogFeature()
     await this.loadCategories()
     if (options.id) {
       this.setData({ id: options.id, isEdit: true })
@@ -78,15 +79,36 @@ Page({
     }
   },
 
-  async _initCatalogFeature() {
+  onShow() {
+    if (!requireLogin()) return
+    this._syncCatalogFeature()
+  },
+
+  async _syncCatalogFeature() {
     const app = getAppSafe()
-    if (app && app._featuresPromise) {
+    let features = DEFAULT_FEATURES
+    if (app) {
       try {
-        await app._featuresPromise
-      } catch (e) { /* ignore */ }
+        features = await refreshAppFeatures(app)
+      } catch (e) {
+        features = getCachedFeatures(app)
+      }
     }
-    const enabled = !!(app && app.globalData && app.globalData.features && app.globalData.features.catalog_recipe)
-    this.setData({ catalogEnabled: enabled })
+    const enabled = !!features.catalog_recipe
+    const patch = { catalogEnabled: enabled }
+    if (!enabled) {
+      Object.assign(patch, {
+        catalogLoading: false,
+        catalogGenerated: false,
+        catalogVariants: [],
+        selectedCatalogId: null,
+        catalogRateLimit: null,
+        variantSheetVisible: false,
+        variantOptions: [],
+        currentVariantLabel: ''
+      })
+    }
+    this.setData(patch)
   },
 
   _buildCategoryOptions(categories) {
@@ -276,6 +298,10 @@ Page({
   },
 
   async onCatalogLookup(e) {
+    if (!this.data.catalogEnabled) {
+      wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
+      return
+    }
     const ds = e && e.currentTarget && e.currentTarget.dataset
     const newVariant = !!(ds && (ds.newVariant === true || ds.newVariant === 'true'))
     const name = this.data.name.trim()

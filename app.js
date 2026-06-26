@@ -2,7 +2,7 @@
  * app.js - 微信小程序应用入口
  */
 
-const { loadAppFeatures } = require('./utils/features')
+const { refreshAppFeatures } = require('./utils/features')
 const notification = require('./utils/notification')
 
 App({
@@ -15,6 +15,7 @@ App({
   onShow() {
     this._ensureSocket()
     this._refreshUnreadNotifications()
+    this.refreshFeatures()
   },
 
   _onNotification(msg) {
@@ -46,9 +47,12 @@ App({
   },
 
   _loadFeatures() {
-    return loadAppFeatures().then((features) => {
-      this.globalData.features = features
-    })
+    return refreshAppFeatures(this)
+  },
+
+  refreshFeatures() {
+    this._featuresPromise = refreshAppFeatures(this)
+    return this._featuresPromise
   },
 
   globalData: {
@@ -57,7 +61,7 @@ App({
     indexNeedRefresh: false,   // true 时首页 onShow 会全量刷新列表
     lastNotification: null,
     unreadCount: 0,
-    features: { ai_recommend: false, catalog_recipe: false, fridge: false }
+    features: { ai_recommend: false, catalog_recipe: false, fridge: false, blind_box: false }
   },
 
   setNotificationCallback(fn) {
