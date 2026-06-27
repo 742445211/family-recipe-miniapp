@@ -6,7 +6,7 @@ const api = require('../../utils/api')
 const { requireLogin } = require('../../utils/auth')
 const { todayYMD } = require('../../utils/date')
 const { safeParse } = require('../../utils/json')
-const { refreshAppFeatures } = require('../../utils/features')
+const { refreshAppFeatures, getCachedFeatures } = require('../../utils/features')
 
 function getAppSafe() {
   try {
@@ -24,6 +24,7 @@ function difficultyLabel(d) {
 
 Page({
   data: {
+    enabled: false,
     itemId: '',
     draft: {},
     ingredients: [],
@@ -45,14 +46,21 @@ Page({
       return
     }
     this.setData({ itemId, orderDate: todayYMD() })
+    this._draftLoaded = false
+    this._leftForDisabled = false
+    const cached = getCachedFeatures(getAppSafe())
+    if (!cached.ai_recommend) {
+      this._applyDisabled()
+      return
+    }
     this._checkEnabled(itemId)
   },
 
   onShow() {
     if (!requireLogin()) return
-    if (this.data.itemId) {
-      this._checkEnabled(this.data.itemId)
-    }
+    if (!this.data.itemId) return
+    if (!this.data.enabled && this._leftForDisabled) return
+    this._checkEnabled(this.data.itemId)
   },
 
   _goBack() {
@@ -65,6 +73,17 @@ Page({
   },
 
   _applyDisabled() {
+    this._draftLoaded = false
+    this.setData({
+      enabled: false,
+      draft: {},
+      ingredients: [],
+      seasonings: [],
+      steps: [],
+      difficultyText: '中等',
+      inLibrary: false,
+      showOrderModal: false
+    })
     if (!this._leftForDisabled) {
       this._leftForDisabled = true
       wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
@@ -80,6 +99,7 @@ Page({
         return false
       }
       this._leftForDisabled = false
+      this.setData({ enabled: true })
       if (itemId && !this._draftLoaded) {
         this._draftLoaded = true
         this.loadDraft(itemId)
@@ -92,8 +112,10 @@ Page({
   },
 
   async loadDraft(itemId) {
+    if (!this.data.enabled) return
     try {
       const draft = await api.getAIRecipeItem(itemId)
+      if (!this.data.enabled) return
       this.setData({
         draft,
         ingredients: safeParse(draft.ingredients),

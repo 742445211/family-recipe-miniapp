@@ -1,74 +1,66 @@
-<view class="ai-page">
-  <view wx:if="{{!ready}}" class="state-block">
-    <view class="state-bubble">AI</view>
-    <text class="state-title">稍等片刻</text>
-    <text class="state-desc">正在准备推荐</text>
+<view wx:if="{{enabled}}" class="ai-page">
+  <view class="gradient-border hero-card">
+    <view class="gradient-border-inner is-flush hero-inner">
+      <text class="hero-kicker">AI 推荐</text>
+      <text class="hero-title">今晚吃什么，帮你想想</text>
+      <text class="hero-desc" user-select>会参考收藏、点过的菜和天气，一次推荐 {{recommendCount}} 道</text>
+      <text class="hero-weather" wx:if="{{weatherText}}" user-select>{{weatherText}}</text>
+
+      <text class="quota-line" wx:if="{{rateLimit}}">
+        还能推荐 {{rateLimit.remaining}} 次（每 {{rateWindowHours}} 小时 {{rateLimit.limit}} 次）
+      </text>
+      <text class="quota-line quota-muted" wx:else>
+        每 {{rateWindowHours}} 小时最多 {{rateLimitMax}} 次
+      </text>
+
+      <button
+        class="btn-primary btn-block hero-btn"
+        hover-class="btn-hover"
+        bindtap="getRecommend"
+        loading="{{loading}}"
+        disabled="{{loading}}"
+      >
+        {{btnText}}
+      </button>
+    </view>
   </view>
 
-  <block wx:elif="{{enabled}}">
-    <view class="gradient-border hero-card">
-      <view class="gradient-border-inner is-flush hero-inner">
-        <text class="hero-kicker">AI 推荐</text>
-        <text class="hero-title">今晚吃什么，帮你想想</text>
-        <text class="hero-desc" user-select>会参考收藏、点过的菜和天气，一次推荐 {{recommendCount}} 道</text>
-        <text class="hero-weather" wx:if="{{weatherText}}" user-select>{{weatherText}}</text>
-
-        <text class="quota-line" wx:if="{{rateLimit}}">
-          还能推荐 {{rateLimit.remaining}} 次（每 {{rateWindowHours}} 小时 {{rateLimit.limit}} 次）
-        </text>
-        <text class="quota-line quota-muted" wx:else>
-          每 {{rateWindowHours}} 小时最多 {{rateLimitMax}} 次
-        </text>
-
-        <button
-          class="btn-primary btn-block hero-btn"
-          hover-class="btn-hover"
-          bindtap="getRecommend"
-          loading="{{loading}}"
-          disabled="{{loading}}"
-        >
-          {{btnText}}
-        </button>
-      </view>
+  <view wx:if="{{loading}}" class="menu-panel menu-panel-loading">
+    <text class="menu-loading-tip">{{loadingTip}}</text>
+    <view wx:for="{{skeletonSlots}}" wx:key="*this" class="menu-row menu-row-skeleton">
+      <view class="menu-dot"></view>
+      <view class="sk-line sk-line-title"></view>
     </view>
+  </view>
 
-    <view wx:if="{{loading}}" class="menu-panel menu-panel-loading">
-      <text class="menu-loading-tip">{{loadingTip}}</text>
-      <view wx:for="{{skeletonSlots}}" wx:key="*this" class="menu-row menu-row-skeleton">
-        <view class="menu-dot"></view>
-        <view class="sk-line sk-line-title"></view>
-      </view>
-    </view>
-
-    <view wx:elif="{{items.length}}" class="gradient-border menu-panel-wrap">
-      <view class="gradient-border-inner is-flush menu-panel">
-        <text class="menu-head">今天就做这个</text>
-        <view
-          wx:for="{{items}}"
-          wx:key="item_id"
-          class="menu-row {{index < items.length - 1 ? 'has-line' : ''}}"
-          bindtap="toAIRecipeDetail"
-          data-id="{{item.item_id}}"
-          hover-class="menu-row-hover"
-          hover-stay-time="80"
-        >
-          <view class="menu-num num-{{index < 3 ? index + 1 : 'n'}}">{{index + 1}}</view>
-          <view class="menu-body">
-            <view class="menu-name-row">
-              <text class="menu-name" user-select>{{item.name}}</text>
-              <text class="menu-tag" wx:if="{{item.existing_recipe_id}}">菜谱库里有了</text>
-            </view>
-            <text class="menu-reason" wx:if="{{item.reason}}" user-select>{{item.reason}}</text>
+  <view wx:elif="{{items.length}}" class="gradient-border menu-panel-wrap">
+    <view class="gradient-border-inner is-flush menu-panel">
+      <text class="menu-head">今天就做这个</text>
+      <view
+        wx:for="{{items}}"
+        wx:key="item_id"
+        class="menu-row {{index < items.length - 1 ? 'has-line' : ''}}"
+        bindtap="toAIRecipeDetail"
+        data-id="{{item.item_id}}"
+        hover-class="menu-row-hover"
+        hover-stay-time="80"
+      >
+        <view class="menu-num num-{{index < 3 ? index + 1 : 'n'}}">{{index + 1}}</view>
+        <view class="menu-body">
+          <view class="menu-name-row">
+            <text class="menu-name" user-select>{{item.name}}</text>
+            <text class="menu-tag" wx:if="{{item.existing_recipe_id}}">菜谱库里有了</text>
           </view>
-          <text class="menu-arrow">›</text>
+          <text class="menu-reason" wx:if="{{item.reason}}" user-select>{{item.reason}}</text>
         </view>
+        <text class="menu-arrow">›</text>
       </view>
     </view>
+  </view>
 
-    <view wx:else class="state-block state-block-sm">
-      <view class="state-pan">荐</view>
-      <text class="state-title">还没开始推荐</text>
-      <text class="state-desc">点上面的按钮，让 AI 帮你想</text>
-    </view>
-  </block>
+  <view wx:else class="state-block state-block-sm">
+    <view class="state-pan">荐</view>
+    <text class="state-title">还没开始推荐</text>
+    <text class="state-desc">点上面的按钮，让 AI 帮你想</text>
+  </view>
 </view>

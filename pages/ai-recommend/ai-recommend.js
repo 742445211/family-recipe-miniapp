@@ -34,7 +34,6 @@ const LOADING_TIPS = [
 
 Page({
   data: {
-    ready: false,
     enabled: false,
     loading: false,
     items: [],
@@ -52,15 +51,17 @@ Page({
     if (!requireLogin()) return
     this._weatherLoaded = false
     this._leftForDisabled = false
-    const app = getAppSafe()
-    if (getCachedFeatures(app).ai_recommend) {
-      this.setData({ ready: true, enabled: true })
+    const cached = getCachedFeatures(getAppSafe())
+    if (!cached.ai_recommend) {
+      this._applyDisabled()
+      return
     }
     this._checkEnabled()
   },
 
   onShow() {
     if (!requireLogin()) return
+    if (!this.data.enabled && this._leftForDisabled) return
     this._checkEnabled()
   },
 
@@ -72,6 +73,7 @@ Page({
 
   _clearPageData() {
     this.setData({
+      enabled: false,
       items: [],
       weatherText: '',
       rateLimit: null,
@@ -89,7 +91,6 @@ Page({
   },
 
   _applyDisabled() {
-    this.setData({ ready: true, enabled: false })
     this._clearPageData()
     if (!this._leftForDisabled) {
       this._leftForDisabled = true
@@ -106,7 +107,7 @@ Page({
         return false
       }
       this._leftForDisabled = false
-      this.setData({ ready: true, enabled: true })
+      this.setData({ enabled: true })
       if (!this._weatherLoaded) {
         this._weatherLoaded = true
         this.loadWeather()

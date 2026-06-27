@@ -1,4 +1,4 @@
-<view class="container detail-page">
+<view wx:if="{{enabled}}" class="container detail-page">
   <view class="gradient-border">
     <view class="gradient-border-inner">
       <view class="name-row">
