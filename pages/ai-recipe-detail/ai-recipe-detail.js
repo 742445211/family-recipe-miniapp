@@ -22,6 +22,8 @@ function difficultyLabel(d) {
   return '中等'
 }
 
+const NAV_TITLE = 'AI 推荐详情'
+
 Page({
   data: {
     enabled: false,
@@ -86,8 +88,8 @@ Page({
     })
     if (!this._leftForDisabled) {
       this._leftForDisabled = true
-      wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
       this._goBack()
+      wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
     }
   },
 
@@ -99,6 +101,7 @@ Page({
         return false
       }
       this._leftForDisabled = false
+      wx.setNavigationBarTitle({ title: NAV_TITLE })
       this.setData({ enabled: true })
       if (itemId && !this._draftLoaded) {
         this._draftLoaded = true
@@ -124,7 +127,7 @@ Page({
         difficultyText: difficultyLabel(draft.difficulty),
         inLibrary: !!draft.existing_recipe_id
       })
-      wx.setNavigationBarTitle({ title: draft.name || 'AI 推荐菜' })
+      wx.setNavigationBarTitle({ title: draft.name || NAV_TITLE })
     } catch (e) {
       wx.showToast({ title: (e && e.msg) || '加载失败', icon: 'none' })
     }

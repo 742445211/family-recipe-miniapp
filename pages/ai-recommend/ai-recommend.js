@@ -32,6 +32,8 @@ const LOADING_TIPS = [
   '正在组合推荐...'
 ]
 
+const NAV_TITLE = 'AI 推荐'
+
 Page({
   data: {
     enabled: false,
@@ -94,8 +96,8 @@ Page({
     this._clearPageData()
     if (!this._leftForDisabled) {
       this._leftForDisabled = true
-      wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
       this._goBack()
+      wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
     }
   },
 
@@ -107,6 +109,7 @@ Page({
         return false
       }
       this._leftForDisabled = false
+      wx.setNavigationBarTitle({ title: NAV_TITLE })
       this.setData({ enabled: true })
       if (!this._weatherLoaded) {
         this._weatherLoaded = true

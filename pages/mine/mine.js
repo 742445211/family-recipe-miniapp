@@ -39,16 +39,17 @@ Page({
     wx.showTabBar()
     if (!requireLogin()) return
     const app = getAppSafe()
-    const apply = (features) => {
+    this.setData({ showAI: false })
+    const applyFeatures = (features) => {
       const f = features || getCachedFeatures(app)
       this.setData({ showAI: !!f.ai_recommend })
       this.loadProfile()
     }
     if (app) {
-      refreshAppFeatures(app).then(apply).catch(() => apply())
+      refreshAppFeatures(app).then(applyFeatures).catch(() => applyFeatures(null))
       return
     }
-    apply()
+    applyFeatures(null)
   },
 
   /**
