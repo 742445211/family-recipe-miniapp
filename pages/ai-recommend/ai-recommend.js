@@ -50,18 +50,24 @@ Page({
   },
 
   onLoad() {
-    if (!requireLogin()) return
     this._weatherLoaded = false
     this._leftForDisabled = false
     const cached = getCachedFeatures(getAppSafe())
     if (!cached.ai_recommend) {
-      this._applyDisabled()
+      this._exitDisabled()
       return
     }
+    if (!requireLogin()) return
     this._checkEnabled()
   },
 
   onShow() {
+    if (this._leftForDisabled) return
+    const cached = getCachedFeatures(getAppSafe())
+    if (!cached.ai_recommend) {
+      this._exitDisabled()
+      return
+    }
     if (!requireLogin()) return
     if (!this.data.enabled && this._leftForDisabled) return
     this._checkEnabled()
@@ -92,13 +98,16 @@ Page({
     }
   },
 
-  _applyDisabled() {
+  _exitDisabled() {
+    if (this._leftForDisabled) return
+    this._leftForDisabled = true
     this._clearPageData()
-    if (!this._leftForDisabled) {
-      this._leftForDisabled = true
-      this._goBack()
-      wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
-    }
+    wx.setNavigationBarTitle({ title: '' })
+    this._goBack()
+  },
+
+  _applyDisabled() {
+    this._exitDisabled()
   },
 
   _checkEnabled() {

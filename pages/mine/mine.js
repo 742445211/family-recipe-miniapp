@@ -159,19 +159,11 @@ Page({
    */
   goAI() {
     const app = getAppSafe()
-    if (!getCachedFeatures(app).ai_recommend) {
-      wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
-      return
-    }
+    if (!getCachedFeatures(app).ai_recommend) return
     refreshAppFeatures(app).then((features) => {
-      if (!features.ai_recommend) {
-        wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
-        return
-      }
+      if (!features.ai_recommend) return
       wx.navigateTo({ url: '/pages/ai-recommend/ai-recommend' })
-    }).catch(() => {
-      wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
-    })
+    }).catch(() => {})
   },
 
   /**

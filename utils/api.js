@@ -44,7 +44,7 @@ const request = (url, method = 'GET', data = {}) => {
         // 网关/非 JSON 响应时 res.data 可能为空，须先取 body 再读 code
         const body = res.data
         if (res.statusCode === 401 || (body && body.code === 401)) {
-          notification.handleAuthExpired()
+          notification.clearAuthSession({ toast: !!token })
           reject(body || { code: 401, msg: '未登录' })
         } else if (body && body.code === 0) {
           resolve(body.data)
@@ -320,7 +320,7 @@ const api = {
           return
         }
         if (res.statusCode === 401 || data.code === 401) {
-          notification.handleAuthExpired()
+          notification.clearAuthSession({ toast: !!token })
           reject(data)
           return
         }

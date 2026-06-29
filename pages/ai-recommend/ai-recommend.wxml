@@ -59,8 +59,8 @@
   </view>
 
   <view wx:else class="state-block state-block-sm">
-    <view class="state-pan">荐</view>
-    <text class="state-title">还没开始推荐</text>
+    <view class="state-pan">AI</view>
+    <text class="state-title">还没开伙</text>
     <text class="state-desc">点上面的按钮，让 AI 帮你想</text>
   </view>
 </view>

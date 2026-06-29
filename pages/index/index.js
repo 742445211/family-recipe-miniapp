@@ -130,19 +130,26 @@ Page({
       .catch(() => wx.stopPullDownRefresh())
   },
 
-  /** 未登录拉公开分类；已登录拉家庭分类 */
+  /** 未登录拉公开分类；已登录拉家庭分类；401 时清 token 后回退公开接口 */
   async loadCategories() {
     let names = DEFAULT_CATEGORY_NAMES.slice()
+    const loadPublic = async () => {
+      const data = await api.getPublicCategories()
+      return categoriesFromPublicAPI(data)
+    }
     try {
       if (isLoggedIn()) {
         const data = await api.getCategories()
         names = mergeCategoryNames(data)
       } else {
-        const data = await api.getPublicCategories()
-        names = categoriesFromPublicAPI(data)
+        names = await loadPublic()
       }
     } catch (e) {
-      // 网络失败时保留默认分类
+      if (e && e.code === 401) {
+        try {
+          names = await loadPublic()
+        } catch (err) { /* 保留默认分类 */ }
+      }
     }
     const categories = buildIndexPickerCategories(names)
     let category = this.data.category
@@ -236,6 +243,27 @@ Page({
       })
     } catch (e) {
       if (token !== this._loadToken) return
+      if (reset && e && e.code === 401 && this.data.mode === 'recipes') {
+        try {
+          const data = await api.getRecipes({
+            keyword: this.data.keyword,
+            category: this.data.category,
+            page: requestPage,
+            page_size: PAGE_SIZE
+          })
+          if (token !== this._loadToken) return
+          const list = (data && data.list) ? data.list : []
+          const batch = list.map(enrichRecipe)
+          const recipes = batch
+          this._finishLoad(token, {
+            recipes,
+            page: requestPage + 1,
+            hasMore: resolveHasMore(data, recipes.length),
+            loadError: false
+          })
+          return
+        } catch (retryErr) { /* fall through */ }
+      }
       if (reset) {
         this._finishLoad(token, { recipes: [], loadError: true })
       } else {

@@ -68,26 +68,23 @@ function isTokenExpired(token) {
   return expMs < Date.now()
 }
 
-let authRedirecting = false
 
-/** 401 / token 过期：清本地凭证、断 WebSocket，并跳转登录页（防多次 reLaunch） */
-function handleAuthExpired() {
+/** 清除本地登录态并断开 WebSocket，不跳转（首页等可匿名浏览） */
+function clearAuthSession(options = {}) {
+  const { toast = false } = options
   intentionalClose = true
   disconnectSocket()
   wx.removeStorageSync('token')
   wx.removeStorageSync('userInfo')
   wx.removeStorageSync('isChef')
-  wx.showToast({ title: '登录已过期，请重新登录', icon: 'none' })
-  if (authRedirecting) return
-  authRedirecting = true
-  setTimeout(() => {
-    wx.reLaunch({
-      url: '/pages/login/login',
-      complete() {
-        authRedirecting = false
-      }
-    })
-  }, 400)
+  if (toast) {
+    wx.showToast({ title: '登录已过期，请重新登录', icon: 'none' })
+  }
+}
+
+/** 401 / token 过期：清凭证；不再全局 reLaunch，需登录页由 requireLogin() 处理 */
+function handleAuthExpired() {
+  clearAuthSession({ toast: true })
 }
 
 function updateMessageHandler(onMessage) {
@@ -138,7 +135,7 @@ function connectSocket(onMessage) {
   if (!token) return
 
   if (isTokenExpired(token)) {
-    handleAuthExpired()
+    clearAuthSession({ toast: false })
     return
   }
 
@@ -167,7 +164,7 @@ function connectSocket(onMessage) {
 function scheduleReconnect() {
   const token = wx.getStorageSync('token')
   if (!token || isTokenExpired(token)) {
-    if (token && isTokenExpired(token)) handleAuthExpired()
+    if (token && isTokenExpired(token)) clearAuthSession({ toast: false })
     return
   }
   if (reconnectTimer) return
@@ -206,6 +203,7 @@ module.exports = {
   connectSocket,
   disconnectSocket,
   updateMessageHandler,
+  clearAuthSession,
   handleAuthExpired,
   parseSocketMessage,
   mealLabel,

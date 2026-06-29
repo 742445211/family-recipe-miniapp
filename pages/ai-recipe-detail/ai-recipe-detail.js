@@ -41,24 +41,30 @@ Page({
   },
 
   onLoad(options) {
-    if (!requireLogin()) return
     const itemId = options.item_id || ''
+    this._draftLoaded = false
+    this._leftForDisabled = false
+    const cached = getCachedFeatures(getAppSafe())
+    if (!cached.ai_recommend) {
+      this._exitDisabled()
+      return
+    }
+    if (!requireLogin()) return
     if (!itemId) {
       wx.showToast({ title: '参数错误', icon: 'none' })
       return
     }
     this.setData({ itemId, orderDate: todayYMD() })
-    this._draftLoaded = false
-    this._leftForDisabled = false
-    const cached = getCachedFeatures(getAppSafe())
-    if (!cached.ai_recommend) {
-      this._applyDisabled()
-      return
-    }
     this._checkEnabled(itemId)
   },
 
   onShow() {
+    if (this._leftForDisabled) return
+    const cached = getCachedFeatures(getAppSafe())
+    if (!cached.ai_recommend) {
+      this._exitDisabled()
+      return
+    }
     if (!requireLogin()) return
     if (!this.data.itemId) return
     if (!this.data.enabled && this._leftForDisabled) return
@@ -74,7 +80,9 @@ Page({
     }
   },
 
-  _applyDisabled() {
+  _exitDisabled() {
+    if (this._leftForDisabled) return
+    this._leftForDisabled = true
     this._draftLoaded = false
     this.setData({
       enabled: false,
@@ -86,11 +94,12 @@ Page({
       inLibrary: false,
       showOrderModal: false
     })
-    if (!this._leftForDisabled) {
-      this._leftForDisabled = true
-      this._goBack()
-      wx.showToast({ title: 'AI推荐功能未开启', icon: 'none' })
-    }
+    wx.setNavigationBarTitle({ title: '' })
+    this._goBack()
+  },
+
+  _applyDisabled() {
+    this._exitDisabled()
   },
 
   _checkEnabled(itemId) {
