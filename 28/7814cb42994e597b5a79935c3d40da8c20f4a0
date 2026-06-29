@@ -1,0 +1,40 @@
+pages/index/index.js
+  s_4fca4b61d6dd4e::t_d0a6020b96fef8 133,136-139,145,148-152
+  s_4fca4b61d6dd4e::t_ad4fc300c7a829 246-266
+utils/notification.js
+  s_4fca4b61d6dd4e::t_ca1d0cf85e4c83 72-74,80-87
+  s_4fca4b61d6dd4e::t_03d6ffc0b6aa78 206
+  s_4fca4b61d6dd4e::t_538f847e3f5580 138
+  s_4fca4b61d6dd4e::t_25cb4470f821e2 167
+pages/ai-recommend/ai-recommend.js
+  s_4fca4b61d6dd4e::t_df38973fa8e507 65-70
+  s_4fca4b61d6dd4e::t_5642a316f4a6fb 101-103,105-110
+  s_4fca4b61d6dd4e::t_24d0b13bf37ffa 57,60
+utils/api.js
+  s_4fca4b61d6dd4e::t_792ff2ae44318d 323
+  s_4fca4b61d6dd4e::t_c860fcc0f40552 47
+pages/ai-recipe-detail/ai-recipe-detail.js
+  s_4fca4b61d6dd4e::t_99673d83781df4 83-85,97-102
+  s_4fca4b61d6dd4e::t_d21d59dbfa2583 49-54,57
+  s_4fca4b61d6dd4e::t_008fe5af420161 62-67
+pages/mine/mine.js
+  s_4fca4b61d6dd4e::t_a0d758471be2dd 162,164,166
+pages/ai-recommend/ai-recommend.wxml
+  s_4fca4b61d6dd4e::t_5b25cf077945ee 62-63
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.1",
+  "base_commit_sha": "287814cb42994e597b5a79935c3d40da8c20f4a0",
+  "prompts": {},
+  "sessions": {
+    "s_4fca4b61d6dd4e": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "dbf17b86-8c70-4e02-b26f-7a4d10cbd9e2",
+        "model": "default"
+      },
+      "human_author": "张津川 <jinchuan@uxin.com>"
+    }
+  }
+}
